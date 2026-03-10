@@ -1,0 +1,124 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "../ui/button";
+import { ShoppingBag, ChevronLeft, ChevronRight, Plus, Check } from "lucide-react";
+import { toast } from "sonner";
+
+// Твоите оригинални продукти (записани директно в кода)
+const productsData = [
+  { id: 1, name: "Професионална електрическа пила", price: "185", description: "Висока мощност за маникюр.", image_url: "https://images.unsplash.com" },
+  { id: 2, name: "LED/UV лампа 48W", price: "45", description: "Бързо изпичане на гел.", image_url: "https://images.unsplash.com" },
+  { id: 3, name: "Прахоуловител", price: "95", description: "Мощен и тих за чиста среда.", image_url: "https://images.unsplash.com" },
+  { id: 4, name: "Дървени пили", price: "5", description: "Висококачествени пили.", image_url: "https://images.unsplash.com" }
+];
+
+function AddToCartButton({ product, user }) {
+  const [added, setAdded] = useState(false);
+
+  const handleAdd = () => {
+    if (!user) {
+      toast.error("Моля, влезте в акаунта си, за да поръчате!");
+      return;
+    }
+    setAdded(true);
+    toast.success(`${product.name} е добавен в количката!`);
+    setTimeout(() => setAdded(false), 2000);
+  };
+
+  return (
+    <motion.button
+      onClick={handleAdd}
+      className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+        added ? "bg-green-500 text-white" : "bg-gradient-to-r from-rose-400 to-pink-500 text-white hover:from-rose-500 hover:to-pink-600"
+      }`}
+      whileTap={{ scale: 0.92 }}
+    >
+      {added ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+      {added ? "Добавено!" : "Добави"}
+    </motion.button>
+  );
+}
+
+export default function FeaturedProducts() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [user, setUser] = useState(null); // Тук по-късно ще добавим системата за акаунти
+  const intervalRef = useRef(null);
+
+  const visibleCount = 4;
+  const maxIndex = Math.max(0, productsData.length - visibleCount);
+
+  const next = useCallback(() => {
+    setCurrentIndex(i => (i >= maxIndex ? 0 : i + 1));
+  }, [maxIndex]);
+
+  const prev = useCallback(() => {
+    setCurrentIndex(i => (i <= 0 ? maxIndex : i - 1));
+  }, [maxIndex]);
+
+  useEffect(() => {
+    if (!isPaused && productsData.length > 1) {
+      intervalRef.current = setInterval(next, 3500);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [isPaused, next]);
+
+  const displayProducts = productsData.slice(currentIndex, currentIndex + 4);
+
+  return (
+    <section
+      className="py-20 bg-gradient-to-b from-white to-pink-50/30"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="container mx-auto px-6">
+        <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose-100/50 rounded-full mb-4">
+            <ShoppingBag className="w-4 h-4 text-rose-500" />
+            <span className="text-sm font-medium text-rose-600">Магазин</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+            Най-желаните <span className="font-semibold text-rose-500">продукти</span>
+          </h2>
+          <p className="text-gray-500 text-lg max-w-2xl mx-auto">Качествени продукти за професионален маникюр</p>
+        </motion.div>
+
+        <div className="relative">
+          {productsData.length > 4 && (
+            <>
+              <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors"><ChevronLeft className="w-5 h-5 text-gray-600" /></button>
+              <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors"><ChevronRight className="w-5 h-5 text-gray-600" /></button>
+            </>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-hidden">
+            <AnimatePresence mode="popLayout">
+              {displayProducts.map((product, idx) => (
+                <motion.div
+                  key={`${product.id}`}
+                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50"
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{ duration: 0.3, delay: idx * 0.05 }}
+                >
+                  <div className="relative h-48 bg-gray-100">
+                    <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
+                    <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-rose-500">€{product.price}</span>
+                      <AddToCartButton product={product} user={user} />
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

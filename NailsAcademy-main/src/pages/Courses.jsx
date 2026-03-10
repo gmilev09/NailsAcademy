@@ -1,0 +1,159 @@
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Clock, GraduationCap, Award, ArrowRight, CheckCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const categories = [
+  { value: "all", label: "Всички курсове" },
+  { value: "manicure", label: "Базови" },
+  { value: "advanced", label: "Надграждащи" },
+];
+
+const levels = [
+  { value: "all", label: "Всички нива" },
+  { value: "beginner", label: "Начинаещи" },
+  { value: "intermediate", label: "Средно ниво" },
+  { value: "advanced", label: "Напреднали" },
+];
+
+const levelColors = {
+  beginner: "bg-green-100 text-green-700 border-green-200",
+  intermediate: "bg-blue-100 text-blue-700 border-blue-200",
+  advanced: "bg-purple-100 text-purple-700 border-purple-200",
+};
+
+const levelLabels = {
+  beginner: "Начинаещи",
+  intermediate: "Средно ниво",
+  advanced: "Напреднали",
+};
+
+// Твоите реални курсове (зареждат се веднага)
+const initialCourses = [
+  { 
+    id: 1, 
+    title: "Базов курс по маникюр", 
+    category: "manicure", 
+    level: "beginner", 
+    price: 450, 
+    duration: "5 дни",
+    certificate: true,
+    image_url: "https://images.unsplash.com"
+  },
+  { 
+    id: 2, 
+    title: "Комбиниран апаратен маникюр", 
+    category: "advanced", 
+    level: "intermediate", 
+    price: 180, 
+    duration: "1 ден",
+    certificate: true,
+    image_url: "https://images.unsplash.com"
+  },
+  { 
+    id: 3, 
+    title: "Изграждане с горни форми", 
+    category: "advanced", 
+    level: "advanced", 
+    price: 220, 
+    duration: "2 дни",
+    certificate: true,
+    image_url: "https://images.unsplash.com"
+  }
+];
+
+export default function Courses() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeLevel, setActiveLevel] = useState("all");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const filteredCourses = initialCourses.filter(course => {
+    const categoryMatch = activeCategory === "all" || course.category === activeCategory;
+    const levelMatch = activeLevel === "all" || course.level === activeLevel;
+    return categoryMatch && levelMatch;
+  });
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-rose-50/50 to-white">
+      <section className="pt-32 pb-16 px-6">
+        <div className="container mx-auto text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 shadow-sm mb-6">
+              <GraduationCap className="w-4 h-4 text-rose-400" />
+              <span className="text-sm font-medium text-rose-600 uppercase">Обучение</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-4 text-center">
+              Нашите <span className="font-semibold text-rose-500 italic">курсове</span>
+            </h1>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="px-6 pb-8">
+        <div className="container mx-auto space-y-6">
+          <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
+            <TabsList className="bg-white border border-gray-100 p-1 rounded-full flex flex-wrap justify-center h-auto gap-2">
+              {categories.map((cat) => (
+                <TabsTrigger key={cat.value} value={cat.value} className="rounded-full px-6 py-2 data-[state=active]:bg-rose-500 data-[state=active]:text-white">
+                  {cat.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+          
+          <div className="flex justify-center">
+            <Tabs value={activeLevel} onValueChange={setActiveLevel}>
+              <TabsList className="bg-gray-50 p-1 rounded-full flex gap-1">
+                {levels.map((level) => (
+                  <TabsTrigger key={level.value} value={level.value} className="rounded-full px-4 py-1 text-sm data-[state=active]:bg-white shadow-sm">
+                    {level.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 pb-24">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredCourses.map((course, index) => (
+              <motion.div key={course.id} className="group" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
+                <div className="bg-white rounded-3xl p-3 shadow-sm hover:shadow-xl transition-all border border-gray-50 flex flex-col h-full">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/3]">
+                    <img src={course.image_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <Badge className={levelColors[course.level]}>{levelLabels[course.level]}</Badge>
+                      {course.certificate && <Badge className="bg-white text-rose-500 border-none italic">Сертификат</Badge>}
+                    </div>
+                  </div>
+                  
+                  <div className="p-5 flex-1 flex flex-col">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 italic">{course.title}</h3>
+                    <div className="space-y-2 mb-6">
+                      <div className="flex items-center text-sm text-gray-500 gap-2"><Clock className="w-4 h-4 text-rose-400" /> Продължителност: {course.duration}</div>
+                      <div className="flex items-center text-sm text-gray-500 gap-2"><CheckCircle className="w-4 h-4 text-rose-400" /> Индивидуален подход</div>
+                    </div>
+                    <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
+                      <span className="text-2xl font-bold text-rose-500">€{course.price}</span>
+                      <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
+                        <Button className="bg-rose-500 text-white rounded-full">Запиши се <ArrowRight className="ml-2 w-4 h-4" /></Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
