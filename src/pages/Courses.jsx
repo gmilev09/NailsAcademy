@@ -48,7 +48,7 @@ const initialCourses = [
     title: "Комбиниран апаратен маникюр", 
     category: "advanced", 
      level: "advanced",  
-    price: 180, 
+    price: 250, 
      duration: "20 учебни часа",
     certificate: true,
     image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg"
