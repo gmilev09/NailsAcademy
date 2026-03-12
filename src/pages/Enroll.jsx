@@ -54,9 +54,61 @@ const courses = [
 
 Това обучение ви подготвя не просто да правите красиви нокти, а да работите уверено, безопасно и професионално.
 Ако искате знания, практика, сигурност и реален старт в професията - този курс е за вас.
-Местата са ограничени. Свържете се с нас и запазете своето място още днес.`
+Местата са ограничени. Свържете се с нас и запазете своето място още днес.`,
+    max_students: 2
   },
-  { id: 2, title: "Комбиниран апаратен маникюр", price: 180, duration: "1 ден", image_url: "https://images.unsplash.com", description: "Надграждаща техника." },
+  {
+    id: 2,
+    title: "Комбиниран апаратен маникюр",
+    price: 180,
+    duration: "20 учебни часа",
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg",
+    max_students: 2,
+    description: `Надграждащо обучение по комбиниран маникюр
+Прецизност. Контрол. Съвършен резултат.
+Продължителност: 20 учебни часа
+
+Това надграждащо обучение е създадено за маникюристи, които искат да усъвършенстват техниката си, да работят по-чисто, по-безопасно и с по-дълготраен резултат. Курсът е фокусиран върху детайла, правилния подбор на инструменти и контрола във всяка стъпка от работния процес.
+
+Ако вече работите с комбиниран маникюр, но търсите повече увереност, по-малко грешки и по-високо качество, това обучение е за вас.
+
+Какво ще усвоите:
+Техника и контрол
+• Задълбочен анализ на комбинирания маникюр
+• Правилен подбор и използване на фрези
+• Контрол на натиск, ъгъл и скорост
+• Безопасна и ефективна работа с електрическа пила
+• Работа без порязвания и без изтъняване на плочката
+
+Работа с кутикулата - професионално ниво
+• Дълбока и прецизна обработка на кутикулата
+• Чиста линия без накъсване и травми
+• Подготовка за дълбоко лакиране под кутикул
+• Техники за минимално израстване и дълготраен ефект
+
+Често срещани грешки и тяхното коригиране
+• Защо резултатът не е чист
+• Как да избегнете напуквания и зачервявания
+• Работа при проблемна кожа и чувствителни клиенти
+• Анализ и корекция на индивидуалните грешки на курсистите
+
+Практика и резултат
+Обучението е силно практическо и насочено към реалната работа в салон. Работи се стъпка по стъпка с постоянна обратна връзка и индивидуален подход.
+
+След обучението ще:
+✔ работите по-бързо и по-чисто
+✔ имате по-добър контрол и сигурност
+✔ постигате професионален и дълготраен резултат
+
+За кого е подходящо обучението?
+• Маникюристи с базови познания по комбиниран маникюр
+• Професионалисти, които искат по-високо ниво на работа
+• Хора, които търсят усъвършенстване, а не просто сертификат
+
+Това обучение не добавя просто техника - то променя начина ви на работа.
+20 учебни часа.
+Максимум 2-ма курсисти.`
+  },
   { id: 3, title: "Изграждане с горни форми", price: 220, duration: "2 дни", image_url: "https://images.unsplash.com", description: "Съвременно удължаване." }
 ];
 
@@ -182,7 +234,7 @@ export default function Enroll() {
                  <p className="text-sm text-gray-600 whitespace-pre-line max-h-56 overflow-y-auto pr-1 mb-4">{selectedCourse.description}</p>
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-sm"><span className="text-gray-500 flex items-center gap-2"><Clock className="w-4 h-4 text-rose-500" /> Срок</span><span className="font-bold">{selectedCourse.duration}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-gray-500 flex items-center gap-2"><Users className="w-4 h-4 text-rose-500" /> Група</span><span className="font-bold">Индивидуално</span></div>
+                                  <div className="flex justify-between text-sm"><span className="text-gray-500 flex items-center gap-2"><Users className="w-4 h-4 text-rose-500" /> Група</span><span className="font-bold">{selectedCourse.max_students ? `Максимум ${selectedCourse.max_students}` : "Индивидуално"}</span></div>
                   <div className="flex justify-between text-sm"><span className="text-gray-500 flex items-center gap-2"><Award className="w-4 h-4 text-rose-500" /> Диплома</span><Badge className="bg-green-100 text-green-700 border-0">Включена</Badge></div>
                 </div>
                 <div className="pt-4 border-t flex justify-between items-center">
