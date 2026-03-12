@@ -1,0 +1,40 @@
+// Изчистен модел за Галерия (GalleryItem)
+export const GalleryItemSchema = {
+  title: "",
+  image_url: "",
+  category: "manicure" // manicure, pedicure, nail_art, gel, acrylic
+};
+
+// Примерни снимки за твоето портфолио
+export const mockGalleryItems = [
+  {
+    id: "g1",
+    title: "Класически червен маникюр",
+    category: "manicure",
+    image_url: "https://images.unsplash.com"
+  },
+  {
+    id: "g2",
+    title: "Пролетен Nail Art",
+    category: "nail_art",
+    image_url: "https://images.unsplash.com"
+  },
+  {
+    id: "g3",
+    title: "Изграждане с гел - френч",
+    category: "gel",
+    image_url: "https://images.unsplash.com"
+  },
+  {
+    id: "g4",
+    title: "Декорация с камъни",
+    category: "nail_art",
+    image_url: "https://images.unsplash.com"
+  }
+];
+
+// Функция за филтриране по категория
+export const getGalleryByCategory = (category) => {
+  if (!category || category === 'all') return mockGalleryItems;
+  return mockGalleryItems.filter(item => item.category === category);
+};
