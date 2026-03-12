@@ -1,0 +1,43 @@
+// Изчистен модел за Елемент в количка (CartItem)
+export const CartItemSchema = {
+  product_id: "",
+  product_name: "",
+  product_price: 0,
+  product_image: "",
+  quantity: 1,
+  user_email: "" // Имейл на потребителя (незадължително за локална количка)
+};
+
+// Функция за изчисляване на общата сума на количката
+export const calculateTotal = (cartItems) => {
+  return cartItems.reduce((total, item) => {
+    return total + (item.product_price * item.quantity);
+  }, 0);
+};
+
+// Примерни данни за тестване на дизайна в Netlify
+export const mockCartItems = [
+  {
+    product_id: "prod_01",
+    product_name: "Професионален комплект четки",
+    product_price: 35.00,
+    product_image: "https://images.unsplash.com",
+    quantity: 1,
+    user_email: "test@example.com"
+  }
+];
+
+// Локална функция за добавяне (замества API заявките на Base44)
+export const addToCartLocal = (currentCart, newProduct) => {
+  const existingItem = currentCart.find(item => item.product_id === newProduct.product_id);
+  
+  if (existingItem) {
+    return currentCart.map(item =>
+      item.product_id === newProduct.product_id
+        ? { ...item, quantity: item.quantity + 1 }
+        : item
+    );
+  }
+  
+  return [...currentCart, { ...newProduct, quantity: 1 }];
+};
