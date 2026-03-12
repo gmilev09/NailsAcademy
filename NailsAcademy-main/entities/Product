@@ -1,0 +1,63 @@
+// Изчистен модел за Продукт (Product)
+export const ProductSchema = {
+  name: "",
+  description: "",
+  price: 0, // Цена в евро (според схемата ти)
+  image_url: "", // Основна снимка
+  image_url_2: "", // Втора снимка
+  image_url_3: "", // Трета снимка
+  category: "електроуреди", // електроуреди, инструменти_пили, четки, аксесоари, масажни_свещи
+  in_stock: true,
+  featured: false
+};
+
+// Примерни данни за твоя онлайн магазин
+export const mockProducts = [
+  {
+    id: "p1",
+    name: "Професионална UV/LED Лампа",
+    description: "Мощна 48W лампа за бързо изпичане на всички видове гел и гел лак. Сензор за движение и таймер.",
+    price: 45.00,
+    image_url: "https://images.unsplash.com",
+    image_url_2: "",
+    image_url_3: "",
+    category: "електроуреди",
+    in_stock: true,
+    featured: true
+  },
+  {
+    id: "p2",
+    name: "Комплект Прецизни Четки за Nail Art",
+    description: "Сет от 5 четки с естествен косъм за детайлни декорации и тънки линии.",
+    price: 18.50,
+    image_url: "https://images.unsplash.com",
+    image_url_2: "",
+    image_url_3: "",
+    category: "четки",
+    in_stock: true,
+    featured: true
+  },
+  {
+    id: "p3",
+    name: "Ароматна Масажна Свещ - Ванилия",
+    description: "Подходяща за спа процедури и хидратация на кожата след маникюр.",
+    price: 12.00,
+    image_url: "https://images.unsplash.com",
+    image_url_2: "",
+    image_url_3: "",
+    category: "масажни_свещи",
+    in_stock: true,
+    featured: false
+  }
+];
+
+// Функция за филтриране по категория
+export const getProductsByCategory = (category) => {
+  if (!category || category === 'all') return mockProducts;
+  return mockProducts.filter(product => product.category === category);
+};
+
+// Функция за препоръчани продукти
+export const getFeaturedProducts = () => {
+  return mockProducts.filter(product => product.featured);
+};
