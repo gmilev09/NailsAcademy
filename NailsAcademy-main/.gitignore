@@ -1,0 +1,29 @@
+# Environment Variables (Сигурност)
+.env
+.env.local
+.env.*.local
+
+# Dependencies (Тези НЕ се качват в GitHub)
+node_modules/
+dist/
+dist-ssr/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor & OS files
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.sw?
+
+# Vercel/Netlify specific (ако се генерират локално)
+.netlify
+.vercel
