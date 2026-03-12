@@ -1,0 +1,54 @@
+// Изчистен модел за Отзив (Review)
+export const ReviewSchema = {
+  author_name: "",
+  rating: 5, // оценка от 1 до 5
+  comment: "",
+  course_title: "", // Незадължително име на курса
+  author_image: "", // Снимка на автора
+  approved: false // Дали е одобрен за показване
+};
+
+// Примерни данни за отзиви от клиенти
+export const mockReviews = [
+  {
+    id: "r1",
+    author_name: "Анелия Тодорова",
+    rating: 5,
+    comment: "Курсът за начинаещи беше невероятен! Елена обяснява всичко с голямо търпение и професионализъм. Вече работя с първите си клиенти!",
+    course_title: "Маникюр за начинаещи",
+    author_image: "https://images.unsplash.com",
+    approved: true
+  },
+  {
+    id: "r2",
+    author_name: "Виктория Стойчева",
+    rating: 5,
+    comment: "Изключително доволна съм от Nail Art обучението. Техниките, които научих, ми помогнаха да вдигна цените на услугите си двойно.",
+    course_title: "Nail Art: Декорации",
+    author_image: "https://images.unsplash.com",
+    approved: true
+  },
+  {
+    id: "r3",
+    author_name: "Даниела Стоянова",
+    rating: 4,
+    comment: "Много добър курс по изграждане с гел. Имаше много практика, което за мен беше най-важното.",
+    course_title: "Изграждане с гел",
+    author_image: "https://images.unsplash.com",
+    approved: true
+  }
+];
+
+// Функция за извличане само на одобрените отзиви
+export const getApprovedReviews = () => {
+  return mockReviews.filter(review => review.approved);
+};
+
+// Функция за добавяне на нов отзив (локално)
+export const submitReview = (reviewData) => {
+  console.log("Вашият отзив е изпратен за одобрение:", reviewData);
+  return { 
+    success: true, 
+    message: "Благодарим Ви за отзива! Той ще бъде публикуван след преглед." 
+  };
+};
