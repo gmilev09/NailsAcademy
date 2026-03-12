@@ -3,13 +3,18 @@ import { Button } from "../ui/button";
 import { ArrowRight, Images } from "lucide-react";
 import { Link } from "react-router-dom";
 
-// Тук са твоите снимки. По-късно ще можеш да ги сменяш лесно през панела.
+import previewImg1 from "../../NailsAcademy/Gallery/258373387-105845445258740-6646872728964521253-n.jpg";
+import previewImg2 from "../../NailsAcademy/Gallery/258382105-105854808591137-8481806728798514483-n.jpg";
+import previewImg3 from "../../NailsAcademy/Gallery/258405558-105852005258084-4226010845577433639-n.jpg";
+import previewImg4 from "../../NailsAcademy/Gallery/258457483-105854031924548-2292339568805999732-n.jpg";
+import previewImg5 from "../../NailsAcademy/Gallery/263902421-117499347426683-8723268371839043654-n.jpg";
+
 const galleryImages = [
-  { url: "https://images.unsplash.com", span: "col-span-2 row-span-2" },
-  { url: "https://images.unsplash.com", span: "" },
-  { url: "https://images.unsplash.com", span: "" },
-  { url: "https://images.unsplash.com", span: "" },
-  { url: "https://images.unsplash.com", span: "" }
+  { url: previewImg1, span: "col-span-2 row-span-2" },
+  { url: previewImg2, span: "" },
+  { url: previewImg3, span: "" },
+  { url: previewImg4, span: "" },
+  { url: previewImg5, span: "" }
 ];
 
 export default function GalleryPreview() {

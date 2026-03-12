@@ -4,6 +4,19 @@ import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Images, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../components/ui/button";
 
+import img1 from "../NailsAcademy/Gallery/258373387-105845445258740-6646872728964521253-n.jpg";
+import img2 from "../NailsAcademy/Gallery/258382105-105854808591137-8481806728798514483-n.jpg";
+import img3 from "../NailsAcademy/Gallery/258384318-105852518591366-5290592204321149399-n.jpg";
+import img4 from "../NailsAcademy/Gallery/258397093-105849925258292-2200470297065060521-n.jpg";
+import img5 from "../NailsAcademy/Gallery/258405558-105852005258084-4226010845577433639-n.jpg";
+import img6 from "../NailsAcademy/Gallery/258457483-105854031924548-2292339568805999732-n.jpg";
+import img7 from "../NailsAcademy/Gallery/258470754-105853311924620-5228187720907141976-n.jpg";
+import img8 from "../NailsAcademy/Gallery/258485917-105852801924671-3250341266998586301-n.jpg";
+import img9 from "../NailsAcademy/Gallery/258558742-105849218591696-9138844759808013988-n.jpg";
+import img10 from "../NailsAcademy/Gallery/258615794-105851095258175-44783706752791787-n.jpg";
+import img11 from "../NailsAcademy/Gallery/263902421-117499347426683-8723268371839043654-n.jpg";
+import img12 from "../NailsAcademy/Gallery/471147077-610201628156450-8111398269010871634-n.jpg";
+
 const categories = [
   { value: "all", label: "Всички" },
   { value: "manicure", label: "Маникюр" },
@@ -12,14 +25,19 @@ const categories = [
   { value: "gel", label: "Гел" },
 ];
 
-// Твоите реални снимки (зареждат се веднага)
 const initialGalleryItems = [
-  { id: 1, category: "manicure", title: "Класически червен маникюр", image_url: "https://images.unsplash.com" },
-  { id: 2, category: "manicure", title: "Нюд дизайн", image_url: "https://images.unsplash.com" },
-  { id: 3, category: "gel", title: "Изграждане с гел", image_url: "https://images.unsplash.com" },
-  { id: 4, category: "nail_art", title: "Ръчно рисувани декорации", image_url: "https://images.unsplash.com" },
-  { id: 5, category: "pedicure", title: "Професионален педикюр", image_url: "https://images.unsplash.com" },
-  { id: 6, category: "manicure", title: "Френски маникюр", image_url: "https://images.unsplash.com" }
+  { id: 1, category: "manicure", title: "Класически червен маникюр", image_url: img1 },
+  { id: 2, category: "manicure", title: "Нюд дизайн", image_url: img2 },
+  { id: 3, category: "gel", title: "Изграждане с гел", image_url: img3 },
+  { id: 4, category: "nail_art", title: "Ръчно рисувани декорации", image_url: img4 },
+  { id: 5, category: "pedicure", title: "Професионален педикюр", image_url: img5 },
+  { id: 6, category: "manicure", title: "Френски маникюр", image_url: img6 },
+  { id: 7, category: "nail_art", title: "Арт дизайн", image_url: img7 },
+  { id: 8, category: "gel", title: "Гел ноктопластика", image_url: img8 },
+  { id: 9, category: "manicure", title: "Елегантен маникюр", image_url: img9 },
+  { id: 10, category: "pedicure", title: "Спа педикюр", image_url: img10 },
+  { id: 11, category: "nail_art", title: "Декоративен дизайн", image_url: img11 },
+  { id: 12, category: "gel", title: "Гел лак дизайн", image_url: img12 },
 ];
 
 export default function Gallery() {
