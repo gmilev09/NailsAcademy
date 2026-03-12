@@ -1,0 +1,50 @@
+// Изчистен модел за Услуга (Service)
+export const ServiceSchema = {
+  title: "", // Име на услугата или курса
+  description: "",
+  price: 0,
+  duration: "", // Продължителност (напр. "60 мин")
+  category: "manicure", // manicure, pedicure, nail_art, course, treatment
+  image_url: "",
+  featured: false
+};
+
+// Примерни данни за твоите услуги
+export const mockServices = [
+  {
+    id: "s1",
+    title: "Класически маникюр с гел лак",
+    description: "Цялостна грижа за ноктите, почистване на кутикули и нанасяне на дълготраен цвят.",
+    price: 35.00,
+    duration: "60 мин",
+    category: "manicure",
+    image_url: "https://images.unsplash.com",
+    featured: true
+  },
+  {
+    id: "s2",
+    title: "SPA Педикюр",
+    description: "Релаксираща процедура за стъпала, премахване на натрупвания и лакиране.",
+    price: 45.00,
+    duration: "90 мин",
+    category: "pedicure",
+    image_url: "https://images.unsplash.com",
+    featured: true
+  },
+  {
+    id: "s3",
+    title: "Интензивна терапия за ръце",
+    description: "Парафинова вана и маска за възстановяване на суха и увредена кожа.",
+    price: 20.00,
+    duration: "30 мин",
+    category: "treatment",
+    image_url: "https://images.unsplash.com",
+    featured: false
+  }
+];
+
+// Функция за филтриране по категория
+export const getServicesByCategory = (category) => {
+  if (!category || category === 'all') return mockServices;
+  return mockServices.filter(service => service.category === category);
+};
