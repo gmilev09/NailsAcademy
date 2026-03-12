@@ -8,12 +8,16 @@ import { Link } from "react-router-dom";
 const featuredCourses = [
   {
     id: 1,
-    title: "Базов курс по маникюр",
-    description: "Всичко необходимо за старт в професията - анатомия, хигиена и лакиране.",
-    price: "230",
-    duration: "5 дни",
+    title: "Базов курс по маникюр,педикюр и ноктопластика",
+    description: "Реална професионална подготовка с теория, практика върху модели и индивидуален подход според темпото и целите на курсиста.",
+    price: "1300",
+    duration: "80 учебни часа",
     level: "beginner",
-    image_url: "https://images.unsplash.com",
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/1622aebbd_attygi3AwRXqaCZMpSwhgA-8ixNB8vVeAmf12KHyOcY0CQ.jpg",
+    certificate: true
+  },
+  {
+
     certificate: true
   },
   {
