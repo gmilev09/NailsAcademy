@@ -1,0 +1,32 @@
+// Изчистен модел за Резервации (Booking)
+export const BookingSchema = {
+  client_name: "",
+  email: "",
+  phone: "",
+  service: "", // Избрана услуга
+  preferred_date: "",
+  preferred_time: "",
+  message: "",
+  status: "pending" // Възможни: pending, confirmed, completed, cancelled
+};
+
+// Примерни данни, за да не е празен сайтът ти
+export const mockBookings = [
+  {
+    id: "1",
+    client_name: "Иван Петров",
+    email: "ivan@example.com",
+    phone: "0888123456",
+    service: "Класически маникюр",
+    preferred_date: "2024-05-20",
+    preferred_time: "14:30",
+    message: "Моля за час след обяд.",
+    status: "confirmed"
+  }
+];
+
+// Функция за записване (локална, не изпраща към Base44)
+export const saveBooking = (data) => {
+  console.log("Резервацията е запазена локално:", data);
+  return { success: true, message: "Резервацията е приета успешно!" };
+};
