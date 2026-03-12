@@ -17,17 +17,13 @@ const featuredCourses = [
     certificate: true
   },
   {
-
-    certificate: true
-  },
-  {
     id: 2,
     title: "Комбиниран маникюр",
-    description: "Работа с апарат и ножичка за перфектно почистване на кутикулата.",
-    price: "128",
-    duration: "2 дни",
-    level: "intermediate",
-    image_url: "https://images.unsplash.com",
+    description: "Надграждащо обучение за прецизен контрол, чиста линия и дълготраен резултат при комбиниран маникюр.",
+    price: "180",
+    duration: "20 учебни часа",
+    level: "advanced",
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg",
     certificate: true
   }
 ];
