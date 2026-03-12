@@ -23,7 +23,7 @@ export const mockCourses = [
     duration: "5 дни",
     level: "beginner",
     category: "manicure",
-    image_url: "https://images.unsplash.com",
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/1622aebbd_attygi3AwRXqaCZMpSwhgA-8ixNB8vVeAmf12KHyOcY0CQ.jpg",
     max_students: 4,
     includes: ["Работни материали", "Учебник", "Сертификат"],
     certificate: true,
