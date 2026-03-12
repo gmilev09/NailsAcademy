@@ -21,23 +21,21 @@ const categories = [
   { value: "all", label: "Всички" },
   { value: "manicure", label: "Маникюр" },
   { value: "pedicure", label: "Педикюр" },
-  { value: "nail_art", label: "Nail Art" },
-  { value: "gel", label: "Гел" },
 ];
 
 const initialGalleryItems = [
   { id: 1, category: "manicure", title: "Класически червен маникюр", image_url: img1 },
   { id: 2, category: "manicure", title: "Нюд дизайн", image_url: img2 },
-  { id: 3, category: "gel", title: "Изграждане с гел", image_url: img3 },
-  { id: 4, category: "nail_art", title: "Ръчно рисувани декорации", image_url: img4 },
-  { id: 5, category: "pedicure", title: "Професионален педикюр", image_url: img5 },
+  { id: 3, category: "manicure", title: "Изграждане с гел", image_url: img3 },
+  { id: 4, category: "manicure", title: "Ръчно рисувани декорации", image_url: img4 },
+  { id: 5, category: "manicure", title: "Професионален педикюр", image_url: img5 },
   { id: 6, category: "manicure", title: "Френски маникюр", image_url: img6 },
-  { id: 7, category: "nail_art", title: "Арт дизайн", image_url: img7 },
-  { id: 8, category: "gel", title: "Гел ноктопластика", image_url: img8 },
+  { id: 7, category: "manicure", title: "Арт дизайн", image_url: img7 },
+  { id: 8, category: "manicure", title: "Гел ноктопластика", image_url: img8 },
   { id: 9, category: "manicure", title: "Елегантен маникюр", image_url: img9 },
-  { id: 10, category: "pedicure", title: "Спа педикюр", image_url: img10 },
-  { id: 11, category: "nail_art", title: "Декоративен дизайн", image_url: img11 },
-  { id: 12, category: "gel", title: "Гел лак дизайн", image_url: img12 },
+  { id: 10, category: "manicure", title: "Спа педикюр", image_url: img10 },
+  { id: 11, category: "manicure", title: "Декоративен дизайн", image_url: img11 },
+  { id: 12, category: "manicure", title: "Гел лак дизайн", image_url: img12 },
 ];
 
 export default function Gallery() {

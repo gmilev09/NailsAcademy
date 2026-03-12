@@ -2,7 +2,7 @@
 export const GalleryItemSchema = {
   title: "",
   image_url: "",
-  category: "manicure" // manicure, pedicure, nail_art, gel, acrylic
+  category: "manicure" // manicure, pedicure
 };
 
 // Примерни снимки за твоето портфолио
