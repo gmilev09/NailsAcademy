@@ -1,0 +1,35 @@
+// Изчистен модел за Записване в курс (CourseBooking)
+export const CourseBookingSchema = {
+  student_name: "",
+  email: "",
+  phone: "",
+  course_id: "", // Линк към ID на курса
+  course_title: "",
+  experience_level: "none", // none, beginner, intermediate, professional
+  message: "",
+  status: "pending" // pending, confirmed, paid, completed, cancelled
+};
+
+// Примерни данни за записвания
+export const mockCourseBookings = [
+  {
+    id: "cb1",
+    student_name: "Мария Георгиева",
+    email: "maria.g@example.com",
+    phone: "0899123456",
+    course_id: "c1",
+    course_title: "Базово обучение: Маникюр за начинаещи",
+    experience_level: "none",
+    message: "Имам интерес към вечерните групи.",
+    status: "pending"
+  }
+];
+
+// Функция за обработка на ново записване (локална)
+export const bookCourse = (bookingData) => {
+  console.log("Ново записване за курс е получено локално:", bookingData);
+  return { 
+    success: true, 
+    message: "Вашето записване беше изпратено успешно! Ще се свържем с Вас скоро." 
+  };
+};
