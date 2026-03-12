@@ -35,13 +35,13 @@ const levelLabels = {
 const initialCourses = [
   { 
     id: 1, 
-    title: "Базов курс по маникюр", 
+    title: "Базов курс по маникюр,педикюр и ноктопластика",
     category: "manicure", 
     level: "beginner", 
-    price: 450, 
-    duration: "5 дни",
+    price: 1300, 
+    duration: "80 учебни работни часа",
     certificate: true,
-    image_url: "https://images.unsplash.com"
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/1622aebbd_attygi3AwRXqaCZMpSwhgA-8ixNB8vVeAmf12KHyOcY0CQ.jpg"
   },
   { 
     id: 2, 
