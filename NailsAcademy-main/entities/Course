@@ -1,0 +1,65 @@
+// Изчистен модел за Курс (Course)
+export const CourseSchema = {
+  title: "",
+  description: "",
+  price: 0,
+  duration: "",
+  level: "beginner", // beginner, intermediate, advanced
+  category: "manicure", // manicure, pedicure, nail_art, gel, acrylic, advanced, business
+  image_url: "",
+  max_students: 0,
+  includes: [], // масив от низове
+  certificate: true,
+  featured: false
+};
+
+// Примерни данни за твоята академия
+export const mockCourses = [
+  {
+    id: "c1",
+    title: "Базово обучение: Маникюр за начинаещи",
+    description: "Пълен курс за стартиране в професията. Включва теория и практика върху модели.",
+    price: 350.00,
+    duration: "5 дни",
+    level: "beginner",
+    category: "manicure",
+    image_url: "https://images.unsplash.com",
+    max_students: 4,
+    includes: ["Работни материали", "Учебник", "Сертификат"],
+    certificate: true,
+    featured: true
+  },
+  {
+    id: "c2",
+    title: "Майсторски клас: Изграждане с гел",
+    description: "Усъвършенстване на техниките за работа с гел и форми.",
+    price: 280.00,
+    duration: "2 дни",
+    level: "advanced",
+    category: "gel",
+    image_url: "https://images.unsplash.com",
+    max_students: 6,
+    includes: ["Специализирани материали", "Видео уроци"],
+    certificate: true,
+    featured: true
+  },
+  {
+    id: "c3",
+    title: "Nail Art: Декорации и дизайн",
+    description: "Курс за креативни декорации, работа с пигменти и камъни.",
+    price: 150.00,
+    duration: "1 ден",
+    level: "intermediate",
+    category: "nail_art",
+    image_url: "https://images.unsplash.com",
+    max_students: 8,
+    includes: ["Сертификат за завършен курс"],
+    certificate: true,
+    featured: false
+  }
+];
+
+// Функция за извличане на препоръчани курсове
+export const getFeaturedCourses = () => {
+  return mockCourses.filter(course => course.featured);
+};
