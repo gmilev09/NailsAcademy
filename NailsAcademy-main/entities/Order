@@ -1,0 +1,49 @@
+// Изчистен модел за Поръчка (Order)
+export const OrderSchema = {
+  customer_name: "",
+  customer_email: "",
+  customer_phone: "",
+  city: "",
+  delivery_type: "office", // office, address
+  delivery_address: "",
+  courier: "econt", // econt, speedy
+  items: [], // масив от продукти
+  subtotal: 0,
+  shipping_cost: 0,
+  total: 0,
+  status: "pending", // pending, confirmed, shipped, delivered, cancelled
+  payment_method: "cod" // наложен платеж
+};
+
+// Примерни данни за поръчки
+export const mockOrders = [
+  {
+    id: "ord_101",
+    customer_name: "Петър Иванов",
+    customer_email: "peter@example.com",
+    customer_phone: "0877123456",
+    city: "София",
+    delivery_type: "office",
+    delivery_address: "Офис на Еконт - Център",
+    courier: "econt",
+    items: [
+      { product_name: "Комплект четки", quantity: 1, price: 35.00 }
+    ],
+    subtotal: 35.00,
+    shipping_cost: 5.50,
+    total: 40.50,
+    status: "delivered",
+    payment_method: "cod",
+    createdAt: "2024-05-15T10:30:00Z"
+  }
+];
+
+// Функция за създаване на поръчка (локална)
+export const placeOrder = (orderData) => {
+  console.log("Поръчката е приета локално:", orderData);
+  return { 
+    success: true, 
+    orderId: "ord_" + Math.floor(Math.random() * 1000),
+    message: "Благодарим Ви! Поръчката е приета успешно." 
+  };
+};
