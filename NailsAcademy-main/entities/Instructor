@@ -1,0 +1,45 @@
+
+export const InstructorSchema = {
+  name: "",
+  title: "",
+  bio: "",
+  image_url: "",
+  experience_years: 0,
+  specialties: [], // масив от низове
+  certifications: [], // масив от низове
+  instagram: "",
+  featured: false
+};
+
+// Примерни данни за твоите преподаватели
+export const mockInstructors = [
+  {
+    id: "inst1",
+    name: "Елена Димитрова",
+    title: "Главен инструктор и основател",
+    bio: "С над 10 години опит в индустрията, Елена е специализирана в изграждането с гел и сложен Nail Art.",
+    image_url: "https://images.unsplash.com",
+    experience_years: 12,
+    specialties: ["Гел лак", "Изграждане", "Дизайн"],
+    certifications: ["International Master Educator", "Nail Art Champion 2022"],
+    instagram: "@elena_nails_academy",
+    featured: true
+  },
+  {
+    id: "inst2",
+    name: "Мария Иванова",
+    title: "Инструктор по педикюр",
+    bio: "Мария е експерт в медицинския педикюр и грижата за ноктите, с акцент върху здравето и естетиката.",
+    image_url: "https://images.unsplash.com",
+    experience_years: 8,
+    specialties: ["Медицински педикюр", "Терапевтична грижа"],
+    certifications: ["Medical Pedicure Specialist"],
+    instagram: "@maria_pedicure_pro",
+    featured: true
+  }
+];
+
+// Функция за извличане на главните инструктори
+export const getFeaturedInstructors = () => {
+  return mockInstructors.filter(instructor => instructor.featured);
+};
