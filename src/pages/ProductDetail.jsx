@@ -19,14 +19,12 @@ export default function ProductDetail() {
   // Примерни данни за продукта (зареждат се веднага без сървър)
   const product = {
     id: productId || "1",
-    name: "Професионална електрическа пила за маникюр",
-    price: 185,
+    name: "Професионална електрическа",
+    price: 150,
     category: "Оборудване",
     in_stock: true,
     description: "Висококачествена електрическа пила с ниски нива на шум и вибрации. \n\nПодходяща както за начинаещи, така и за напреднали професионалисти. Ергономичен дизайн и LCD дисплей за лесен контрол на оборотите.",
-    image_url: "https://images.unsplash.com",
-    image_url_2: "https://images.unsplash.com",
-    image_url_3: "https://images.unsplash.com"
+    image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png",
   };
 
   const images = [product.image_url, product.image_url_2, product.image_url_3].filter(Boolean);
