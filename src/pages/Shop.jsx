@@ -53,7 +53,7 @@ const categories = [
 
 // Твоите реални продукти за 2026 г.
 const initialProducts = [
-  { id: "1", name: "Електрическа пила 35000 RPM", price: 185, category: "електроуреди", in_stock: true, image_url: "https://images.unsplash.com", description: "Професионална пила за маникюр." },
+  { id: "1", name: "Професионална електрическа пила", price: 150, category: "електроуреди", in_stock: true, image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png", description: "Професионална електрическа пила - 65W: 35000RPM" },
   { id: "2", name: "Масажна свещ AYA - Rose", price: 15, category: "масажни_свещи", in_stock: true, image_url: "https://images.unsplash.com", description: "Луксозна свещ за спа маникюр." },
   { id: "3", name: "Комплект четки за Nail Art", price: 25, category: "четки", in_stock: true, image_url: "https://images.unsplash.com", description: "Прецизни четки за рисуване." }
 ];
