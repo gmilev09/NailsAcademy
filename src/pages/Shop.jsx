@@ -53,8 +53,8 @@ const categories = [
 
 // Твоите реални продукти за 2026 г.
 const initialProducts = [
-  { id: "1", name: "Професионална електрическа пила", price: 150, category: "електроуреди", in_stock: true, image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png", image_url_2: "https://i.postimg.cc/VvphBJPf/Ekranna-snimka-2026-03-01-204526.png",description: "Професионална електрическа пила - 65W: 35000RPM" },
-  { id: "2", name: "LED/UV лампа", price: 27.9, category: "електроуреди", in_stock: true, image_url: "https://i.postimg.cc/8cj36h3d/Ekranna-snimka-2026-03-01-204502.png", description: "UV/LED лампа с 45 диода" },
+  { id: "1", name: "Професионална електрическа пила", price: 150, category: "електроуреди", in_stock: true, image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png", description: "Професионална електрическа пила - 65W: 35000RPM" },
+  { id: "2", name: "LED/UV лампа", price: 27.9, category: "електроуреди", in_stock: true, image_url: "https://i.postimg.cc/8cj36h3d/Ekranna-snimka-2026-03-01-204502.png", image_url_2:  "https://i.postimg.cc/VvphBJPf/Ekranna-snimka-2026-03-01-204526.png" , description: "UV/LED лампа с 45 диода" },
   { id: "3", name: "Комплект четки за Nail Art", price: 25, category: "четки", in_stock: true, image_url: "https://images.unsplash.com", description: "Прецизни четки за рисуване." }
 ];
 
