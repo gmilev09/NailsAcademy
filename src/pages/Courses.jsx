@@ -45,7 +45,7 @@ const initialCourses = [
   },
   { 
     id: 2, 
-    title: "Комбиниран апаратен маникюр", 
+    title: "Комбиниран маникюр", 
     category: "advanced", 
      level: "advanced",  
     price: 250, 
