@@ -8,7 +8,7 @@ import { toast } from "sonner";
 const productsData = [
   { id: 1, name: "Професионална електрическа пила", price: "150", description: "Професионална електрическа пила - 65W: 35000RPM.", image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png" },
   { id: 2, name: "LED/UV лампа 4", price: "27.9", description: "UV/LED лампа с 45 диода", image_url: "https://i.postimg.cc/8cj36h3d/Ekranna-snimka-2026-03-01-204502.png" , image_url_2: "https://i.postimg.cc/VvphBJPf/Ekranna-snimka-2026-03-01-204526.png" },
-  { id: 3, name: "Прахоуловител", price: "95", description: "Мощен и тих за чиста среда.", image_url: "https://images.unsplash.com" },
+  { id: 3, name: "Прахоуловител", price: "99.9", description: " Безчетков прахоуловител за маникюр с мощен двоен турбо вентилатор", image_url: "https://ae01.alicdn.com/kf/S2ed36052861f4496ac755dd36c049c15F.jpg", image_url_2: "https://ae01.alicdn.com/kf/Sb0d0265f910b4c3c81e060724b925f4cn.jpg",  image_url_3: "https://ae01.alicdn.com/kf/S91b63083317d445c8290b4c0238a858bx.jpg"  },
   { id: 4, name: "Дървени пили", price: "5", description: "Висококачествени пили.", image_url: "https://images.unsplash.com" }
 ];
 
