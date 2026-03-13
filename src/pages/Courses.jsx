@@ -62,6 +62,16 @@ const initialCourses = [
     duration: "10 учебни часа",
     certificate: true,
     image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/637fe9b35_attmRG1nC8ozJ_HT5ii5lWHpExNOB0bBMV0mxHJGk1kAZA.jpg"
+  },
+  { 
+    id: 4,
+    title: "Работа с горни форми",
+    category: "advanced",
+    level: "advanced",
+    price: 250,
+    duration: "20 учебни часа",
+    certificate: true,
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa659ac98_attIQDVOiwZWSFwUUrTJ8noxCY4qkQ1Ml_xATQ-ixFgJq8.jpg"
   }
 ];
 
