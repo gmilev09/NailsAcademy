@@ -59,7 +59,7 @@ const courses = [
   },
   {
     id: 2,
-    title: "Комбиниран апаратен маникюр",
+    title: "Комбиниран маникюр",
     price: 180,
     duration: "20 учебни часа",
     image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg",
