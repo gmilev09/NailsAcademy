@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 // Твоите оригинални продукти (записани директно в кода)
 const productsData = [
-  { id: 1, name: "Професионална електрическа пила", price: "185", description: "Висока мощност за маникюр.", image_url: "https://images.unsplash.com" },
+  { id: 1, name: "Професионална електрическа пила", price: "150", description: "Професионална електрическа пила - 65W: 35000RPM.", image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png" },
   { id: 2, name: "LED/UV лампа 48W", price: "45", description: "Бързо изпичане на гел.", image_url: "https://images.unsplash.com" },
   { id: 3, name: "Прахоуловител", price: "95", description: "Мощен и тих за чиста среда.", image_url: "https://images.unsplash.com" },
   { id: 4, name: "Дървени пили", price: "5", description: "Висококачествени пили.", image_url: "https://images.unsplash.com" }
