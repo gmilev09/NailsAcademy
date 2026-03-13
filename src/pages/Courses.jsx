@@ -54,14 +54,14 @@ const initialCourses = [
     image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg"
   },
   { 
-    id: 3, 
-    title: "Изграждане с горни форми", 
-    category: "advanced", 
-    level: "advanced", 
-    price: 220, 
-    duration: "2 дни",
+    id: 3,
+    title: "Изграждане с горни форми",
+    category: "advanced",
+    level: "intermediate",
+    price: 130,
+    duration: "10 учебни часа",
     certificate: true,
-    image_url: "https://images.unsplash.com"
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/637fe9b35_attmRG1nC8ozJ_HT5ii5lWHpExNOB0bBMV0mxHJGk1kAZA.jpg"
   }
 ];
 
