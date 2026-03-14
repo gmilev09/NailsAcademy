@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 const categories = [
   { value: "all", label: "Всички курсове" },
   { value: "manicure", label: "Базови" },
- { value: "advanced", label: "Напреднали" },
+ { value: "advanced", label: "Надграждащи" },
 ];
 
 const levels = [
@@ -36,7 +36,7 @@ const initialCourses = [
   { 
     id: 1, 
     title: "Базов курс по маникюр,педикюр и ноктопластика",
-    category: "manicure", 
+    category: "manicure",
     level: "beginner", 
     price: 1300, 
     duration: "80 учебни работни часа",
@@ -46,7 +46,7 @@ const initialCourses = [
   { 
     id: 2, 
     title: "Комбиниран маникюр", 
-    category: "advanced", 
+    category: "Надграждащи", 
      level: "advanced",  
     price: 250, 
      duration: "20 учебни часа",
@@ -56,7 +56,7 @@ const initialCourses = [
   { 
     id: 3,
     title: "Изграждане с горни форми",
-    category: "advanced",
+    category: "Надграждащи",
     level: "intermediate",
     price: 130,
     duration: "10 учебни часа",
@@ -66,7 +66,7 @@ const initialCourses = [
   { 
     id: 4,
     title: "Работа гел",
-    category: "advanced",
+    category: "Надграждащи",
     level: "advanced",
     price: 250,
     duration: "20 учебни часа",
