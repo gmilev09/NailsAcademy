@@ -145,6 +145,8 @@ export default function Layout({ children, currentPageName }) {
               <ul className="space-y-3 text-sm text-gray-400">
                 <li><Link to="/Enroll?course=Базов%20курс%20по%20маникюр%2C%D0%BF%D0%B5%D0%B4%D0%B8%D0%BA%D1%8E%D1%80%20%D0%B8%20%D0%BD%D0%BE%D0%BA%D1%82%D0%BE%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BA%D0%B0" className="hover:text-rose-400 transition-colors">Базов курс по маникюр,педикюр и ноктопластика</Link></li>
                 <li><Link to="/Enroll?course=Комбиниран маникюр" className="hover:text-rose-400 transition-colors">Комбиниран маникюр</Link></li>
+                <li><Link to="/Enroll?course=Изграждане с горни форми" className="hover:text-rose-400 transition-colors">Изграждане с горни форми</Link></li>
+                <li><Link to="/Enroll?course=Работа с гел" className="hover:text-rose-400 transition-colors">Работа с гел</Link></li>
               </ul>
             </div>
 
