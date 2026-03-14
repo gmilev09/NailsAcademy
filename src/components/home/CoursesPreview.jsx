@@ -25,6 +25,16 @@ const featuredCourses = [
     duration: "20 учебни часа",
     level: "advanced",
     certificate: true
+  },
+   {
+    id: 3  ,
+    title: "Изграждане с горни форми",
+    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/637fe9b35_attmRG1nC8ozJ_HT5ii5lWHpExNOB0bBMV0mxHJGk1kAZA.jpg",
+    description: "Надграждащо обучение – Изграждане с горни формиБързина. Симетрия. Контрол на архитектурата.",
+    price: "130",
+    duration: "10 учебни часа",
+    level: "intermediate",
+    certificate: true
   }
 ];
 
