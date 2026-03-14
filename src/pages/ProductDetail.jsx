@@ -19,7 +19,7 @@ export default function ProductDetail() {
   // Примерни данни за продукта (зареждат се веднага без сървър)
   const product = {
     id: productId || "1",
-    name: "Професионална електрическа",
+    name: "Професионална електрическа пила",
     price: 150,
     category: "Оборудване",
     in_stock: true,
