@@ -46,7 +46,7 @@ const initialCourses = [
   { 
     id: 2, 
     title: "Комбиниран маникюр", 
-    category: "Надграждащи", 
+    category: "advanced", 
      level: "advanced",  
     price: 250, 
      duration: "20 учебни часа",
@@ -56,7 +56,7 @@ const initialCourses = [
   { 
     id: 3,
     title: "Изграждане с горни форми",
-    category: "Надграждащи",
+    category: "advanced",
     level: "intermediate",
     price: 130,
     duration: "10 учебни часа",
@@ -66,7 +66,7 @@ const initialCourses = [
   { 
     id: 4,
     title: "Работа гел",
-    category: "Надграждащи",
+    category: "advanced",
     level: "advanced",
     price: 250,
     duration: "20 учебни часа",
