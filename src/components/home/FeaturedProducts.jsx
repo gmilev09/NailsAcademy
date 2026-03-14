@@ -100,7 +100,6 @@ export default function FeaturedProducts() {
             </AnimatePresence>
           </div>
         </div>
-      </div>
     </section>
   );
 }
