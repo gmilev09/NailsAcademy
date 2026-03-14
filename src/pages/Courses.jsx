@@ -28,7 +28,7 @@ const levelColors = {
 const levelLabels = {
   beginner: "Начинаещи",
   intermediate: "Средно ниво",
-  advanced: "Напреднали",
+  advanced: "Надграждащи",
 };
 
 // Твоите реални курсове (зареждат се веднага)
