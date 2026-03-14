@@ -1,99 +1,116 @@
 import { motion } from "framer-motion";
-import { Award, Instagram, Star } from "lucide-react";
+import { BookOpen, CheckCircle2, Gift, GraduationCap, UserRoundCheck } from "lucide-react";
 
-// Твоите данни (записани директно, за да работят без Base44)
-const instructors = [
+const highlights = [
   {
-    id: 1,
-    name: "Твоето Име", // Промени го на твоето име
-    title: "Основател и Главен Инструктор",
-    image_url: "https://storage.googleapis.com", // Снимката, която изпрати
-    instagram: "your_instagram", // Сложи твоя Instagram тук
-    bio: "Професионалист с дългогодишен опит в индустрията на маникюра. Специалист по изграждане и арт дизайн.",
-    experience_years: "10",
-    specialties: ["Гел лак", "Ноктопластика", "Арт дизайн"],
-    certifications: ["Международен сертификат", "Мастър клас 2024"]
-  }
+    title: "Акредитирани сертификати",
+    description: "Получете признати в индустрията сертификати при завършване на всеки курс",
+    icon: GraduationCap,
+  },
+  {
+    title: "Експертен инструктор",
+    description: "Учете от опитен професионалист с 10+ години опит в индустрията",
+    icon: UserRoundCheck,
+  },
+  {
+    title: "Практическо обучение",
+    description: "Практикувайте с реални клиенти под ръководството на нашия експертен екип",
+    icon: BookOpen,
+  },
+  {
+    title: "Кариерна подкрепа",
+    description: "Съдействие за намиране на работа и бизнес менторство за завършилите",
+    icon: Gift,
+  },
+];
+
+const outcomes = [
+  "Пълна професионална подготовка",
+  "Разширена програма с модерни техники",
+  "Индивидуален подход",
+  "Работа с професионални материали и реални модели",
+  "Подкрепа след завършване на обучението",
+  "Сертификат",
+  "Подарък комплект професионални инструменти",
 ];
 
 export default function InstructorSection() {
   return (
-    <section className="py-24 bg-gradient-to-b from-pink-50/30 to-white">
+    <section className="relative overflow-hidden bg-[#F8F8FA] py-16 md:py-20">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(237,241,247,0.85)_1px,transparent_1px)] bg-[length:34px_34px] opacity-45" />
       <div className="container mx-auto px-6">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose-100/50 rounded-full mb-6">
-            <Star className="w-4 h-4 text-rose-500" />
-            <span className="text-sm font-medium text-rose-600">Нашият екип</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-            Нашите <span className="font-semibold text-rose-500">инструктори</span>
-          </h2>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            Запознайте се с професионалистите, които ще ви водят по пътя към успеха
-          </p>
-        </motion.div>
+        <div className="relative z-10 grid items-start gap-10 lg:grid-cols-[1.1fr_0.95fr] lg:gap-14">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45 }}
+          >
+            <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-rose-100 px-5 py-2 text-sm font-semibold text-rose-600">
+              <GraduationCap className="h-4 w-4" />
+              Защо да изберете нас
+            </div>
 
-        <div className="grid md:grid-cols-1 lg:grid-cols-1 max-w-md mx-auto">
-          {instructors.map((instructor, index) => (
-            <motion.div
-              key={instructor.id}
-              className="group"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50">
-                <div className="relative h-96 overflow-hidden">
-                  <img
-                    src={instructor.image_url}
-                    alt={instructor.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  {instructor.instagram && (
-                    <a
-                      href={`https://instagram.com/${instructor.instagram}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute top-4 right-4 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-colors"
-                    >
-                      <Instagram className="w-5 h-5" />
-                    </a>
-                  )}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-semibold text-white">{instructor.name}</h3>
-                    <p className="text-white/80 text-sm">{instructor.title}</p>
-                  </div>
-                </div>
+            <h2 className="mb-6 text-3xl font-light leading-tight text-slate-800 md:text-5xl">
+              Вашият път към <span className="font-semibold text-rose-500">успеха</span>
+            </h2>
+            <p className="mb-10 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">
+              В Nails Academy не просто преподаваме техники за нокти – ние изграждаме кариери. Нашите цялостни програми съчетават теория, практика и бизнес умения, за да ви подготвим за успех в beauty индустрията.
+            </p>
 
-                <div className="p-6">
-                  <p className="text-gray-500 text-sm mb-4">{instructor.bio}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="px-3 py-1 bg-rose-100 text-rose-600 text-xs font-medium rounded-full">
-                      {instructor.experience_years}+ години опит
-                    </span>
-                    {instructor.specialties.map((specialty, i) => (
-                      <span key={i} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
-                        {specialty}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <Award className="w-4 h-4 text-rose-400" />
-                      <span>{instructor.certifications.length} сертификата</span>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {highlights.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <motion.article
+                    key={item.title}
+                    className="flex items-start gap-4"
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.06 }}
+                  >
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-500">
+                      <Icon className="h-5 w-5" />
                     </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                    <div>
+                      <h3 className="mb-2 text-2xl/none font-semibold text-slate-900 md:text-3xl/none">
+                        {item.title}
+                      </h3>
+                      <p className="text-lg/normal text-slate-600 md:text-xl/normal">
+                        {item.description}
+                      </p>
+                    </div>
+                  </motion.article>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          <motion.aside
+            className="rounded-[2rem] bg-gradient-to-br from-[#FF6F95] to-[#E74E95] p-6 text-white shadow-[0_16px_44px_rgba(231,78,149,0.35)] md:p-9"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+          >
+            <h3 className="mb-6 text-2xl font-semibold md:text-4xl">Какво ще получите:</h3>
+            <ul className="space-y-4 text-lg md:text-2xl">
+              {outcomes.map((outcome, index) => (
+                <motion.li
+                  key={outcome}
+                  className="flex items-start gap-3 leading-snug"
+                  initial={{ opacity: 0, x: 10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 + 0.1 }}
+                >
+                  <CheckCircle2 className="mt-1 h-6 w-6 shrink-0 text-rose-100 md:h-7 md:w-7" />
+                  <span>{outcome}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.aside>
         </div>
       </div>
     </section>
