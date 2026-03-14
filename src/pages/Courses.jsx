@@ -65,7 +65,7 @@ const initialCourses = [
   },
   { 
     id: 4,
-    title: "Работа с горни форми",
+    title: "Работа гел",
     category: "advanced",
     level: "advanced",
     price: 250,
