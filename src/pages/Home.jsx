@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import HeroSection from "../components/home/HeroSection";
 import CoursesPreview from "../components/home/CoursesPreview";
-import WhyChooseUs from "../components/home/WhyChooseUs";
 import FeaturedProducts from "../components/home/FeaturedProducts";
 import GalleryPreview from "../components/home/GalleryPreview";
 import CTASection from "../components/home/CTASection";
@@ -30,7 +29,6 @@ export default function Home() {
     <div className="min-h-screen">
       <HeroSection />
       <CoursesPreview />
-      <WhyChooseUs />
       <FeaturedProducts />
       <InstructorSection />
       <GalleryPreview />
