@@ -72,6 +72,24 @@ export default function FeaturedProducts() {
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="container mx-auto px-6">
+        <motion.div className="text-center mb-12" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose-100/50 rounded-full mb-4">
+            <ShoppingBag className="w-4 h-4 text-rose-500" />
+            <span className="text-sm font-medium text-rose-600">Магазин</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+            Най-желаните <span className="font-semibold text-rose-500">продукти</span>
+          </h2>
+          <p className="text-gray-500 text-lg max-w-2xl mx-auto">Качествени продукти за професионален маникюр</p>
+        </motion.div>
+
+        <div className="relative">
+          {productsData.length > 4 && (
+            <>
+              <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors"><ChevronLeft className="w-5 h-5 text-gray-600" /></button>
+              <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors"><ChevronRight className="w-5 h-5 text-gray-600" /></button>
+            </>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-hidden">
             <AnimatePresence mode="popLayout">
@@ -100,6 +118,7 @@ export default function FeaturedProducts() {
             </AnimatePresence>
           </div>
         </div>
+       </div>
     </section>
   );
 }
