@@ -67,7 +67,7 @@ export default function CoursesPreview() {
           </p>
         </motion.div>
         
-        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 mx-auto">
           {featuredCourses.map((course, index) => (
             <motion.div key={course.id} className="group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.15 }}>
               <div className="relative overflow-hidden rounded-3xl bg-gray-50 p-2 h-full border border-gray-100">
