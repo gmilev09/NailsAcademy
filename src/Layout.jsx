@@ -124,7 +124,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
                 <div><span className="text-xl font-light">Nails</span><span className="text-xl font-semibold text-rose-400 ml-1">Academy</span></div>
               </div>
-              <p className="text-gray-400 text-sm leading-relaxed mb-6">Професионални курсове и сертификати за маникюристи.</p>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">Професионални курсове и сертификати за маникюристи.Стартирайте кариерата си в бюти индустрията.</p>
               <div className="flex gap-3">
                 <a href="https://www.instagram.com/nailsacademy22" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-rose-500 transition-colors"><Instagram className="w-5 h-5" /></a>
                 <a href="https://www.facebook.com/share/1a3J1NbP87/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-rose-500 transition-colors"><Facebook className="w-5 h-5" /></a>
