@@ -37,6 +37,15 @@ export const shopProducts = [
     in_stock: true,
     image_url: "https://i.postimg.cc/x1zcfMF5/ea1a423f-c4f0-4fe6-b2ed-4278f1a91ca4.jpg",
     description: "Стабилна и удобна поставка за ръце за комфорт по време на работа."
+  },
+   {
+    id: "5",
+    name: "UV лампа с щипка с USB",
+    price: 8.9,
+    category: "електроуреди",
+    in_stock: true,
+    image_url: "https://i.postimg.cc/rpZNtvLg/Ekranna-snimka-2026-03-01-203954.png",
+    description: ""
   }
 ];
 
