@@ -1,28 +1,25 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../ui/button";
-import { ShoppingBag, ChevronLeft, ChevronRight, Plus, Check } from "lucide-react";
+import { ShoppingBag, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { shopProducts } from "../../data/products";
+import { addProductToCart } from "@/lib/cart";
 
-// Твоите оригинални продукти (записани директно в кода)
-const productsData = [
-  { id: 1, name: "Професионална електрическа пила", price: "150", description: "Професионална електрическа пила - 65W: 35000RPM.", image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png" },
-  { id: 2, name: "LED/UV лампа 4", price: "27.9", description: "UV/LED лампа с 45 диода", image_url: "https://i.postimg.cc/8cj36h3d/Ekranna-snimka-2026-03-01-204502.png" , image_url_2: "https://i.postimg.cc/VvphBJPf/Ekranna-snimka-2026-03-01-204526.png" },
-  { id: 3, name: "Прахоуловител", price: "99.9", description: " Безчетков прахоуловител за маникюр с мощен двоен турбо вентилатор", image_url: "https://ae01.alicdn.com/kf/S2ed36052861f4496ac755dd36c049c15F.jpg", image_url_2: "https://ae01.alicdn.com/kf/Sb0d0265f910b4c3c81e060724b925f4cn.jpg",  image_url_3: "https://ae01.alicdn.com/kf/S91b63083317d445c8290b4c0238a858bx.jpg"  },
-  { id: 4, name: "Ергономична поставка за ръце", price: "33", description: "", image_url: "https://i.postimg.cc/x1zcfMF5/ea1a423f-c4f0-4fe6-b2ed-4278f1a91ca4.jpg" }
-];
+const productsData = shopProducts;
 
-function AddToCartButton({ product, user }) {
+function AddToCartButton({ product }) {
   const [added, setAdded] = useState(false);
 
-  const handleAdd = () => {
-    if (!user) {
-      toast.error("Моля, влезте в акаунта си, за да поръчате!");
-      return;
+  const handleAdd = async () => {
+    try {
+      await addProductToCart(product);
+      setAdded(true);
+      toast.success(`${product.name} е добавен в количката!`);
+      setTimeout(() => setAdded(false), 2000);
+    } catch {
+      toast.error("Възникна проблем при добавяне в количката.");
     }
-    setAdded(true);
-    toast.success(`${product.name} е добавен в количката!`);
-    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -33,8 +30,7 @@ function AddToCartButton({ product, user }) {
       }`}
       whileTap={{ scale: 0.92 }}
     >
-      {added ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-      {added ? "Добавено!" : "Добави"}
+      {added ? "✔ Добавено!" : <><Plus className="w-4 h-4" />Добави</>}
     </motion.button>
   );
 }
@@ -42,7 +38,6 @@ function AddToCartButton({ product, user }) {
 export default function FeaturedProducts() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [user, setUser] = useState(null); // Тук по-късно ще добавим системата за акаунти
   const intervalRef = useRef(null);
 
   const visibleCount = 4;
@@ -110,13 +105,21 @@ export default function FeaturedProducts() {
                     <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-lg font-bold text-rose-500">€{product.price}</span>
-                      <AddToCartButton product={product} user={user} />
+                      <AddToCartButton product={product} />
                     </div>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
+        </div>
+        <div className="flex justify-center mt-12">
+          <Link
+            to="/Shop"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 px-10 py-3 text-lg font-semibold text-white shadow-md transition-all hover:from-rose-500 hover:to-pink-600 hover:shadow-lg"
+          >
+            Покажи всички→
+          </Link>
         </div>
        </div>
     </section>

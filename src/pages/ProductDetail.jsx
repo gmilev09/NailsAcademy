@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { ShoppingBag, ChevronLeft, ChevronRight, Plus, ArrowLeft, Check } from "lucide-react";
+import { ShoppingBag, ChevronLeft, ChevronRight, Plus, ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
+import { getProductById } from "../data/products";
+import { addProductToCart } from "@/lib/cart";
 
 export default function ProductDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -16,16 +18,7 @@ export default function ProductDetail() {
   const params = new URLSearchParams(location.search);
   const productId = params.get("id");
 
-  // Примерни данни за продукта (зареждат се веднага без сървър)
-  const product = {
-    id: productId || "1",
-    name: "Професионална електрическа пила",
-    price: 150,
-    category: "Оборудване",
-    in_stock: true,
-    description: "Висококачествена електрическа пила с ниски нива на шум и вибрации. \n\nПодходяща както за начинаещи, така и за напреднали професионалисти. Ергономичен дизайн и LCD дисплей за лесен контрол на оборотите.",
-    image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png",
-  };
+  const product = getProductById(productId) || getProductById("1");
 
   const images = [product.image_url, product.image_url_2, product.image_url_3].filter(Boolean);
 
@@ -33,10 +26,19 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleAddToCart = () => {
-    setAdded(true);
-    toast.success("Продуктът е добавен в количката!");
-    setTimeout(() => setAdded(false), 2000);
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [productId]);
+
+  const handleAddToCart = async () => {
+    try {
+      await addProductToCart(product);
+      setAdded(true);
+      toast.success("Продуктът е добавен в количката!");
+      setTimeout(() => setAdded(false), 2000);
+    } catch {
+      toast.error("Възникна проблем при добавяне в количката.");
+    }
   };
 
   return (
@@ -132,7 +134,7 @@ export default function ProductDetail() {
                   } text-white`}
                 >
                   {added ? (
-                    <><Check className="w-6 h-6 mr-2" />Добавено!</>
+                    "✔ Добавено!"
                   ) : (
                     <><Plus className="w-6 h-6 mr-2" />{product.in_stock ? "Добави в количката" : "Изчерпан"}</>
                   )}

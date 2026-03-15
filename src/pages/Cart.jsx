@@ -1,51 +1,52 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
-import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, LogIn } from "lucide-react";
+import { ShoppingCart, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { getCartItems, updateCartItemQuantity, removeCartItem } from "@/lib/cart";
 
 export default function Cart() {
-  const [user, setUser] = useState(null);
-  // Временно състояние за демонстрация, докато свържем новата база данни
-  const [cartItems, setCartItems] = useState([
-    { id: 1, product_name: "Професионална електрическа пила", product_price: 185, quantity: 1, product_image: "https://images.unsplash.com" }
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+
+  const loadCartItems = useCallback(async () => {
+    try {
+      const items = await getCartItems();
+      setCartItems(items);
+    } catch {
+      setCartItems([]);
+    }
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Симулация на логнат потребител за преглед
-    setUser({ email: "guest@example.com" });
-  }, []);
+    loadCartItems();
+  }, [loadCartItems]);
 
-  const updateQuantity = (id, newQuantity) => {
+  const updateQuantity = async (id, newQuantity) => {
     if (newQuantity <= 0) {
-      removeItem(id);
+      await removeItem(id);
       return;
     }
-    setCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity: newQuantity } : item));
+    try {
+      await updateCartItemQuantity(id, newQuantity);
+      await loadCartItems();
+    } catch {
+      toast.error("Възникна проблем при обновяване на количеството.");
+    }
   };
 
-  const removeItem = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
-    toast.success("Продуктът е премахнат от количката");
+  const removeItem = async (id) => {
+    try {
+      await removeCartItem(id);
+      await loadCartItems();
+      toast.success("Продуктът е премахнат от количката");
+    } catch {
+      toast.error("Възникна проблем при премахване от количката.");
+    }
   };
 
   const total = cartItems.reduce((sum, item) => sum + (item.product_price * item.quantity), 0);
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-pink-50/30 to-rose-50/20 pt-32 px-6 text-center">
-        <ShoppingCart className="w-16 h-16 text-rose-300 mx-auto mb-4" />
-        <h1 className="text-2xl font-semibold text-gray-900 mb-4">Моля, влезте в акаунта си</h1>
-        <Link to="/">
-          <Button className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-8">
-            <LogIn className="w-4 h-4 mr-2" /> Вход
-          </Button>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50/30 to-rose-50/20">

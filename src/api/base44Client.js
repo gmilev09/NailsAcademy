@@ -52,6 +52,12 @@ export const base44 = {
         setStoredItems(CART_STORAGE_KEY, items);
         return Promise.resolve(newItem);
       },
+      update: (id, data) => {
+        const items = getStoredItems(CART_STORAGE_KEY);
+        const nextItems = items.map((item) => (item.id === id ? { ...item, ...data } : item));
+        setStoredItems(CART_STORAGE_KEY, nextItems);
+        return Promise.resolve(nextItems.find((item) => item.id === id) || null);
+      },
       delete: (id) => {
         const items = getStoredItems(CART_STORAGE_KEY).filter((i) => i.id !== id);
         setStoredItems(CART_STORAGE_KEY, items);
