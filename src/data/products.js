@@ -231,7 +231,7 @@ export const shopProducts = [
     id: "26",
     name: "Златен резец за удължители",
     price: 4.9,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://i.postimg.cc/Gm9W0jts/Ekranna-snimka-2026-03-01-202958.png",
     description: ""
@@ -240,7 +240,7 @@ export const shopProducts = [
     id: "27",
     name: "Гелотина ",
     price: 4.5,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://i.postimg.cc/VNW5x1dj/Ekranna-snimka-2026-03-01-202448.png",image_url_2: "https://i.postimg.cc/8c21Fn7D/Ekranna-snimka-2026-03-01-202528.png", image_url_3: "https://i.postimg.cc/xTmjrYZz/Ekranna-snimka-2026-03-01-202502.png",
     description: "Гелотина от неръждаема стомана за скъсяване на нокти и удължители"
@@ -249,7 +249,7 @@ export const shopProducts = [
     id: "28",
     name: "Силиконов полировчик",
     price: 2.9,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://i.postimg.cc/YqMD7znQ/Ekranna-snimka-2026-03-01-202049.png",
     description: ""
@@ -258,7 +258,7 @@ export const shopProducts = [
     id: "29",
     name: "Буфер блок пила",
     price: 1.5,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://i.postimg.cc/J7bzyR15/Ekranna-snimka-2026-03-01-200004.png",
     description: ""
@@ -267,7 +267,7 @@ export const shopProducts = [
     id: "30",
     name: "Керамичен накраиник за електрическа пила с червена насечка",
     price: 9.9,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://i.postimg.cc/xTJNpwYJ/Ekranna-snimka-2026-03-01-195555.png",
     description: ""
@@ -276,7 +276,7 @@ export const shopProducts = [
     id: "31",
     name: "Керамичен накраиник за електричвска пила с жълта насечка",
     price: 9.9,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://i.postimg.cc/N011JW6R/Ekranna-snimka-2026-03-01-195609.png",
     description: ""
@@ -285,7 +285,7 @@ export const shopProducts = [
     id: "32",
     name: "Избутвач ",
     price: 2.9,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://i.postimg.cc/59XhXgbt/Ekranna-snimka-2026-03-01-193957.png",image_url_2: "https://i.postimg.cc/BQxwFwyX/Ekranna-snimka-2026-03-01-194209.png",image_url_3: "https://i.postimg.cc/QMn6sLB0/Ekranna-snimka-2026-03-01-194019.png",
     description: "Избутвач от неръждаема стомана"
@@ -294,7 +294,7 @@ export const shopProducts = [
     id: "33",
     name: "Хартиени пили 100/180",
     price: 0.99,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://ae01.alicdn.com/kf/Se2812b34e81b4c029328cd5b4ebb7e44j.jpg",
     description: ""
@@ -303,7 +303,7 @@ export const shopProducts = [
     id: "34",
     name: "Дървени пили за маникюр 100/180",
     price: 0.99,
-    category: "инструменти и пили",
+    category: "инструменти_пили",
     in_stock: true,
     image_url: "https://ae01.alicdn.com/kf/S378316ffa374451abeb161596780849fA.jpg?width=900&height=900&hash=1800",
     description: ""
