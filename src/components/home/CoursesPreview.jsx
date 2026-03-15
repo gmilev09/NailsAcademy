@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { ArrowRight, GraduationCap, Clock, Users, Award } from "lucide-react";
+import { GraduationCap, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // Твоите данни за курсовете (запазени точно)
@@ -94,6 +94,14 @@ export default function CoursesPreview() {
               </div>
             </motion.div>
           ))}
+        </div>
+        <div className="flex justify-center mt-12">
+          <Link
+            to="/Courses"
+            className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-white px-10 py-3 text-base font-semibold text-rose-500 transition-colors hover:bg-rose-50 md:text-2xl"
+          >
+            Виж всички курсове→
+          </Link>
         </div>
       </div>
     </section>

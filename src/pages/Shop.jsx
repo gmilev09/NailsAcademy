@@ -6,6 +6,8 @@ import { Input } from "../components/ui/input";
 import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { shopProducts } from "../data/products";
+import { addProductToCart } from "@/lib/cart";
 
 // Галерия за малките карти в магазина
 function ProductImageGallery({ product }) {
@@ -51,28 +53,28 @@ const categories = [
   { value: "масажни_свещи", label: "Масажни свещи AYA" },
 ];
 
-// Твоите реални продукти за 2026 г.
-const initialProducts = [
-  { id: "1", name: "Професионална електрическа пила", price: 150, category: "електроуреди", in_stock: true, image_url: "https://i.postimg.cc/4xmS2bxf/Ekranna-snimka-2026-03-01-210524.png", description: "Професионална електрическа пила - 65W: 35000RPM" },
-  { id: "2", name: "LED/UV лампа", price: 27.9, category: "електроуреди", in_stock: true, image_url: "https://i.postimg.cc/8cj36h3d/Ekranna-snimka-2026-03-01-204502.png", image_url_2:  "https://i.postimg.cc/VvphBJPf/Ekranna-snimka-2026-03-01-204526.png" , description: "UV/LED лампа с 45 диода" },
-  { id: "3", name: "Прахоловител", price: 99.9, category: "електроуреди", in_stock: true, image_url: "https://ae01.alicdn.com/kf/S2ed36052861f4496ac755dd36c049c15F.jpg", image_url_2: "https://ae01.alicdn.com/kf/Sb0d0265f910b4c3c81e060724b925f4cn.jpg", image_url_3: "https://ae01.alicdn.com/kf/S91b63083317d445c8290b4c0238a858bx.jpg", description: " Безчетков прахоуловител за маникюр с мощен двоен турбо вентилатор" },
-  { id: "4", name: "Ергономична поставка за ръце", price: 33, category: "Аксесоари", in_stock: true, image_url: "https://i.postimg.cc/x1zcfMF5/ea1a423f-c4f0-4fe6-b2ed-4278f1a91ca4.jpg", }
-];
-
 export default function Shop() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [addedProductId, setAddedProductId] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const filteredProducts = initialProducts
+  const filteredProducts = shopProducts
     .filter(p => activeCategory === "all" || p.category === activeCategory)
     .filter(p => searchQuery === "" || p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  const handleAddToCart = (product) => {
-    toast.success(`${product.name} е добавен в количката!`);
+  const handleAddToCart = async (product) => {
+    try {
+      await addProductToCart(product);
+      setAddedProductId(product.id);
+      toast.success(`${product.name} е добавен в количката!`);
+      setTimeout(() => setAddedProductId((current) => (current === product.id ? null : current)), 2000);
+    } catch {
+      toast.error("Възникна проблем при добавяне в количката.");
+    }
   };
 
   return (
@@ -143,11 +145,15 @@ export default function Shop() {
                       <span className="text-2xl font-bold text-rose-500 italic">€{product.price}</span>
                       <Button
                         size="sm"
-                        className="bg-rose-500 text-white rounded-full px-4 hover:bg-rose-600"
+                        className={`rounded-full px-4 ${
+                          addedProductId === product.id
+                            ? "bg-green-500 text-white hover:bg-green-600"
+                            : "bg-rose-500 text-white hover:bg-rose-600"
+                        }`}
                         disabled={!product.in_stock}
                         onClick={() => handleAddToCart(product)}
                       >
-                        <Plus className="w-4 h-4 mr-1" /> Добави
+                        {addedProductId === product.id ? "✔ Добавено!" : <><Plus className="w-4 h-4 mr-1" /> Добави</>}
                       </Button>
                     </div>
                   </div>
