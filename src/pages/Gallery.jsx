@@ -16,6 +16,12 @@ import img9 from "../NailsAcademy/Gallery/258558742-105849218591696-913884475980
 import img10 from "../NailsAcademy/Gallery/258615794-105851095258175-44783706752791787-n.jpg";
 import img11 from "../NailsAcademy/Gallery/263902421-117499347426683-8723268371839043654-n.jpg";
 import img12 from "../NailsAcademy/Gallery/471147077-610201628156450-8111398269010871634-n.jpg";
+import img13 from "../NailsAcademy/Gallery/471188084_611016031408343_4644402612634271318_n.jpg";
+import img14 from "../NailsAcademy/Gallery/472248704_619798720530074_5608259127382265833_n.jpg";
+import img15 from "../NailsAcademy/Gallery/472255776_620429253800354_3345317363692821482_n.jpg";
+import img16 from "../NailsAcademy/Gallery/472256950_620429400467006_4770444369874331077_n.jpg";
+import img17 from "../NailsAcademy/Gallery/472359432_619815443861735_4239270986900913185_n.jpg";
+import img18 from "../NailsAcademy/Gallery/472391424_620429390467007_1058566023368138993_n.jpg";
 
 const categories = [
   { value: "all", label: "Всички" },
@@ -36,6 +42,12 @@ const initialGalleryItems = [
   { id: 10, category: "manicure", title: "Спа педикюр", image_url: img10 },
   { id: 11, category: "manicure", title: "Декоративен дизайн", image_url: img11 },
   { id: 12, category: "manicure", title: "Гел лак дизайн", image_url: img12 },
+  { id: 13, category: "manicure", title: "Гел лак дизайн", image_url: img13 },
+  { id: 14, category: "manicure", title: "Модерен маникюр", image_url: img14 },
+  { id: 15, category: "manicure", title: "Нежен дизайн", image_url: img15 },
+  { id: 16, category: "manicure", title: "Стилен арт", image_url: img16 },
+  { id: 17, category: "manicure", title: "Ежедневен маникюр", image_url: img17 },
+  { id: 18, category: "manicure", title: "Празничен маникюр", image_url: img18 },
 ];
 
 export default function Gallery() {
