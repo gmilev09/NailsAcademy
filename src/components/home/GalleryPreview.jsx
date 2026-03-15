@@ -3,11 +3,11 @@ import { Button } from "../ui/button";
 import { ArrowRight, Images } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import previewImg1 from "../../NailsAcademy/Gallery/258373387-105845445258740-6646872728964521253-n.jpg";
-import previewImg2 from "../../NailsAcademy/Gallery/258382105-105854808591137-8481806728798514483-n.jpg";
-import previewImg3 from "../../NailsAcademy/Gallery/258405558-105852005258084-4226010845577433639-n.jpg";
-import previewImg4 from "../../NailsAcademy/Gallery/258457483-105854031924548-2292339568805999732-n.jpg";
-import previewImg5 from "../../NailsAcademy/Gallery/263902421-117499347426683-8723268371839043654-n.jpg";
+import previewImg1 from "../../NailsAcademy/Gallery/471188084_611016031408343_4644402612634271318_n.jpg";
+import previewImg2 from "../../NailsAcademy/Gallery/472248704_619798720530074_5608259127382265833_n.jpg";
+import previewImg3 from "../../NailsAcademy/Gallery/472255776_620429253800354_3345317363692821482_n.jpg";
+import previewImg4 from "../../NailsAcademy/Gallery/472391424_620429390467007_1058566023368138993_n.jpg";
+import previewImg5 from "../../NailsAcademy/Gallery/472359432_619815443861735_4239270986900913185_n.jpg";
 
 const galleryImages = [
   { url: previewImg1, span: "col-span-2 row-span-2" },
