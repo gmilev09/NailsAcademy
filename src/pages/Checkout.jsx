@@ -21,12 +21,15 @@ import {
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
+import { ensureCartUser } from "@/lib/cart";
 
 const SHIPPING_COST = 5; // 5 EUR
 const FREE_SHIPPING_THRESHOLD = 50; // Free shipping over 50 EUR
 
 export default function Checkout() {
-  const [user, setUser] = useState(null);
+  const [cartUser, setCartUser] = useState(null);
+  const [isUserReady, setIsUserReady] = useState(false);
+  const formatItemName = (name) => (name || "").replace(/,\s*/g, ", ");
   const [formData, setFormData] = useState({
     customer_name: "",
     customer_email: "",
@@ -47,20 +50,21 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
-    base44.auth.me().then((u) => {
-      setUser(u);
+    ensureCartUser().then((u) => {
+      setCartUser(u);
+      const isGuestUser = u?.email === "guest@nailsacademy.bg";
       setFormData(prev => ({
         ...prev,
-        customer_email: u.email || "",
-        customer_name: u.full_name || ""
+        customer_email: isGuestUser ? "" : (u?.email || ""),
+        customer_name: isGuestUser ? "" : (u?.full_name || "")
       }));
-    }).catch(() => setUser(null));
+    }).finally(() => setIsUserReady(true));
   }, []);
 
   const { data: cartItems = [] } = useQuery({
-    queryKey: ["cart", user?.email],
-    queryFn: () => base44.entities.CartItem.filter({ user_email: user?.email }),
-    enabled: !!user,
+    queryKey: ["cart", cartUser?.email],
+    queryFn: () => base44.entities.CartItem.filter({ user_email: cartUser?.email }),
+    enabled: !!cartUser?.email,
   });
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.product_price * item.quantity), 0);
@@ -169,19 +173,12 @@ ${itemsList}
     });
   };
 
-  if (!user) {
+  if (!isUserReady) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-pink-50/30 to-rose-50/20 pt-32 px-6">
         <div className="container mx-auto max-w-2xl text-center">
-          <ShoppingBag className="w-16 h-16 text-rose-300 mx-auto mb-4" />
-          <h1 className="text-2xl font-semibold text-gray-900 mb-4">Моля, влезте в акаунта си</h1>
-          <p className="text-gray-500 mb-8">За да завършите поръчката си, трябва да сте влезли в акаунта си.</p>
-          <Button 
-            onClick={() => base44.auth.redirectToLogin(window.location.href)}
-            className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-8"
-          >
-            Вход в акаунт
-          </Button>
+          <Loader2 className="w-16 h-16 text-rose-300 mx-auto mb-4 animate-spin" />
+          <h1 className="text-2xl font-semibold text-gray-900 mb-4">Зареждане на Checkout...</h1>
         </div>
       </div>
     );
@@ -442,7 +439,7 @@ ${itemsList}
                       <div key={item.id} className="flex gap-3 items-center">
                         <div className="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                           {item.product_image ? (
-                            <img src={item.product_image} alt={item.product_name} className="w-full h-full object-cover" />
+                            <img src={item.product_image} alt={formatItemName(item.product_name)} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <Package className="w-6 h-6 text-gray-300" />
@@ -450,7 +447,7 @@ ${itemsList}
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">{item.product_name}</p>
+                          <p className="text-sm font-medium text-gray-900 truncate">{formatItemName(item.product_name)}</p>
                           <p className="text-xs text-gray-500">x{item.quantity}</p>
                         </div>
                         <p className="text-sm font-medium text-gray-900">{(item.product_price * item.quantity).toFixed(2)}€</p>

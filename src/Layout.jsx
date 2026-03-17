@@ -76,8 +76,11 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/Cart" className="relative p-2 text-rose-600">
-                <ShoppingCart className="w-6 h-6" />
+              <Link to="/Cart">
+                <Button variant="outline" size="sm" className="border-rose-200 text-rose-600 hover:bg-rose-50 rounded-full px-4">
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Количка
+                </Button>
               </Link>
               <Button variant="ghost" size="sm" className="text-gray-600 hover:text-rose-500">
                 <LogIn className="w-4 h-4 mr-2" />
@@ -103,6 +106,12 @@ export default function Layout({ children, currentPageName }) {
                 {navLinks.map((link) => (
                   <Link key={link.page} to={`/${link.page}`} className="block py-2 text-lg font-medium text-gray-600">{link.name}</Link>
                 ))}
+                <Link to="/Cart" className="block">
+                  <Button variant="outline" className="w-full border-rose-200 text-rose-600 hover:bg-rose-50 rounded-full">
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Количка
+                  </Button>
+                </Link>
                 <Link to="/Enroll" className="block pt-4">
                   <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">Запиши се</Button>
                 </Link>
@@ -143,7 +152,7 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h4 className="font-semibold mb-6">Курсове</h4>
               <ul className="space-y-3 text-sm text-gray-400">
-                <li><Link to="/Enroll?course=Базов%20курс%20по%20маникюр%2C%D0%BF%D0%B5%D0%B4%D0%B8%D0%BA%D1%8E%D1%80%20%D0%B8%20%D0%BD%D0%BE%D0%BA%D1%82%D0%BE%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BA%D0%B0" className="hover:text-rose-400 transition-colors">Базов курс по маникюр,педикюр и ноктопластика</Link></li>
+                <li><Link to="/Enroll?course=Базов%20курс%20по%20маникюр%2C%20%D0%BF%D0%B5%D0%B4%D0%B8%D0%BA%D1%8E%D1%80%20%D0%B8%20%D0%BD%D0%BE%D0%BA%D1%82%D0%BE%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BA%D0%B0" className="hover:text-rose-400 transition-colors">Базов курс по маникюр, педикюр и ноктопластика</Link></li>
                 <li><Link to="/Enroll?course=Комбиниран маникюр" className="hover:text-rose-400 transition-colors">Комбиниран маникюр</Link></li>
                 <li><Link to="/Enroll?course=Изграждане с горни форми" className="hover:text-rose-400 transition-colors">Изграждане с горни форми</Link></li>
                 <li><Link to="/Enroll?course=Работа с гел" className="hover:text-rose-400 transition-colors">Работа с гел</Link></li>
