@@ -49,6 +49,7 @@ const initialGalleryItems = [
   { id: 16, category: "manicure", title: "Стилен арт", image_url: img16 },
   { id: 17, category: "manicure", title: "Ежедневен маникюр", image_url: img17 },
   { id: 18, category: "manicure", title: "Празничен маникюр", image_url: img18 },
+  { id: 19, category: "manicure", title: "Празничен маникюр", image_url: img19 },
 ];
 
 export default function Gallery() {
