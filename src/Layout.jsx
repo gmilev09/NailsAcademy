@@ -174,10 +174,10 @@ export default function Layout({ children, currentPageName }) {
   </p>
   
   <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-400">
-    <Link to="/returns" className="hover:text-rose-400 transition-colors">Връщане</Link>
-    <Link to="/shipping" className="hover:text-rose-400 transition-colors">Доставка</Link>
-    <Link to="/privacy" className="hover:text-rose-400 transition-colors">Поверителност</Link>
-    <Link to="/terms" className="hover:text-rose-400 transition-colors">Общи условия</Link>
+    <Link to="/Returns" className="hover:text-rose-400 transition-colors">Връщане</Link>
+    <Link to="/Shipping" className="hover:text-rose-400 transition-colors">Доставка</Link>
+    <Link to="/PrivacyPolicy" className="hover:text-rose-400 transition-colors">Поверителност</Link>
+    <Link to="/Terms" className="hover:text-rose-400 transition-colors">Общи условия</Link>
   </div>
 </div>
 

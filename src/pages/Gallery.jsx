@@ -140,7 +140,7 @@ export default function Gallery() {
             <Button variant="ghost" size="icon" className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 rounded-full" onClick={(e) => { e.stopPropagation(); navigateImage("prev"); }}><ChevronLeft className="w-8 h-8" /></Button>
             
             <motion.div className="relative max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
-               <img src={selectedImage.image_url} alt={selectedImage.title} className="max-w-full max-h-[80vh] mx-auto object-contain rounded-2xl shadow-2xl" initial={{ scale: 0.9 }} animate={{ scale: 1 }} />
+               <motion.img src={selectedImage.image_url} alt={selectedImage.title} className="max-w-full max-h-[80vh] mx-auto object-contain rounded-2xl shadow-2xl" initial={{ scale: 0.9 }} animate={{ scale: 1 }} />
                {selectedImage.title && <p className="text-white text-center mt-6 text-xl italic font-light">{selectedImage.title}</p>}
             </motion.div>
             
