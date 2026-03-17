@@ -22,6 +22,7 @@ import img15 from "../NailsAcademy/Gallery/472255776_620429253800354_33453173636
 import img16 from "../NailsAcademy/Gallery/472256950_620429400467006_4770444369874331077_n.jpg";
 import img17 from "../NailsAcademy/Gallery/472359432_619815443861735_4239270986900913185_n.jpg";
 import img18 from "../NailsAcademy/Gallery/472391424_620429390467007_1058566023368138993_n.jpg";
+import img19 from "../NailsAcademy/Gallery/587504285_18048329723675195_6197362676033051046_n.jpg;
 
 const categories = [
   { value: "all", label: "Всички" },
