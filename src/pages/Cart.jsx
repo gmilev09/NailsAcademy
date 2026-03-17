@@ -8,6 +8,7 @@ import { getCartItems, updateCartItemQuantity, removeCartItem } from "@/lib/cart
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
+  const formatItemName = (name) => (name || "").replace(/,\s*/g, ", ");
 
   const loadCartItems = useCallback(async () => {
     try {
@@ -72,10 +73,10 @@ export default function Cart() {
                 {cartItems.map((item) => (
                   <motion.div key={item.id} className="bg-white rounded-2xl p-4 shadow-sm flex gap-4 items-center" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
                     <div className="w-20 h-20 bg-gray-100 rounded-xl overflow-hidden shrink-0">
-                      <img src={item.product_image} alt={item.product_name} className="w-full h-full object-cover" />
+                      <img src={item.product_image} alt={formatItemName(item.product_name)} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900 text-sm line-clamp-1">{item.product_name}</h3>
+                      <h3 className="font-medium text-gray-900 text-sm line-clamp-1">{formatItemName(item.product_name)}</h3>
                       <p className="text-rose-500 font-semibold">€{item.product_price}</p>
                     </div>
                     <div className="flex items-center gap-2">

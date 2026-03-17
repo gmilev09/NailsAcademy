@@ -7,13 +7,14 @@ import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
 import { Clock, GraduationCap, Users, Award, Loader2, CheckCircle2 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 // Твоите актуални курсове за избор във формата
 const courses = [
   {
     id: 1,
-    title: "Базов курс по маникюр,педикюр и ноктопластика",
+    title: "Базов курс по маникюр, педикюр и ноктопластика",
     price: 1300,
     duration: "80 учебни работни часа",
     image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/1622aebbd_attygi3AwRXqaCZMpSwhgA-8ixNB8vVeAmf12KHyOcY0CQ.jpg",
@@ -246,7 +247,15 @@ const courses = [
   }
 ];
 
+const normalizeCourseTitle = (value) =>
+  (value || "")
+    .toLowerCase()
+    .replace(/\s*,\s*/g, ", ")
+    .replace(/\s+/g, " ")
+    .trim();
+
 export default function Enroll() {
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     student_name: "",
     email: "",
@@ -261,6 +270,21 @@ export default function Enroll() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const courseFromQuery = searchParams.get("course");
+    if (!courseFromQuery) return;
+
+    const normalizedCourseFromQuery = normalizeCourseTitle(courseFromQuery);
+    const matchedCourse = courses.find(
+      (course) => normalizeCourseTitle(course.title) === normalizedCourseFromQuery
+    );
+
+    if (matchedCourse) {
+      setSelectedCourse(matchedCourse);
+      setFormData((prev) => ({ ...prev, course_title: matchedCourse.title }));
+    }
+  }, [searchParams]);
 
   const handleCourseSelect = (value) => {
     const course = courses.find(c => c.title === value);
@@ -338,7 +362,7 @@ export default function Enroll() {
                 </div>
                 <div className="space-y-2">
                   <Label>Изберете курс *</Label>
-                  <Select onValueChange={handleCourseSelect} required>
+                  <Select value={formData.course_title} onValueChange={handleCourseSelect} required>
                     <SelectTrigger className="rounded-xl"><SelectValue placeholder="Изберете курс" /></SelectTrigger>
                     <SelectContent>
                       {courses.map((c) => <SelectItem key={c.id} value={c.title}>{c.title}</SelectItem>)}

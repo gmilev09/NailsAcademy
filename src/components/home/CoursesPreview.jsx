@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 const featuredCourses = [
   {
     id: 1,
-    title: "Базов курс по маникюр,педикюр и ноктопластика",
+    title: "Базов курс по маникюр, педикюр и ноктопластика",
     description: "Реална професионална подготовка с теория, практика върху модели и индивидуален подход според темпото и целите на курсиста.",
     price: "1300",
     duration: "80 учебни часа",
@@ -87,7 +87,7 @@ export default function CoursesPreview() {
                   <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{course.duration}</span></div>
                   </div>
-                  <Link to="/Enroll">
+                  <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
                     <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">Запиши се</Button>
                   </Link>
                 </div>

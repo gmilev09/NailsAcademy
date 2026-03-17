@@ -35,7 +35,7 @@ const levelLabels = {
 const initialCourses = [
   { 
     id: 1, 
-    title: "Базов курс по маникюр,педикюр и ноктопластика",
+    title: "Базов курс по маникюр, педикюр и ноктопластика",
     category: "manicure",
     level: "beginner", 
     price: 1300, 
