@@ -1,15 +1,15 @@
-// Local base44 client stub — replaces the Base44 platform SDK with local implementations.
-// Cart and order data are stored in localStorage.
+import { createClient } from '@supabase/supabase-js'
+
+// --- ТВОИТЕ ДАННИ ЗА SUPABASE ---
+const supabaseUrl = 'https://pfrwymbonfuidwshaxny.supabase.co'
+const supabaseKey = 'sb_publishable_lzlvr8MNZyHiT4xY53oy4Q_wPh856J_' 
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 const CART_STORAGE_KEY = "nails_academy_cart";
 const ORDERS_STORAGE_KEY = "nails_academy_orders";
 
 function getStoredItems(key) {
-  try {
-    return JSON.parse(localStorage.getItem(key) || "[]");
-  } catch {
-    return [];
-  }
+  try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; }
 }
 
 function setStoredItems(key, items) {
@@ -26,11 +26,7 @@ export const base44 = {
       return Promise.reject(new Error("Not logged in"));
     },
     redirectToLogin: (returnUrl) => {
-      // For now, create a simple guest user flow
-      const guestUser = {
-        email: "guest@nailsacademy.bg",
-        full_name: "Guest",
-      };
+      const guestUser = { email: "guest@nailsacademy.bg", full_name: "Guest" };
       localStorage.setItem("nails_academy_user", JSON.stringify(guestUser));
       window.location.href = returnUrl || "/";
     },
@@ -40,9 +36,7 @@ export const base44 = {
     CartItem: {
       filter: (query) => {
         const items = getStoredItems(CART_STORAGE_KEY);
-        if (query?.user_email) {
-          return Promise.resolve(items.filter((i) => i.user_email === query.user_email));
-        }
+        if (query?.user_email) return Promise.resolve(items.filter((i) => i.user_email === query.user_email));
         return Promise.resolve(items);
       },
       create: (data) => {
@@ -65,9 +59,24 @@ export const base44 = {
       },
     },
     Order: {
-      create: (data) => {
+      create: async (data) => {
+        // ТОВА ИЗПРАЩА ПОРЪЧКАТА АВТОМАТИЧНО КЪМ ТАБЛОТО (API)
+        const { data: apiOrder, error } = await supabase
+          .from('orders')
+          .insert([{ 
+            customer_name: data.full_name || 'Guest', 
+            course_name: data.items?.[0]?.title || 'Курс', 
+            amount: data.total_price || 0,
+            status: 'new'
+          }])
+          .select()
+          .single();
+
+        if (error) console.error("API Error:", error.message);
+
+        // Запазваме и локално за клиента
         const orders = getStoredItems(ORDERS_STORAGE_KEY);
-        const newOrder = { ...data, id: String(++idCounter), createdAt: new Date().toISOString() };
+        const newOrder = { ...data, id: apiOrder ? String(apiOrder.id) : String(++idCounter), createdAt: new Date().toISOString() };
         orders.push(newOrder);
         setStoredItems(ORDERS_STORAGE_KEY, orders);
         return Promise.resolve(newOrder);
@@ -75,18 +84,6 @@ export const base44 = {
     },
   },
 
-  integrations: {
-    Core: {
-      SendEmail: (params) => {
-        console.log("Email would be sent:", params);
-        return Promise.resolve({ success: true });
-      },
-    },
-  },
-
-  analytics: {
-    track: (event) => {
-      console.log("Analytics event:", event);
-    },
-  },
+  integrations: { Core: { SendEmail: (p) => Promise.resolve({ success: true }) } },
+  analytics: { track: (e) => console.log("Event:", e) },
 };
