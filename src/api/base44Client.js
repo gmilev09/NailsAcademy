@@ -1,10 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
-
-// --- ТВОИТЕ ДАННИ ЗА SUPABASE ---
-const supabaseUrl = 'https://pfrwymbonfuidwshaxny.supabase.co'
-const supabaseKey = 'sb_publishable_lzlvr8MNZyHiT4xY53oy4Q_wPh856J_' 
-const supabase = createClient(supabaseUrl, supabaseKey)
-
 const CART_STORAGE_KEY = "nails_academy_cart";
 const ORDERS_STORAGE_KEY = "nails_academy_orders";
 
@@ -60,37 +53,26 @@ export const base44 = {
     },
           Order: {
       create: async (data) => {
-        console.log("Данни от формата:", data); // Виждаме какво идва от формата
-
         try {
-          // ИЗПРАЩАНЕ КЪМ SUPABASE
-          const { data: apiOrder, error } = await supabase
-            .from('orders')
-            .insert([{ 
-              // Проверяваме всички възможни имена на полетата
-              customer_name: data.full_name || data.name || 'Клиент', 
-              course_name: data.course_title || (data.items && data.items[0]?.title) || 'Курс', 
-              amount: Number(data.total_price || data.total || 0),
-              status: 'new'
-            }])
-            .select();
-
-          if (error) {
-            console.error("Грешка от Supabase:", error.message);
-          } else {
-            console.log("Успешно записано в БД:", apiOrder);
+          const response = await fetch("/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.error || "Failed to create order");
           }
+          return result.order;
         } catch (err) {
-          console.error("Критична грешка при връзка с API:", err);
+          console.error("Error saving order to backend:", err);
+          // Fallback to localStorage so the user still sees confirmation
+          const orders = getStoredItems(ORDERS_STORAGE_KEY);
+          const newLocalOrder = { ...data, id: String(Date.now()), createdAt: new Date().toISOString() };
+          orders.push(newLocalOrder);
+          setStoredItems(ORDERS_STORAGE_KEY, orders);
+          return newLocalOrder;
         }
-
-        // ВИНАГИ записваме локално, за да види потребителят "Заявката е приета!"
-        const orders = getStoredItems(ORDERS_STORAGE_KEY);
-        const newLocalOrder = { ...data, id: String(Date.now()), createdAt: new Date().toISOString() };
-        orders.push(newLocalOrder);
-        setStoredItems(ORDERS_STORAGE_KEY, orders);
-
-        return Promise.resolve(newLocalOrder);
       },
     },
   },

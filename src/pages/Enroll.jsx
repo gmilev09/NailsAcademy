@@ -299,11 +299,24 @@ export default function Enroll() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Симулация за Netlify
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    toast.success("Заявката Ви е изпратена успешно!");
+    try {
+      const response = await fetch("/api/enrollments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || "Failed to submit enrollment");
+      }
+      setSubmitted(true);
+      toast.success("Заявката Ви е изпратена успешно!");
+    } catch (err) {
+      console.error("Enrollment error:", err);
+      toast.error("Възникна грешка. Моля, опитайте отново.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
