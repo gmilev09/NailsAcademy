@@ -58,25 +58,34 @@ export const base44 = {
         return Promise.resolve();
       },
     },
-    Order: {
+       Order: {
       create: async (data) => {
-        // ТОВА ИЗПРАЩА ПОРЪЧКАТА АВТОМАТИЧНО КЪМ ТАБЛОТО (API)
+        // ТОВА ЩЕ НИ ПОКАЖЕ В КОНЗОЛАТА КАКВО ТОЧНО ИЗПРАЩА САЙТЪТ
+        console.log("Данни от формата:", data);
+
         const { data: apiOrder, error } = await supabase
           .from('orders')
           .insert([{ 
-            customer_name: data.full_name || 'Guest', 
-            course_name: data.items?.[0]?.title || 'Курс', 
-            amount: data.total_price || 0,
+            // Пробваме всички възможни имена на полетата
+            customer_name: data.full_name || data.name || 'Guest', 
+            course_name: data.course_title || data.items?.[0]?.title || 'Курс', 
+            amount: Number(data.total_price || data.total || 0),
             status: 'new'
           }])
           .select()
           .single();
 
-        if (error) console.error("API Error:", error.message);
+        if (error) {
+          // Ако има грешка, тя ще се изпише в червено в браузъра
+          console.error("API Error:", error.message);
+        }
 
-        // Запазваме и локално за клиента
         const orders = getStoredItems(ORDERS_STORAGE_KEY);
-        const newOrder = { ...data, id: apiOrder ? String(apiOrder.id) : String(++idCounter), createdAt: new Date().toISOString() };
+        const newOrder = { 
+          ...data, 
+          id: apiOrder ? String(apiOrder.id) : String(Date.now()), 
+          createdAt: new Date().toISOString() 
+        };
         orders.push(newOrder);
         setStoredItems(ORDERS_STORAGE_KEY, orders);
         return Promise.resolve(newOrder);
