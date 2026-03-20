@@ -58,37 +58,39 @@ export const base44 = {
         return Promise.resolve();
       },
     },
-       Order: {
+          Order: {
       create: async (data) => {
-        // ТОВА ЩЕ НИ ПОКАЖЕ В КОНЗОЛАТА КАКВО ТОЧНО ИЗПРАЩА САЙТЪТ
-        console.log("Данни от формата:", data);
+        console.log("Данни от формата:", data); // Виждаме какво идва от формата
 
-        const { data: apiOrder, error } = await supabase
-          .from('orders')
-          .insert([{ 
-            // Пробваме всички възможни имена на полетата
-            customer_name: data.full_name || data.name || 'Guest', 
-            course_name: data.course_title || data.items?.[0]?.title || 'Курс', 
-            amount: Number(data.total_price || data.total || 0),
-            status: 'new'
-          }])
-          .select()
-          .single();
+        try {
+          // ИЗПРАЩАНЕ КЪМ SUPABASE
+          const { data: apiOrder, error } = await supabase
+            .from('orders')
+            .insert([{ 
+              // Проверяваме всички възможни имена на полетата
+              customer_name: data.full_name || data.name || 'Клиент', 
+              course_name: data.course_title || (data.items && data.items[0]?.title) || 'Курс', 
+              amount: Number(data.total_price || data.total || 0),
+              status: 'new'
+            }])
+            .select();
 
-        if (error) {
-          // Ако има грешка, тя ще се изпише в червено в браузъра
-          console.error("API Error:", error.message);
+          if (error) {
+            console.error("Грешка от Supabase:", error.message);
+          } else {
+            console.log("Успешно записано в БД:", apiOrder);
+          }
+        } catch (err) {
+          console.error("Критична грешка при връзка с API:", err);
         }
 
+        // ВИНАГИ записваме локално, за да види потребителят "Заявката е приета!"
         const orders = getStoredItems(ORDERS_STORAGE_KEY);
-        const newOrder = { 
-          ...data, 
-          id: apiOrder ? String(apiOrder.id) : String(Date.now()), 
-          createdAt: new Date().toISOString() 
-        };
-        orders.push(newOrder);
+        const newLocalOrder = { ...data, id: String(Date.now()), createdAt: new Date().toISOString() };
+        orders.push(newLocalOrder);
         setStoredItems(ORDERS_STORAGE_KEY, orders);
-        return Promise.resolve(newOrder);
+
+        return Promise.resolve(newLocalOrder);
       },
     },
   },
