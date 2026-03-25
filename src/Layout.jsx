@@ -13,6 +13,7 @@ import {
   ShoppingCart,
   LogIn,
   Facebook } from "lucide-react";
+import CookieBanner from "./components/CookieBanner";
 
 const navLinks = [
   { name: "Начало", page: "" },
@@ -177,12 +178,15 @@ export default function Layout({ children, currentPageName }) {
     <Link to="/Returns" className="hover:text-rose-400 transition-colors">Връщане</Link>
     <Link to="/Shipping" className="hover:text-rose-400 transition-colors">Доставка</Link>
     <Link to="/PrivacyPolicy" className="hover:text-rose-400 transition-colors">Поверителност</Link>
+    <Link to="/CookiePolicy" className="hover:text-rose-400 transition-colors">Бисквитки</Link>
     <Link to="/Terms" className="hover:text-rose-400 transition-colors">Общи условия</Link>
   </div>
 </div>
 
         </div>
       </footer>
+
+      <CookieBanner />
     </div>
   );
 }
