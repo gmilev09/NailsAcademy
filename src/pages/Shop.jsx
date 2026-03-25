@@ -151,7 +151,7 @@ export default function Shop() {
                     <p className="text-gray-500 text-sm mb-4 line-clamp-2 italic">{product.description}</p>
                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
                       <span className="text-2xl font-bold text-rose-500 italic">
-                        {isAuthenticated ? `€${product.price}` : "Цена след вход"}
+                        {`€${product.price}`}
                       </span>
                       <Button
                         size="sm"

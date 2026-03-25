@@ -82,7 +82,7 @@ export default function CoursesPreview() {
                   </div>
                   <div className="absolute bottom-4 left-4">
                     <span className="text-2xl font-bold text-white">
-                      {isAuthenticated ? `€${course.price}` : "Цена след вход"}
+                      {`€${course.price}`}
                     </span>
                   </div>
                 </div>
@@ -92,7 +92,13 @@ export default function CoursesPreview() {
                   <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{course.duration}</span></div>
                   </div>
-                  <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
+                  <Link
+                    to={
+                      isAuthenticated
+                        ? `/Enroll?course=${encodeURIComponent(course.title)}`
+                        : "/Auth"
+                    }
+                  >
                     <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">
                       {isAuthenticated ? "Запиши се" : "Влез за записване"}
                     </Button>
