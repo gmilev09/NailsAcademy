@@ -1,14 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
-import { Label } from "../components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
-import { Clock, GraduationCap, Users, Award, Loader2, CheckCircle2 } from "lucide-react";
+import { Clock, GraduationCap, Users, Award, Phone } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
 
 // Твоите актуални курсове за избор във формата
 const courses = [
@@ -256,16 +251,7 @@ const normalizeCourseTitle = (value) =>
 
 export default function Enroll() {
   const [searchParams] = useSearchParams();
-  const [formData, setFormData] = useState({
-    student_name: "",
-    email: "",
-    phone: "",
-    course_title: "",
-    message: ""
-  });
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -282,55 +268,12 @@ export default function Enroll() {
 
     if (matchedCourse) {
       setSelectedCourse(matchedCourse);
-      setFormData((prev) => ({ ...prev, course_title: matchedCourse.title }));
     }
   }, [searchParams]);
 
-  const handleCourseSelect = (value) => {
-    const course = courses.find(c => c.title === value);
+  const handleCourseSelect = (course) => {
     setSelectedCourse(course);
-    setFormData(prev => ({ ...prev, course_title: value }));
   };
-
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const response = await fetch("/api/enrollments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const result = await response.json();
-        throw new Error(result.error || "Failed to submit enrollment");
-      }
-      setSubmitted(true);
-      toast.success("Заявката Ви е изпратена успешно!");
-    } catch (err) {
-      console.error("Enrollment error:", err);
-      toast.error("Възникна грешка. Моля, опитайте отново.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (submitted) {
-    return (
-      <div className="pt-40 pb-20 container mx-auto px-6 text-center">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-          <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold mb-4 italic">Заявката е приета!</h1>
-          <p className="text-gray-500 mb-8 max-w-md mx-auto">Ще се свържем с Вас до 24 часа за потвърждение на Вашето място в Nails Academy.</p>
-          <Button onClick={() => window.location.href = "/"} className="bg-rose-500 text-white rounded-full px-10 py-6">Към началото</Button>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-50/50 to-white pt-32 pb-24">
@@ -344,56 +287,55 @@ export default function Enroll() {
             <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-4 italic">
               Запишете се <span className="font-semibold text-rose-500">сега</span>
             </h1>
+            <p className="text-gray-500 max-w-lg mx-auto">Изберете курс и се свържете с нас по телефона, за да запазите Вашето място.</p>
           </motion.div>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-12">
-          {/* Form */}
-          <motion.form 
-            onSubmit={handleSubmit}
+          {/* Course selection & Contact */}
+          <motion.div
             className="lg:col-span-3 bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-pink-50"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <h2 className="text-xl font-bold text-gray-900 mb-8 italic">Информация за курсиста</h2>
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label>Пълно име *</Label>
-                  <Input placeholder="Вашето име" value={formData.student_name} onChange={(e) => handleChange("student_name", e.target.value)} required className="rounded-xl" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Email *</Label>
-                  <Input type="email" placeholder="your@email.com" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} required className="rounded-xl" />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label>Телефонен номер *</Label>
-                  <Input placeholder="+359..." value={formData.phone} onChange={(e) => handleChange("phone", e.target.value)} required className="rounded-xl" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Изберете курс *</Label>
-                  <Select value={formData.course_title} onValueChange={handleCourseSelect} required>
-                    <SelectTrigger className="rounded-xl"><SelectValue placeholder="Изберете курс" /></SelectTrigger>
-                    <SelectContent>
-                      {courses.map((c) => <SelectItem key={c.id} value={c.title}>{c.title}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Разкажете ни за Вашите цели</Label>
-                <Textarea placeholder="Защо искате този курс?" value={formData.message} onChange={(e) => handleChange("message", e.target.value)} className="rounded-xl min-h-[120px]" />
-              </div>
-
-              <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full py-7 text-lg font-bold shadow-lg">
-                {isSubmitting ? <Loader2 className="animate-spin" /> : <><GraduationCap className="mr-2 w-5 h-5" /> Изпрати заявка</>}
-              </Button>
+            <h2 className="text-xl font-bold text-gray-900 mb-8 italic">Изберете курс</h2>
+            <div className="space-y-4 mb-10">
+              {courses.map((course) => (
+                <button
+                  key={course.id}
+                  type="button"
+                  onClick={() => handleCourseSelect(course)}
+                  className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
+                    selectedCourse?.id === course.id
+                      ? "border-rose-400 bg-rose-50/50 shadow-md"
+                      : "border-gray-100 hover:border-rose-200 hover:bg-rose-50/30"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold text-gray-900">{course.title}</h3>
+                      <p className="text-sm text-gray-500 mt-1">{course.duration}</p>
+                    </div>
+                    <span className="text-lg font-bold text-rose-500">€{course.price}</span>
+                  </div>
+                </button>
+              ))}
             </div>
-          </motion.form>
+
+            <div className="text-center">
+              <p className="text-gray-500 mb-6">За записване, моля свържете се с нас по телефона:</p>
+              <Button
+                asChild
+                className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full py-7 text-lg font-bold shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <a href="tel:+359895737470">
+                  <Phone className="mr-3 w-5 h-5" />
+                  Свържете се с нас
+                </a>
+              </Button>
+              <p className="text-sm text-gray-400 mt-3">+359 89 5737470</p>
+            </div>
+          </motion.div>
 
           {/* Preview */}
           <motion.div className="lg:col-span-2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}>
