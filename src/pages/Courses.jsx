@@ -155,9 +155,15 @@ export default function Courses() {
                     </div>
                     <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
                       <span className="text-2xl font-bold text-rose-500">
-                        {isAuthenticated ? `€${course.price}` : "Цена след вход"}
+                        {`€${course.price}`}
                       </span>
-                      <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
+                      <Link
+                        to={
+                          isAuthenticated
+                            ? `/Enroll?course=${encodeURIComponent(course.title)}`
+                            : "/Auth"
+                        }
+                      >
                         <Button className="bg-rose-500 text-white rounded-full">
                           {isAuthenticated ? "Запиши се" : "Влез за записване"}
                           <ArrowRight className="ml-2 w-4 h-4" />

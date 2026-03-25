@@ -113,7 +113,7 @@ export default function FeaturedProducts() {
                     <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-lg font-bold text-rose-500">
-                        {isAuthenticated ? `€${product.price}` : "Цена след вход"}
+                        {`€${product.price}`}
                       </span>
                       <AddToCartButton
                         product={product}
