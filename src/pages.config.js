@@ -2,6 +2,7 @@ import About from './pages/About';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Contact from './pages/Contact';
+import CookiePolicy from './pages/CookiePolicy';
 import Courses from './pages/Courses';
 import Enroll from './pages/Enroll';
 import Gallery from './pages/Gallery';
@@ -19,6 +20,7 @@ export const PAGES = {
     "Cart": Cart,
     "Checkout": Checkout,
     "Contact": Contact,
+    "CookiePolicy": CookiePolicy,
     "Courses": Courses,
     "Enroll": Enroll,
     "Gallery": Gallery,
