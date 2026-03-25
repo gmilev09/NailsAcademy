@@ -1,4 +1,5 @@
 import About from './pages/About';
+import Auth from './pages/Auth';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Contact from './pages/Contact';
@@ -17,6 +18,7 @@ import __Layout from './Layout.jsx';
 
 export const PAGES = {
     "About": About,
+    "Auth": Auth,
     "Cart": Cart,
     "Checkout": Checkout,
     "Contact": Contact,

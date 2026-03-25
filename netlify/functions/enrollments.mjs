@@ -1,15 +1,21 @@
 import { getStore } from "@netlify/blobs";
+import { getUser } from "@netlify/identity";
 
 export default async (req) => {
   const store = getStore({ name: "enrollments", consistency: "strong" });
+  const user = await getUser();
+
+  if (!user || !user.confirmedAt) {
+    return Response.json({ error: "Authentication required" }, { status: 401 });
+  }
 
   if (req.method === "POST") {
     const body = await req.json();
 
-    const { student_name, email, phone, course_title, message } = body;
-    if (!student_name || !email || !phone || !course_title) {
+    const { student_name, phone, course_title, message } = body;
+    if (!student_name || !phone || !course_title) {
       return Response.json(
-        { error: "Missing required fields: student_name, email, phone, course_title" },
+        { error: "Missing required fields: student_name, phone, course_title" },
         { status: 400 }
       );
     }
@@ -17,8 +23,9 @@ export default async (req) => {
     const id = `enr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const enrollment = {
       id,
+      user_id: user.id,
       student_name,
-      email,
+      email: user.email || "",
       phone,
       course_title,
       message: message || "",
@@ -33,11 +40,10 @@ export default async (req) => {
 
   if (req.method === "GET") {
     const { blobs } = await store.list();
-    const enrollments = await Promise.all(
-      blobs.map((blob) => store.get(blob.key, { type: "json" }))
-    );
+    const enrollments = await Promise.all(blobs.map((blob) => store.get(blob.key, { type: "json" })));
+    const currentUserEnrollments = enrollments.filter((enrollment) => enrollment?.user_id === user.id);
 
-    return Response.json({ enrollments });
+    return Response.json({ enrollments: currentUserEnrollments });
   }
 
   return Response.json({ error: "Method not allowed" }, { status: 405 });

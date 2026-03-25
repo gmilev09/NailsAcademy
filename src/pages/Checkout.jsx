@@ -21,14 +21,13 @@ import {
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
-import { ensureCartUser } from "@/lib/cart";
+import { useAuth } from "@/lib/AuthContext";
 
 const SHIPPING_COST = 5; // 5 EUR
 const FREE_SHIPPING_THRESHOLD = 50; // Free shipping over 50 EUR
 
 export default function Checkout() {
-  const [cartUser, setCartUser] = useState(null);
-  const [isUserReady, setIsUserReady] = useState(false);
+  const { user, isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();
   const formatItemName = (name) => (name || "").replace(/,\s*/g, ", ");
   const [formData, setFormData] = useState({
     customer_name: "",
@@ -50,21 +49,17 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
-    ensureCartUser().then((u) => {
-      setCartUser(u);
-      const isGuestUser = u?.email === "guest@nailsacademy.bg";
-      setFormData(prev => ({
-        ...prev,
-        customer_email: isGuestUser ? "" : (u?.email || ""),
-        customer_name: isGuestUser ? "" : (u?.full_name || "")
-      }));
-    }).finally(() => setIsUserReady(true));
-  }, []);
+    setFormData((prev) => ({
+      ...prev,
+      customer_email: user?.email || "",
+      customer_name: user?.name || "",
+    }));
+  }, [user]);
 
   const { data: cartItems = [] } = useQuery({
-    queryKey: ["cart", cartUser?.email],
-    queryFn: () => base44.entities.CartItem.filter({ user_email: cartUser?.email }),
-    enabled: !!cartUser?.email,
+    queryKey: ["cart", user?.email],
+    queryFn: () => base44.entities.CartItem.filter({ user_email: user?.email }),
+    enabled: Boolean(isAuthenticated && user?.email),
   });
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.product_price * item.quantity), 0);
@@ -160,6 +155,7 @@ ${itemsList}
     
     createOrderMutation.mutate({
       ...formData,
+      customer_email: user?.email || formData.customer_email,
       items: cartItems.map(item => ({
         product_id: item.product_id,
         name: item.product_name,
@@ -173,12 +169,26 @@ ${itemsList}
     });
   };
 
-  if (!isUserReady) {
+  if (isLoadingAuth) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-pink-50/30 to-rose-50/20 pt-32 px-6">
         <div className="container mx-auto max-w-2xl text-center">
           <Loader2 className="w-16 h-16 text-rose-300 mx-auto mb-4 animate-spin" />
           <h1 className="text-2xl font-semibold text-gray-900 mb-4">Зареждане на Checkout...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-pink-50/30 to-rose-50/20 pt-32 px-6">
+        <div className="container mx-auto max-w-2xl text-center bg-white rounded-3xl p-10 shadow-sm">
+          <ShoppingBag className="w-16 h-16 text-rose-300 mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold text-gray-900 mb-4">Поръчка може да се направи само с акаунт</h1>
+          <Button onClick={navigateToLogin} className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-8">
+            Вход / Регистрация
+          </Button>
         </div>
       </div>
     );
@@ -284,7 +294,9 @@ ${itemsList}
                         onChange={(e) => setFormData({...formData, customer_email: e.target.value})}
                         className={errors.customer_email ? "border-red-500" : ""}
                         placeholder="email@example.com"
+                        readOnly
                       />
+                      <p className="text-xs text-gray-400">Използва се имейлът от вашия акаунт.</p>
                       {errors.customer_email && <p className="text-red-500 text-sm">{errors.customer_email}</p>}
                     </div>
                   </div>

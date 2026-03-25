@@ -5,9 +5,11 @@ import { ShoppingCart, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { getCartItems, updateCartItemQuantity, removeCartItem } from "@/lib/cart";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
+  const { isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();
   const formatItemName = (name) => (name || "").replace(/,\s*/g, ", ");
 
   const loadCartItems = useCallback(async () => {
@@ -21,8 +23,30 @@ export default function Cart() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    loadCartItems();
-  }, [loadCartItems]);
+    if (isAuthenticated) {
+      loadCartItems();
+    } else {
+      setCartItems([]);
+    }
+  }, [isAuthenticated, loadCartItems]);
+
+  if (isLoadingAuth) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-pink-50/30 to-rose-50/20 pt-32 px-6">
+        <div className="container mx-auto max-w-2xl text-center bg-white rounded-3xl p-10 shadow-sm">
+          <ShoppingCart className="w-16 h-16 text-rose-300 mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold text-gray-900 mb-3">Количката е достъпна само за регистрирани потребители</h1>
+          <Button onClick={navigateToLogin} className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-8">
+            Вход / Регистрация
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const updateQuantity = async (id, newQuantity) => {
     if (newQuantity <= 0) {

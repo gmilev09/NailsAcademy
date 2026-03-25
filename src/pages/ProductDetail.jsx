@@ -7,12 +7,14 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { getProductById } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function ProductDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [added, setAdded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, navigateToLogin } = useAuth();
 
   // Вземаме ID от линка
   const params = new URLSearchParams(location.search);
@@ -31,6 +33,12 @@ export default function ProductDetail() {
   }, [productId]);
 
   const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      toast.error("Влезте в акаунт, за да поръчвате.");
+      navigateToLogin();
+      return;
+    }
+
     try {
       await addProductToCart(product);
       setAdded(true);
@@ -117,7 +125,9 @@ export default function ProductDetail() {
                 <Badge className="w-fit mb-4 bg-rose-100 text-rose-600 border-0 px-3 py-1 font-medium">{product.category}</Badge>
               )}
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 italic leading-tight">{product.name}</h1>
-              <p className="text-4xl font-bold text-rose-500 mb-8 italic">€{product.price}</p>
+              <p className="text-4xl font-bold text-rose-500 mb-8 italic">
+                {isAuthenticated ? `€${product.price}` : "Цена след вход"}
+              </p>
 
               {product.description && (
                 <p className="text-gray-600 leading-relaxed mb-10 whitespace-pre-line text-lg italic">{product.description}</p>
@@ -136,7 +146,7 @@ export default function ProductDetail() {
                   {added ? (
                     "✔ Добавено!"
                   ) : (
-                    <><Plus className="w-6 h-6 mr-2" />{product.in_stock ? "Добави в количката" : "Изчерпан"}</>
+                    <><Plus className="w-6 h-6 mr-2" />{product.in_stock ? (isAuthenticated ? "Добави в количката" : "Влез в акаунт") : "Изчерпан"}</>
                   )}
                 </Button>
                 <Link to="/Cart">

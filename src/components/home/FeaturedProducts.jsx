@@ -5,13 +5,20 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { shopProducts } from "../../data/products";
 import { addProductToCart } from "@/lib/cart";
+import { useAuth } from "@/lib/AuthContext";
 
 const productsData = shopProducts;
 
-function AddToCartButton({ product }) {
+function AddToCartButton({ product, isAuthenticated, navigateToLogin }) {
   const [added, setAdded] = useState(false);
 
   const handleAdd = async () => {
+    if (!isAuthenticated) {
+      toast.error("Влезте в акаунт, за да добавяте продукти.");
+      navigateToLogin();
+      return;
+    }
+
     try {
       await addProductToCart(product);
       setAdded(true);
@@ -39,6 +46,7 @@ export default function FeaturedProducts() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef(null);
+  const { isAuthenticated, navigateToLogin } = useAuth();
 
   const visibleCount = 4;
   const maxIndex = Math.max(0, productsData.length - visibleCount);
@@ -104,8 +112,14 @@ export default function FeaturedProducts() {
                     <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
                     <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-rose-500">€{product.price}</span>
-                      <AddToCartButton product={product} />
+                      <span className="text-lg font-bold text-rose-500">
+                        {isAuthenticated ? `€${product.price}` : "Цена след вход"}
+                      </span>
+                      <AddToCartButton
+                        product={product}
+                        isAuthenticated={isAuthenticated}
+                        navigateToLogin={navigateToLogin}
+                      />
                     </div>
                   </div>
                 </motion.div>

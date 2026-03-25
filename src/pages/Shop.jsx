@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { shopProducts } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
+import { useAuth } from "@/lib/AuthContext";
 
 // Галерия за малките карти в магазина
 function ProductImageGallery({ product }) {
@@ -57,6 +58,7 @@ export default function Shop() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [addedProductId, setAddedProductId] = useState(null);
+  const { isAuthenticated, navigateToLogin } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -67,6 +69,12 @@ export default function Shop() {
     .filter(p => searchQuery === "" || p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const handleAddToCart = async (product) => {
+    if (!isAuthenticated) {
+      toast.error("Влезте в акаунт, за да добавяте продукти.");
+      navigateToLogin();
+      return;
+    }
+
     try {
       await addProductToCart(product);
       setAddedProductId(product.id);
@@ -142,7 +150,9 @@ export default function Shop() {
                     </Link>
                     <p className="text-gray-500 text-sm mb-4 line-clamp-2 italic">{product.description}</p>
                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
-                      <span className="text-2xl font-bold text-rose-500 italic">€{product.price}</span>
+                      <span className="text-2xl font-bold text-rose-500 italic">
+                        {isAuthenticated ? `€${product.price}` : "Цена след вход"}
+                      </span>
                       <Button
                         size="sm"
                         className={`rounded-full px-4 ${
@@ -153,7 +163,7 @@ export default function Shop() {
                         disabled={!product.in_stock}
                         onClick={() => handleAddToCart(product)}
                       >
-                        {addedProductId === product.id ? "✔ Добавено!" : <><Plus className="w-4 h-4 mr-1" /> Добави</>}
+                        {addedProductId === product.id ? "✔ Добавено!" : <><Plus className="w-4 h-4 mr-1" /> {isAuthenticated ? "Добави" : "Вход"}</>}
                       </Button>
                     </div>
                   </div>
