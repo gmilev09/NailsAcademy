@@ -14,6 +14,7 @@ import {
   LogIn,
   Facebook } from "lucide-react";
 import CookieBanner from "./components/CookieBanner";
+import { useAuth } from "./lib/AuthContext";
 
 const navLinks = [
   { name: "Начало", page: "" },
@@ -28,6 +29,7 @@ export default function Layout({ children, currentPageName }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, user, logout, navigateToLogin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,10 +85,16 @@ export default function Layout({ children, currentPageName }) {
                   Количка
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="text-gray-600 hover:text-rose-500">
-                <LogIn className="w-4 h-4 mr-2" />
-                Вход
-              </Button>
+              {isAuthenticated ? (
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-rose-500" onClick={logout}>
+                  {user?.name || user?.email || "Профил"} | Изход
+                </Button>
+              ) : (
+                <Button variant="ghost" size="sm" className="text-gray-600 hover:text-rose-500" onClick={navigateToLogin}>
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Вход
+                </Button>
+              )}
               <Link to="/Enroll">
                 <Button className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-6">
                   Запиши се
@@ -113,6 +121,16 @@ export default function Layout({ children, currentPageName }) {
                     Количка
                   </Button>
                 </Link>
+                {isAuthenticated ? (
+                  <Button variant="ghost" className="w-full" onClick={logout}>
+                    Изход ({user?.name || user?.email || "Профил"})
+                  </Button>
+                ) : (
+                  <Button variant="ghost" className="w-full" onClick={navigateToLogin}>
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Вход
+                  </Button>
+                )}
                 <Link to="/Enroll" className="block pt-4">
                   <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">Запиши се</Button>
                 </Link>

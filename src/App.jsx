@@ -7,6 +7,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { Analytics } from '@vercel/analytics/react';
+import { AuthProvider } from './lib/AuthContext';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -20,37 +21,39 @@ const LayoutWrapper = ({ children, currentPageName }) => {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClientInstance}>
-      <Router>
-        <Routes>
-          {/* Начална страница */}
-          <Route path="/" element={
-            <LayoutWrapper currentPageName={mainPageKey}>
-              <MainPage />
-            </LayoutWrapper>
-          } />
+    <AuthProvider>
+      <QueryClientProvider client={queryClientInstance}>
+        <Router>
+          <Routes>
+            {/* Начална страница */}
+            <Route path="/" element={
+              <LayoutWrapper currentPageName={mainPageKey}>
+                <MainPage />
+              </LayoutWrapper>
+            } />
 
-          {/* Всички останали страници от твоя сайт */}
-          {Object.entries(Pages).map(([path, Page]) => (
-            <Route
-              key={path}
-              path={`/${path}`}
-              element={
-                <LayoutWrapper currentPageName={path}>
-                  <Page />
-                </LayoutWrapper>
-              }
-            />
-          ))}
+            {/* Всички останали страници от твоя сайт */}
+            {Object.entries(Pages).map(([path, Page]) => (
+              <Route
+                key={path}
+                path={`/${path}`}
+                element={
+                  <LayoutWrapper currentPageName={path}>
+                    <Page />
+                  </LayoutWrapper>
+                }
+              />
+            ))}
 
-          {/* Страница за грешка 404 */}
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-        <Toaster />
-        <SonnerToaster position="top-center" />
-        <Analytics />
-      </Router>
-    </QueryClientProvider>
+            {/* Страница за грешка 404 */}
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+          <Toaster />
+          <SonnerToaster position="top-center" />
+          <Analytics />
+        </Router>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 

@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Clock, GraduationCap, Award, ArrowRight, CheckCircle } from "lucide-react";
+import { Clock, GraduationCap, ArrowRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
 
 const categories = [
   { value: "all", label: "Всички курсове" },
@@ -78,6 +79,7 @@ const initialCourses = [
 export default function Courses() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeLevel, setActiveLevel] = useState("all");
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -152,9 +154,14 @@ export default function Courses() {
                       <div className="flex items-center text-sm text-gray-500 gap-2"><CheckCircle className="w-4 h-4 text-rose-400" /> Индивидуален подход</div>
                     </div>
                     <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
-                      <span className="text-2xl font-bold text-rose-500">€{course.price}</span>
+                      <span className="text-2xl font-bold text-rose-500">
+                        {isAuthenticated ? `€${course.price}` : "Цена след вход"}
+                      </span>
                       <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
-                        <Button className="bg-rose-500 text-white rounded-full">Запиши се <ArrowRight className="ml-2 w-4 h-4" /></Button>
+                        <Button className="bg-rose-500 text-white rounded-full">
+                          {isAuthenticated ? "Запиши се" : "Влез за записване"}
+                          <ArrowRight className="ml-2 w-4 h-4" />
+                        </Button>
                       </Link>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
+import { getUser } from "@netlify/identity";
+
 const CART_STORAGE_KEY = "nails_academy_cart";
-const ORDERS_STORAGE_KEY = "nails_academy_orders";
 
 function getStoredItems(key) {
   try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; }
@@ -13,15 +14,13 @@ let idCounter = Date.now();
 
 export const base44 = {
   auth: {
-    me: () => {
-      const stored = localStorage.getItem("nails_academy_user");
-      if (stored) return Promise.resolve(JSON.parse(stored));
-      return Promise.reject(new Error("Not logged in"));
+    me: async () => {
+      const currentUser = await getUser();
+      if (!currentUser) throw new Error("AUTH_REQUIRED");
+      return currentUser;
     },
     redirectToLogin: (returnUrl) => {
-      const guestUser = { email: "guest@nailsacademy.bg", full_name: "Guest" };
-      localStorage.setItem("nails_academy_user", JSON.stringify(guestUser));
-      window.location.href = returnUrl || "/";
+      window.location.href = returnUrl || "/Auth";
     },
   },
 
@@ -61,17 +60,12 @@ export const base44 = {
           });
           const result = await response.json();
           if (!response.ok) {
-            throw new Error(result.error || "Failed to create order");
+            throw new Error(result.error || "Неуспешна поръчка");
           }
           return result.order;
         } catch (err) {
           console.error("Error saving order to backend:", err);
-          // Fallback to localStorage so the user still sees confirmation
-          const orders = getStoredItems(ORDERS_STORAGE_KEY);
-          const newLocalOrder = { ...data, id: String(Date.now()), createdAt: new Date().toISOString() };
-          orders.push(newLocalOrder);
-          setStoredItems(ORDERS_STORAGE_KEY, orders);
-          return newLocalOrder;
+          throw err;
         }
       },
     },

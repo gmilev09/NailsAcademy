@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { GraduationCap, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
 
 // Твоите данни за курсовете (запазени точно)
 const featuredCourses = [
@@ -51,6 +52,8 @@ const levelLabels = {
 };
 
 export default function CoursesPreview() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section className="bg-white py-24">
       <div className="container mx-auto px-6">
@@ -78,7 +81,9 @@ export default function CoursesPreview() {
                     {course.certificate && <Badge className="bg-white/90 text-rose-500 border-0"><Award className="w-3 h-3 mr-1" />Сертификат</Badge>}
                   </div>
                   <div className="absolute bottom-4 left-4">
-                    <span className="text-2xl font-bold text-white">€{course.price}</span>
+                    <span className="text-2xl font-bold text-white">
+                      {isAuthenticated ? `€${course.price}` : "Цена след вход"}
+                    </span>
                   </div>
                 </div>
                 <div className="p-5">
@@ -88,7 +93,9 @@ export default function CoursesPreview() {
                     <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{course.duration}</span></div>
                   </div>
                   <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
-                    <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">Запиши се</Button>
+                    <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">
+                      {isAuthenticated ? "Запиши се" : "Влез за записване"}
+                    </Button>
                   </Link>
                 </div>
               </div>

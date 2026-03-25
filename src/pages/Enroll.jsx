@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Clock, GraduationCap, Users, Award, Phone } from "lucide-react";
+import { Clock, GraduationCap, Users, Award } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 // Твоите актуални курсове за избор във формата
 const courses = [
@@ -252,10 +255,24 @@ const normalizeCourseTitle = (value) =>
 export default function Enroll() {
   const [searchParams] = useSearchParams();
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const { user, isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [enrollData, setEnrollData] = useState({
+    student_name: "",
+    phone: "",
+    message: "",
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    setEnrollData((prev) => ({
+      ...prev,
+      student_name: user?.name || "",
+    }));
+  }, [user]);
 
   useEffect(() => {
     const courseFromQuery = searchParams.get("course");
@@ -275,6 +292,50 @@ export default function Enroll() {
     setSelectedCourse(course);
   };
 
+  const handleEnroll = async (event) => {
+    event.preventDefault();
+
+    if (!isAuthenticated) {
+      toast.error("Нужен е профил за записване.");
+      navigateToLogin();
+      return;
+    }
+
+    if (!selectedCourse) {
+      toast.error("Изберете курс.");
+      return;
+    }
+
+    if (!enrollData.student_name.trim() || !enrollData.phone.trim()) {
+      toast.error("Попълнете име и телефон.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/enrollments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_name: enrollData.student_name.trim(),
+          phone: enrollData.phone.trim(),
+          course_title: selectedCourse.title,
+          message: enrollData.message.trim(),
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result?.error || "Неуспешно записване.");
+      }
+      toast.success("Записването е изпратено успешно.");
+      setEnrollData((prev) => ({ ...prev, phone: "", message: "" }));
+    } catch (error) {
+      toast.error(error?.message || "Неуспешно записване.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-50/50 to-white pt-32 pb-24">
       <div className="container mx-auto px-6">
@@ -287,7 +348,9 @@ export default function Enroll() {
             <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-4 italic">
               Запишете се <span className="font-semibold text-rose-500">сега</span>
             </h1>
-            <p className="text-gray-500 max-w-lg mx-auto">Изберете курс и се свържете с нас по телефона, за да запазите Вашето място.</p>
+            <p className="text-gray-500 max-w-lg mx-auto">
+              Изберете курс и изпратете записване през формата. Необходим е влязъл акаунт.
+            </p>
           </motion.div>
         </div>
 
@@ -299,7 +362,7 @@ export default function Enroll() {
             animate={{ opacity: 1, x: 0 }}
           >
             <h2 className="text-xl font-bold text-gray-900 mb-8 italic">Изберете курс</h2>
-            <div className="space-y-4 mb-10">
+            <div className="space-y-4 mb-8">
               {courses.map((course) => (
                 <button
                   key={course.id}
@@ -316,25 +379,43 @@ export default function Enroll() {
                       <h3 className="font-bold text-gray-900">{course.title}</h3>
                       <p className="text-sm text-gray-500 mt-1">{course.duration}</p>
                     </div>
-                    <span className="text-lg font-bold text-rose-500">€{course.price}</span>
+                    <span className="text-lg font-bold text-rose-500">
+                      {isAuthenticated ? `€${course.price}` : "Цена след вход"}
+                    </span>
                   </div>
                 </button>
               ))}
             </div>
 
-            <div className="text-center">
-              <p className="text-gray-500 mb-6">За записване, моля свържете се с нас по телефона:</p>
+            <form className="space-y-4" onSubmit={handleEnroll}>
+              <Input
+                placeholder="Име и фамилия"
+                value={enrollData.student_name}
+                onChange={(e) => setEnrollData((prev) => ({ ...prev, student_name: e.target.value }))}
+              />
+              <Input
+                placeholder="Телефон"
+                value={enrollData.phone}
+                onChange={(e) => setEnrollData((prev) => ({ ...prev, phone: e.target.value }))}
+              />
+              <Input
+                placeholder="Съобщение (по желание)"
+                value={enrollData.message}
+                onChange={(e) => setEnrollData((prev) => ({ ...prev, message: e.target.value }))}
+              />
+
+              {!isAuthenticated && !isLoadingAuth && (
+                <p className="text-sm text-rose-500">Записване е възможно само след вход.</p>
+              )}
+
               <Button
-                asChild
+                type="submit"
                 className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full py-7 text-lg font-bold shadow-lg hover:shadow-xl transition-shadow"
+                disabled={isSubmitting || !selectedCourse}
               >
-                <a href="tel:+359895737470">
-                  <Phone className="mr-3 w-5 h-5" />
-                  Свържете се с нас
-                </a>
+                {isSubmitting ? "Изпращане..." : isAuthenticated ? "Изпрати записване" : "Влез за записване"}
               </Button>
-              <p className="text-sm text-gray-400 mt-3">+359 89 5737470</p>
-            </div>
+            </form>
           </motion.div>
 
           {/* Preview */}
@@ -352,7 +433,9 @@ export default function Enroll() {
                 </div>
                 <div className="pt-4 border-t flex justify-between items-center">
                   <span className="text-gray-500">Цена</span>
-                  <span className="text-2xl font-bold text-rose-500">€{selectedCourse.price}</span>
+                  <span className="text-2xl font-bold text-rose-500">
+                    {isAuthenticated ? `€${selectedCourse.price}` : "Цена след вход"}
+                  </span>
                 </div>
               </div>
             ) : (

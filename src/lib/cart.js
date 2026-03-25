@@ -1,29 +1,7 @@
 import { base44 } from "@/api/base44Client";
 
-const GUEST_USER = {
-  email: "guest@nailsacademy.bg",
-  full_name: "Guest",
-};
-
-function getStoredGuestUser() {
-  try {
-    return JSON.parse(localStorage.getItem("nails_academy_user") || "null");
-  } catch {
-    return null;
-  }
-}
-
 export async function ensureCartUser() {
-  try {
-    return await base44.auth.me();
-  } catch {
-    const storedUser = getStoredGuestUser();
-    if (storedUser?.email) {
-      return storedUser;
-    }
-    localStorage.setItem("nails_academy_user", JSON.stringify(GUEST_USER));
-    return GUEST_USER;
-  }
+  return base44.auth.me();
 }
 
 export async function getCartItems() {
