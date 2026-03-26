@@ -14,6 +14,7 @@ import {
 } from "@netlify/identity";
 
 const AuthContext = createContext();
+const RECOVERY_SESSION_KEY = "netlify-recovery-in-progress";
 
 function getReadableError(error) {
   if (error instanceof MissingIdentityError) {
@@ -44,6 +45,9 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       setIsLoadingAuth(true);
       setIsLoadingPublicSettings(true);
+      if (typeof window !== "undefined" && window.sessionStorage.getItem(RECOVERY_SESSION_KEY) === "1") {
+        setNeedsPasswordReset(true);
+      }
       try {
         const callbackResult = await handleAuthCallback();
         if (!isMounted) return;
@@ -51,8 +55,15 @@ export const AuthProvider = ({ children }) => {
           setCallbackNotice("Имейлът е потвърден успешно. Входът е активен.");
         }
         if (callbackResult?.type === "recovery") {
+          if (typeof window !== "undefined") {
+            window.sessionStorage.setItem(RECOVERY_SESSION_KEY, "1");
+          }
           setNeedsPasswordReset(true);
           setCallbackNotice("Линкът за възстановяване е валиден. Задайте нова парола.");
+          if (typeof window !== "undefined" && window.location.pathname !== "/Auth") {
+            window.location.assign("/Auth");
+            return;
+          }
         }
       } catch (error) {
         if (!isMounted) return;
@@ -119,6 +130,9 @@ export const AuthProvider = ({ children }) => {
     try {
       await netlifyLogout();
     } finally {
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem(RECOVERY_SESSION_KEY);
+      }
       setUser(null);
       setIsAuthenticated(false);
       setNeedsPasswordReset(false);
@@ -141,6 +155,9 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     try {
       const updatedUser = await updateUser({ password: newPassword });
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem(RECOVERY_SESSION_KEY);
+      }
       setUser(updatedUser);
       setIsAuthenticated(Boolean(updatedUser));
       setNeedsPasswordReset(false);
