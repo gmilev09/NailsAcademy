@@ -271,15 +271,16 @@ export default function Auth() {
                 />
               </div>
 
-              {mode === "login" && (
-                <button
-                  type="button"
-                  onClick={() => setShowForgotPassword(true)}
-                  className="text-sm text-rose-600 hover:text-rose-700 hover:underline"
-                >
-                  Забравена парола?
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode("login");
+                  setShowForgotPassword(true);
+                }}
+                className="text-sm text-rose-600 hover:text-rose-700 hover:underline"
+              >
+                Забравена парола?
+              </button>
 
               <Button
                 type="submit"
