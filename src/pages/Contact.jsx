@@ -41,11 +41,32 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Симулация на изпращане за Netlify
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    toast.success("Съобщението е изпратено успешно!");
+    const form = e.currentTarget;
+
+    try {
+      const response = await fetch("/__forms.html", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
+
+      setSubmitted(true);
+      toast.success("Съобщението е изпратено успешно!");
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch {
+      toast.error("Неуспешно изпращане. Моля, опитайте отново.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field, value) => {
@@ -118,25 +139,38 @@ export default function Contact() {
                   <Button onClick={() => setSubmitted(false)} className="bg-rose-500 text-white rounded-full px-8">Изпрати друго</Button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-pink-50 space-y-6">
+                <form
+                  name="contact"
+                  method="POST"
+                  data-netlify="true"
+                  netlify-honeypot="bot-field"
+                  onSubmit={handleSubmit}
+                  className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-pink-50 space-y-6"
+                >
+                  <input type="hidden" name="form-name" value="contact" />
+                  <p className="hidden" aria-hidden="true">
+                    <label>
+                      Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
+                    </label>
+                  </p>
                   <h2 className="text-2xl font-semibold text-gray-900 mb-8 italic">Изпратете ни съобщение</h2>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">Вашето име *</Label>
-                      <Input id="name" placeholder="Име и фамилия" value={formData.name} onChange={(e) => handleChange("name", e.target.value)} required className="rounded-xl" />
+                      <Input id="name" name="name" placeholder="Име и фамилия" value={formData.name} onChange={(e) => handleChange("name", e.target.value)} required className="rounded-xl" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Вашият имейл *</Label>
-                      <Input id="email" type="email" placeholder="email@example.com" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} required className="rounded-xl" />
+                      <Input id="email" name="email" type="email" placeholder="email@example.com" value={formData.email} onChange={(e) => handleChange("email", e.target.value)} required className="rounded-xl" />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="subject">Тема</Label>
-                    <Input id="subject" placeholder="Как можем да помогнем?" value={formData.subject} onChange={(e) => handleChange("subject", e.target.value)} className="rounded-xl" />
+                    <Input id="subject" name="subject" placeholder="Как можем да помогнем?" value={formData.subject} onChange={(e) => handleChange("subject", e.target.value)} className="rounded-xl" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="message">Вашето съобщение *</Label>
-                    <Textarea id="message" placeholder="Разкажете ни повече..." value={formData.message} onChange={(e) => handleChange("message", e.target.value)} required className="rounded-xl min-h-[180px]" />
+                    <Textarea id="message" name="message" placeholder="Разкажете ни повече..." value={formData.message} onChange={(e) => handleChange("message", e.target.value)} required className="rounded-xl min-h-[180px]" />
                   </div>
                   <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full py-6 text-base shadow-lg">
                     {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-5 h-5 mr-2" /> Изпрати</>}
