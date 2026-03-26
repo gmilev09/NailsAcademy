@@ -71,46 +71,6 @@ export default function Checkout() {
       // Create order
       const order = await base44.entities.Order.create(orderData);
       
-      // Send email notification to admin
-      const itemsList = cartItems.map(item => 
-        `- ${item.product_name} x${item.quantity} = ${(item.product_price * item.quantity).toFixed(2)}€`
-      ).join("\n");
-      
-      // Do not block order completion if email notifications fail.
-      await Promise.allSettled([
-        base44.integrations.Core.SendEmail({
-          to: orderData.customer_email,
-          subject: "Потвърждение на поръчката — Nails Academy",
-          body: `Здравейте, ${orderData.customer_name}!\n\nВашата поръчка беше получена успешно.\n\nПродукти:\n${itemsList}\n\nОбщо: ${orderData.total.toFixed(2)}€\n\nЩе се свържем с вас до 48 часа.\n\nС уважение,\nNails Academy`
-        }),
-        base44.integrations.Core.SendEmail({
-          to: "bozhinova.nails.academy@gmail.com",
-          subject: `Нова поръчка от ${orderData.customer_name}`,
-          body: `
-Нова поръчка е направена!
-
-Клиент: ${orderData.customer_name}
-Имейл: ${orderData.customer_email}
-Телефон: ${orderData.customer_phone}
-
-Доставка:
-Град: ${orderData.city}
-Тип: ${orderData.delivery_type === "office" ? "До офис" : "До адрес"}
-Адрес/Офис: ${orderData.delivery_address}
-Куриер: ${orderData.courier === "econt" ? "Еконт" : "Спиди"}
-
-Продукти:
-${itemsList}
-
-Междинна сума: ${orderData.subtotal.toFixed(2)}€
-Доставка: ${orderData.shipping_cost.toFixed(2)}€
-ОБЩО: ${orderData.total.toFixed(2)}€
-
-Плащане: Наложен платеж
-        `
-        }),
-      ]);
-      
       // Clear cart
       for (const item of cartItems) {
         await base44.entities.CartItem.delete(item.id);
