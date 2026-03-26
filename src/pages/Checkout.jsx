@@ -76,17 +76,17 @@ export default function Checkout() {
         `- ${item.product_name} x${item.quantity} = ${(item.product_price * item.quantity).toFixed(2)}€`
       ).join("\n");
       
-      // Send confirmation to customer
-      await base44.integrations.Core.SendEmail({
-        to: orderData.customer_email,
-        subject: "Потвърждение на поръчката — Nails Academy",
-        body: `Здравейте, ${orderData.customer_name}!\n\nВашата поръчка беше получена успешно.\n\nПродукти:\n${itemsList}\n\nОбщо: ${orderData.total.toFixed(2)}€\n\nЩе се свържем с вас до 48 часа.\n\nС уважение,\nNails Academy`
-      });
-
-      await base44.integrations.Core.SendEmail({
-        to: "bozhinova.nails.academy@gmail.com",
-        subject: `Нова поръчка от ${orderData.customer_name}`,
-        body: `
+      // Do not block order completion if email notifications fail.
+      await Promise.allSettled([
+        base44.integrations.Core.SendEmail({
+          to: orderData.customer_email,
+          subject: "Потвърждение на поръчката — Nails Academy",
+          body: `Здравейте, ${orderData.customer_name}!\n\nВашата поръчка беше получена успешно.\n\nПродукти:\n${itemsList}\n\nОбщо: ${orderData.total.toFixed(2)}€\n\nЩе се свържем с вас до 48 часа.\n\nС уважение,\nNails Academy`
+        }),
+        base44.integrations.Core.SendEmail({
+          to: "bozhinova.nails.academy@gmail.com",
+          subject: `Нова поръчка от ${orderData.customer_name}`,
+          body: `
 Нова поръчка е направена!
 
 Клиент: ${orderData.customer_name}
@@ -108,7 +108,8 @@ ${itemsList}
 
 Плащане: Наложен платеж
         `
-      });
+        }),
+      ]);
       
       // Clear cart
       for (const item of cartItems) {
@@ -121,6 +122,10 @@ ${itemsList}
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       base44.analytics.track({ eventName: "purchase_product", properties: { total, items: cartItems.length } });
       setOrderComplete(true);
+    },
+    onError: (error) => {
+      const message = error instanceof Error ? error.message : "Неуспешно финализиране на поръчката";
+      toast.error(message);
     },
   });
 
