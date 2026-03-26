@@ -4,6 +4,8 @@ import {
   getSettings,
   login,
   signup,
+  requestPasswordRecovery,
+  updateUser,
   logout as netlifyLogout,
   onAuthChange,
   handleAuthCallback,
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }) => {
   const [authSettings, setAuthSettings] = useState(null);
   const [authError, setAuthError] = useState(null);
   const [callbackNotice, setCallbackNotice] = useState(null);
+  const [needsPasswordReset, setNeedsPasswordReset] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -46,6 +49,10 @@ export const AuthProvider = ({ children }) => {
         if (!isMounted) return;
         if (callbackResult?.type === "confirmation") {
           setCallbackNotice("Имейлът е потвърден успешно. Входът е активен.");
+        }
+        if (callbackResult?.type === "recovery") {
+          setNeedsPasswordReset(true);
+          setCallbackNotice("Линкът за възстановяване е валиден. Задайте нова парола.");
         }
       } catch (error) {
         if (!isMounted) return;
@@ -114,7 +121,34 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setUser(null);
       setIsAuthenticated(false);
+      setNeedsPasswordReset(false);
       window.location.href = "/";
+    }
+  };
+
+  const sendPasswordRecoveryEmail = async (email) => {
+    setAuthError(null);
+    try {
+      await requestPasswordRecovery(email);
+    } catch (error) {
+      const message = getReadableError(error);
+      setAuthError(message);
+      throw new Error(message);
+    }
+  };
+
+  const resetPassword = async (newPassword) => {
+    setAuthError(null);
+    try {
+      const updatedUser = await updateUser({ password: newPassword });
+      setUser(updatedUser);
+      setIsAuthenticated(Boolean(updatedUser));
+      setNeedsPasswordReset(false);
+      return updatedUser;
+    } catch (error) {
+      const message = getReadableError(error);
+      setAuthError(message);
+      throw new Error(message);
     }
   };
 
@@ -132,9 +166,12 @@ export const AuthProvider = ({ children }) => {
         authSettings,
         authError,
         callbackNotice,
+        needsPasswordReset,
         setAuthError,
         loginUser,
         signupUser,
+        sendPasswordRecoveryEmail,
+        resetPassword,
         logout,
         navigateToLogin,
       }}
