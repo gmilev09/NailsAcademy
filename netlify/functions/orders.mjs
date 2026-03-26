@@ -5,15 +5,12 @@ export default async (req) => {
   const store = getStore({ name: "orders", consistency: "strong" });
   const user = await getUser();
 
-  if (!user || !user.confirmedAt) {
-    return Response.json({ error: "Authentication required" }, { status: 401 });
-  }
-
   if (req.method === "POST") {
     const body = await req.json();
 
     const {
       customer_name,
+      customer_email,
       customer_phone,
       city,
       delivery_type,
@@ -36,9 +33,9 @@ export default async (req) => {
     const id = `ord_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const order = {
       id,
-      user_id: user.id,
+      user_id: user?.id || null,
       customer_name,
-      customer_email: user.email || "",
+      customer_email: user?.email || customer_email || "",
       customer_phone,
       city: city || "",
       delivery_type: delivery_type || "office",
@@ -59,6 +56,10 @@ export default async (req) => {
   }
 
   if (req.method === "GET") {
+    if (!user || !user.confirmedAt) {
+      return Response.json({ error: "Authentication required" }, { status: 401 });
+    }
+
     const { blobs } = await store.list();
     const orders = await Promise.all(blobs.map((blob) => store.get(blob.key, { type: "json" })));
     const currentUserOrders = orders.filter((order) => order?.user_id === user.id);
