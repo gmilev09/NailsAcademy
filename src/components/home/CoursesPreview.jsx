@@ -64,13 +64,10 @@ export default function CoursesPreview() {
                   <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{course.duration}</span></div>
                   </div>
-                  <Link to={`/courses/${course.slug}`}>
+                  <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
                     <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">
-                      Разгледай курса
+                      Запиши се
                     </Button>
-                  </Link>
-                  <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`} className="mt-3 inline-flex text-sm text-rose-500 hover:text-rose-600">
-                    Запиши се без акаунт
                   </Link>
                 </div>
               </div>

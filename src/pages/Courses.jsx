@@ -119,19 +119,13 @@ export default function Courses() {
                       <span className="text-2xl font-bold text-rose-500">
                         {`€${course.price}`}
                       </span>
-                      <Link to={`/courses/${course.slug}`}>
+                      <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
                         <Button className="bg-rose-500 text-white rounded-full">
-                          Разгледай
+                          Запиши се
                           <ArrowRight className="ml-2 w-4 h-4" />
                         </Button>
                       </Link>
                     </div>
-                    <Link
-                      to={`/Enroll?course=${encodeURIComponent(course.title)}`}
-                      className="mt-3 inline-flex text-sm font-medium text-rose-500 hover:text-rose-600"
-                    >
-                      Запиши се без акаунт
-                    </Link>
                   </div>
                 </div>
               </motion.div>

@@ -81,7 +81,7 @@ export default function CourseDetail() {
 
               <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
                 <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">
-                  Запиши се без акаунт
+                  Запиши се
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
