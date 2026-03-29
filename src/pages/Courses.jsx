@@ -5,6 +5,7 @@ import { Badge } from "../components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Clock, GraduationCap, ArrowRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { courses } from "../data/courses";
 import { useAuth } from "@/lib/AuthContext";
 
 const categories = [
@@ -32,50 +33,6 @@ const levelLabels = {
   advanced: "Надграждащи",
 };
 
-// Твоите реални курсове (зареждат се веднага)
-const initialCourses = [
-  { 
-    id: 1, 
-    title: "Базов курс по маникюр, педикюр и ноктопластика",
-    category: "manicure",
-    level: "beginner", 
-    price: 1300, 
-    duration: "80 учебни работни часа",
-    certificate: true,
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/1622aebbd_attygi3AwRXqaCZMpSwhgA-8ixNB8vVeAmf12KHyOcY0CQ.jpg"
-  },
-  { 
-    id: 2, 
-    title: "Комбиниран маникюр", 
-    category: "advanced", 
-     level: "advanced",  
-    price: 250, 
-     duration: "20 учебни часа",
-    certificate: true,
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg"
-  },
-  { 
-    id: 3,
-    title: "Изграждане с горни форми",
-    category: "advanced",
-    level: "intermediate",
-    price: 130,
-    duration: "10 учебни часа",
-    certificate: true,
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/637fe9b35_attmRG1nC8ozJ_HT5ii5lWHpExNOB0bBMV0mxHJGk1kAZA.jpg"
-  },
-  { 
-    id: 4,
-    title: "Работа гел",
-    category: "advanced",
-    level: "advanced",
-    price: 250,
-    duration: "20 учебни часа",
-    certificate: true,
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa659ac98_attIQDVOiwZWSFwUUrTJ8noxCY4qkQ1Ml_xATQ-ixFgJq8.jpg"
-  }
-];
-
 export default function Courses() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeLevel, setActiveLevel] = useState("all");
@@ -85,7 +42,7 @@ export default function Courses() {
     window.scrollTo(0, 0);
   }, []);
 
-  const filteredCourses = initialCourses.filter(course => {
+  const filteredCourses = courses.filter(course => {
     const categoryMatch = activeCategory === "all" || course.category === activeCategory;
     const levelMatch = activeLevel === "all" || course.level === activeLevel;
     return categoryMatch && levelMatch;
@@ -140,7 +97,9 @@ export default function Courses() {
               <motion.div key={course.id} className="group" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
                 <div className="bg-white rounded-3xl p-3 shadow-sm hover:shadow-xl transition-all border border-gray-50 flex flex-col h-full">
                   <div className="relative overflow-hidden rounded-2xl aspect-[4/3]">
-                    <img src={course.image_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <Link to={`/courses/${course.slug}`}>
+                      <img src={course.image_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    </Link>
                     <div className="absolute top-4 left-4 flex gap-2">
                       <Badge className={levelColors[course.level]}>{levelLabels[course.level]}</Badge>
                       {course.certificate && <Badge className="bg-white text-rose-500 border-none italic">Сертификат</Badge>}
@@ -148,7 +107,12 @@ export default function Courses() {
                   </div>
                   
                   <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 italic">{course.title}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 italic">
+                      <Link to={`/courses/${course.slug}`} className="hover:text-rose-500 transition-colors">
+                        {course.title}
+                      </Link>
+                    </h3>
+                    <p className="text-gray-500 text-sm mb-4">{course.short_description}</p>
                     <div className="space-y-2 mb-6">
                       <div className="flex items-center text-sm text-gray-500 gap-2"><Clock className="w-4 h-4 text-rose-400" /> Продължителност: {course.duration}</div>
                       <div className="flex items-center text-sm text-gray-500 gap-2"><CheckCircle className="w-4 h-4 text-rose-400" /> Индивидуален подход</div>
@@ -157,15 +121,9 @@ export default function Courses() {
                       <span className="text-2xl font-bold text-rose-500">
                         {`€${course.price}`}
                       </span>
-                      <Link
-                        to={
-                          isAuthenticated
-                            ? `/Enroll?course=${encodeURIComponent(course.title)}`
-                            : "/Auth"
-                        }
-                      >
+                      <Link to={isAuthenticated ? `/Enroll?course=${encodeURIComponent(course.title)}` : "/auth?mode=signup"}>
                         <Button className="bg-rose-500 text-white rounded-full">
-                          {isAuthenticated ? "Запиши се" : "Влез за записване"}
+                          Запиши се
                           <ArrowRight className="ml-2 w-4 h-4" />
                         </Button>
                       </Link>

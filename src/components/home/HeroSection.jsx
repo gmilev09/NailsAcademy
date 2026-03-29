@@ -2,8 +2,12 @@ import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { GraduationCap, ArrowRight, Award, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function HeroSection() {
+  const { isAuthenticated } = useAuth();
+  const enrollNowPath = isAuthenticated ? "/Enroll" : "/auth?mode=signup";
+
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-rose-50 via-white to-pink-50">
       {/* Decorative elements */}
@@ -64,7 +68,7 @@ export default function HeroSection() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link to="/Enroll">
+              <Link to={enrollNowPath}>
                 <Button 
                   variant="outline" 
                   size="lg"

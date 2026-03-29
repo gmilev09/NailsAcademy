@@ -2,8 +2,12 @@ import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { GraduationCap, ArrowRight, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function CTASection() {
+  const { isAuthenticated } = useAuth();
+  const enrollNowPath = isAuthenticated ? "/Enroll" : "/auth?mode=signup";
+
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-rose-400 via-pink-500 to-rose-500" />
@@ -42,7 +46,7 @@ export default function CTASection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/Enroll">
+            <Link to={enrollNowPath}>
               <Button 
                 size="lg"
                 className="bg-white text-rose-500 hover:bg-gray-50 rounded-full px-10 py-6 text-base shadow-xl shadow-rose-900/20 transition-all duration-300 hover:shadow-2xl"

@@ -20,7 +20,7 @@ export const base44 = {
       return currentUser;
     },
     redirectToLogin: (returnUrl) => {
-      window.location.href = returnUrl || "/Auth";
+      window.location.href = returnUrl || "/auth";
     },
   },
 

@@ -3,41 +3,8 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { GraduationCap, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
+import { courses } from "@/data/courses";
 import { useAuth } from "@/lib/AuthContext";
-
-// Твоите данни за курсовете (запазени точно)
-const featuredCourses = [
-  {
-    id: 1,
-    title: "Базов курс по маникюр, педикюр и ноктопластика",
-    description: "Реална професионална подготовка с теория, практика върху модели и индивидуален подход според темпото и целите на курсиста.",
-    price: "1300",
-    duration: "80 учебни часа",
-    level: "beginner",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/1622aebbd_attygi3AwRXqaCZMpSwhgA-8ixNB8vVeAmf12KHyOcY0CQ.jpg",
-    certificate: true
-  },
-  {
-    id: 2,
-    title: "Комбиниран маникюр",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg",
-    description: "Надграждащо обучение по комбиниран маникюр.Прецизност. Kонтрол. Съвършен резултат.",
-    price: "250",
-    duration: "20 учебни часа",
-    level: "advanced",
-    certificate: true
-  },
-   {
-    id: 3  ,
-    title: "Изграждане с горни форми",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/637fe9b35_attmRG1nC8ozJ_HT5ii5lWHpExNOB0bBMV0mxHJGk1kAZA.jpg",
-    description: "Надграждащо обучение – Изграждане с горни формиБързина. Симетрия. Контрол на архитектурата.",
-    price: "130",
-    duration: "10 учебни часа",
-    level: "intermediate",
-    certificate: true
-  }
-];
 
 const levelColors = {
   beginner: "bg-green-100 text-green-700",
@@ -52,6 +19,7 @@ const levelLabels = {
 };
 
 export default function CoursesPreview() {
+  const featuredCourses = courses.slice(0, 3);
   const { isAuthenticated } = useAuth();
 
   return (
@@ -75,7 +43,9 @@ export default function CoursesPreview() {
             <motion.div key={course.id} className="group" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.15 }}>
               <div className="relative overflow-hidden rounded-3xl bg-gray-50 p-2 h-full border border-gray-100">
                 <div className="relative overflow-hidden rounded-2xl">
-                  <img src={course.image_url} alt={course.title} className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <Link to={`/courses/${course.slug}`}>
+                    <img src={course.image_url} alt={course.title} className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110" />
+                  </Link>
                   <div className="absolute top-4 left-4 flex gap-2">
                     <Badge className={`${levelColors[course.level]} border-0`}>{levelLabels[course.level]}</Badge>
                     {course.certificate && <Badge className="bg-white/90 text-rose-500 border-0"><Award className="w-3 h-3 mr-1" />Сертификат</Badge>}
@@ -87,20 +57,18 @@ export default function CoursesPreview() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{course.title}</h3>
-                  <p className="text-gray-500 mb-4">{course.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <Link to={`/courses/${course.slug}`} className="hover:text-rose-500 transition-colors">
+                      {course.title}
+                    </Link>
+                  </h3>
+                  <p className="text-gray-500 mb-4">{course.short_description}</p>
                   <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{course.duration}</span></div>
                   </div>
-                  <Link
-                    to={
-                      isAuthenticated
-                        ? `/Enroll?course=${encodeURIComponent(course.title)}`
-                        : "/Auth"
-                    }
-                  >
+                  <Link to={isAuthenticated ? `/Enroll?course=${encodeURIComponent(course.title)}` : "/auth?mode=signup"}>
                     <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">
-                      {isAuthenticated ? "Запиши се" : "Влез за записване"}
+                      Запиши се
                     </Button>
                   </Link>
                 </div>
