@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider } from './lib/AuthContext';
 import NavigationTracker from './lib/NavigationTracker';
+import CourseDetail from './pages/CourseDetail';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -45,6 +46,15 @@ function App() {
                 }
               />
             )}
+
+            <Route
+              path="/courses/:slug"
+              element={
+                <LayoutWrapper currentPageName="Courses">
+                  <CourseDetail />
+                </LayoutWrapper>
+              }
+            />
 
             {/* Всички останали страници от твоя сайт */}
             {Object.entries(Pages).map(([path, Page]) => (
