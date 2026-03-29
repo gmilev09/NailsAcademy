@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import ReviewsList from "@/components/reviews/ReviewsList";
+import { useAuth } from "@/lib/AuthContext";
 
 const stats = [
 { icon: Users, value: "500+", label: "Доволни клиенти" },
@@ -37,6 +38,9 @@ const values = [
 
 
 export default function About() {
+  const { isAuthenticated } = useAuth();
+  const enrollNowPath = isAuthenticated ? createPageUrl("Enroll") : "/auth?mode=signup";
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -187,7 +191,7 @@ export default function About() {
               <p className="text-gray-500 text-lg leading-relaxed mb-8">
                 Освен висок клас салонни услуги, академията предлага сертифицирани обучения, насочени към бъдещи и практикуващи специалисти, които искат да се отличават с качество, устойчивост и стил. Нашата мисия не е просто да създаваме красиви нокти — нашата мисия е да създаваме професионалисти.
               </p>
-              <Link to={createPageUrl("Enroll")}>
+              <Link to={enrollNowPath}>
                 <Button className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white rounded-full px-8 shadow-lg shadow-pink-200/50">
                   Запишете се за курс
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -243,7 +247,7 @@ export default function About() {
 
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to={createPageUrl("Enroll")}>
+              <Link to={enrollNowPath}>
                 <Button size="lg" className="bg-white text-rose-500 hover:bg-gray-50 rounded-full px-10 shadow-xl">
                   Запишете се
                 </Button>

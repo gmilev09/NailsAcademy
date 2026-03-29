@@ -4,6 +4,7 @@ import { Badge } from "../ui/badge";
 import { GraduationCap, Clock, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { courses } from "@/data/courses";
+import { useAuth } from "@/lib/AuthContext";
 
 const levelColors = {
   beginner: "bg-green-100 text-green-700",
@@ -19,6 +20,7 @@ const levelLabels = {
 
 export default function CoursesPreview() {
   const featuredCourses = courses.slice(0, 3);
+  const { isAuthenticated } = useAuth();
 
   return (
     <section className="bg-white py-24">
@@ -64,7 +66,7 @@ export default function CoursesPreview() {
                   <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
                     <div className="flex items-center gap-1"><Clock className="w-4 h-4" /><span>{course.duration}</span></div>
                   </div>
-                  <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
+                  <Link to={isAuthenticated ? `/Enroll?course=${encodeURIComponent(course.title)}` : "/auth?mode=signup"}>
                     <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">
                       Запиши се
                     </Button>

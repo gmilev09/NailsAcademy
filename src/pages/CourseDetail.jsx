@@ -5,6 +5,7 @@ import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { ArrowRight, Award, CheckCircle, Clock, Users } from "lucide-react";
 import { getCourseBySlug } from "../data/courses";
+import { useAuth } from "@/lib/AuthContext";
 
 const levelColors = {
   beginner: "bg-green-100 text-green-700 border-green-200",
@@ -20,6 +21,7 @@ const levelLabels = {
 
 export default function CourseDetail() {
   const { slug } = useParams();
+  const { isAuthenticated } = useAuth();
   const course = getCourseBySlug(slug);
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function CourseDetail() {
                 </div>
               </div>
 
-              <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
+              <Link to={isAuthenticated ? `/Enroll?course=${encodeURIComponent(course.title)}` : "/auth?mode=signup"}>
                 <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">
                   Запиши се
                   <ArrowRight className="w-4 h-4 ml-2" />

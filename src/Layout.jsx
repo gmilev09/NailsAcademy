@@ -30,6 +30,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user, logout, navigateToLogin } = useAuth();
+  const enrollNowPath = isAuthenticated ? "/Enroll" : "/auth?mode=signup";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -95,7 +96,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
                   Вход
                 </Button>
               )}
-              <Link to="/Enroll">
+              <Link to={enrollNowPath}>
                 <Button className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-6">
                   Запиши се
                 </Button>
@@ -131,7 +132,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
                     Вход
                   </Button>
                 )}
-                <Link to="/Enroll" className="block pt-4">
+                <Link to={enrollNowPath} className="block pt-4">
                   <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">Запиши се</Button>
                 </Link>
               </div>

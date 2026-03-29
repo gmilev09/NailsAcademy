@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Clock, GraduationCap, ArrowRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { courses } from "../data/courses";
+import { useAuth } from "@/lib/AuthContext";
 
 const categories = [
   { value: "all", label: "Всички курсове" },
@@ -35,6 +36,7 @@ const levelLabels = {
 export default function Courses() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeLevel, setActiveLevel] = useState("all");
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -119,7 +121,7 @@ export default function Courses() {
                       <span className="text-2xl font-bold text-rose-500">
                         {`€${course.price}`}
                       </span>
-                      <Link to={`/Enroll?course=${encodeURIComponent(course.title)}`}>
+                      <Link to={isAuthenticated ? `/Enroll?course=${encodeURIComponent(course.title)}` : "/auth?mode=signup"}>
                         <Button className="bg-rose-500 text-white rounded-full">
                           Запиши се
                           <ArrowRight className="ml-2 w-4 h-4" />
