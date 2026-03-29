@@ -161,7 +161,7 @@ export default function Courses() {
                         to={
                           isAuthenticated
                             ? `/Enroll?course=${encodeURIComponent(course.title)}`
-                            : "/Auth"
+                            : "/auth"
                         }
                       >
                         <Button className="bg-rose-500 text-white rounded-full">

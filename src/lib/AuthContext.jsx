@@ -4,8 +4,6 @@ import {
   getSettings,
   login,
   signup,
-  requestPasswordRecovery,
-  updateUser,
   logout as netlifyLogout,
   onAuthChange,
   handleAuthCallback,
@@ -14,7 +12,6 @@ import {
 } from "@netlify/identity";
 
 const AuthContext = createContext();
-const RECOVERY_SESSION_KEY = "netlify-recovery-in-progress";
 
 function getReadableError(error) {
   if (error instanceof MissingIdentityError) {
@@ -37,7 +34,6 @@ export const AuthProvider = ({ children }) => {
   const [authSettings, setAuthSettings] = useState(null);
   const [authError, setAuthError] = useState(null);
   const [callbackNotice, setCallbackNotice] = useState(null);
-  const [needsPasswordReset, setNeedsPasswordReset] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,9 +41,6 @@ export const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       setIsLoadingAuth(true);
       setIsLoadingPublicSettings(true);
-      if (typeof window !== "undefined" && window.sessionStorage.getItem(RECOVERY_SESSION_KEY) === "1") {
-        setNeedsPasswordReset(true);
-      }
       try {
         const callbackResult = await handleAuthCallback();
         if (!isMounted) return;
@@ -55,13 +48,9 @@ export const AuthProvider = ({ children }) => {
           setCallbackNotice("Имейлът е потвърден успешно. Входът е активен.");
         }
         if (callbackResult?.type === "recovery") {
-          if (typeof window !== "undefined") {
-            window.sessionStorage.setItem(RECOVERY_SESSION_KEY, "1");
-          }
-          setNeedsPasswordReset(true);
-          setCallbackNotice("Линкът за възстановяване е валиден. Задайте нова парола.");
-          if (typeof window !== "undefined" && window.location.pathname !== "/Auth") {
-            window.location.assign("/Auth");
+          setAuthError("Възстановяването на парола е изключено. Свържете се с администратор.");
+          if (typeof window !== "undefined" && window.location.pathname.toLowerCase() !== "/auth") {
+            window.location.assign("/auth");
             return;
           }
         }
@@ -130,47 +119,14 @@ export const AuthProvider = ({ children }) => {
     try {
       await netlifyLogout();
     } finally {
-      if (typeof window !== "undefined") {
-        window.sessionStorage.removeItem(RECOVERY_SESSION_KEY);
-      }
       setUser(null);
       setIsAuthenticated(false);
-      setNeedsPasswordReset(false);
       window.location.href = "/";
     }
   };
 
-  const sendPasswordRecoveryEmail = async (email) => {
-    setAuthError(null);
-    try {
-      await requestPasswordRecovery(email);
-    } catch (error) {
-      const message = getReadableError(error);
-      setAuthError(message);
-      throw new Error(message);
-    }
-  };
-
-  const resetPassword = async (newPassword) => {
-    setAuthError(null);
-    try {
-      const updatedUser = await updateUser({ password: newPassword });
-      if (typeof window !== "undefined") {
-        window.sessionStorage.removeItem(RECOVERY_SESSION_KEY);
-      }
-      setUser(updatedUser);
-      setIsAuthenticated(Boolean(updatedUser));
-      setNeedsPasswordReset(false);
-      return updatedUser;
-    } catch (error) {
-      const message = getReadableError(error);
-      setAuthError(message);
-      throw new Error(message);
-    }
-  };
-
   const navigateToLogin = () => {
-    window.location.href = "/Auth";
+    window.location.href = "/auth";
   };
 
   return (
@@ -183,12 +139,9 @@ export const AuthProvider = ({ children }) => {
         authSettings,
         authError,
         callbackNotice,
-        needsPasswordReset,
         setAuthError,
         loginUser,
         signupUser,
-        sendPasswordRecoveryEmail,
-        resetPassword,
         logout,
         navigateToLogin,
       }}

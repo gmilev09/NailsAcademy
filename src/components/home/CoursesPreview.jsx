@@ -96,7 +96,7 @@ export default function CoursesPreview() {
                     to={
                       isAuthenticated
                         ? `/Enroll?course=${encodeURIComponent(course.title)}`
-                        : "/Auth"
+                        : "/auth"
                     }
                   >
                     <Button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full">

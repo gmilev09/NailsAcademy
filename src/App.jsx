@@ -34,6 +34,18 @@ function App() {
               </LayoutWrapper>
             } />
 
+            {/* Canonical auth path (lowercase) */}
+            {Pages.Auth && (
+              <Route
+                path="/auth"
+                element={
+                  <LayoutWrapper currentPageName="Auth">
+                    <Pages.Auth />
+                  </LayoutWrapper>
+                }
+              />
+            )}
+
             {/* Всички останали страници от твоя сайт */}
             {Object.entries(Pages).map(([path, Page]) => (
               <Route
