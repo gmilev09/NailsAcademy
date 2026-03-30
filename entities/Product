@@ -54,7 +54,6 @@ export const getProductsByCategory = (category) => {
   return mockProducts.filter(product => product.category === category);
 };
 
-// Функция за препоръчани продукти
 export const getFeaturedProducts = () => {
   return mockProducts.filter(product => product.featured);
 };
