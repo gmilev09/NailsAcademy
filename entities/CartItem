@@ -1,4 +1,3 @@
-// Изчистен модел за Елемент в количка (CartItem)
 export const CartItemSchema = {
   product_id: "",
   product_name: "",
@@ -8,14 +7,12 @@ export const CartItemSchema = {
   user_email: "" // Имейл на потребителя (незадължително за локална количка)
 };
 
-// Функция за изчисляване на общата сума на количката
 export const calculateTotal = (cartItems) => {
   return cartItems.reduce((total, item) => {
     return total + (item.product_price * item.quantity);
   }, 0);
 };
 
-// Примерни данни за тестване на дизайна в Netlify
 export const mockCartItems = [
   {
     product_id: "prod_01",
@@ -27,7 +24,6 @@ export const mockCartItems = [
   }
 ];
 
-// Локална функция за добавяне (замества API заявките на Base44)
 export const addToCartLocal = (currentCart, newProduct) => {
   const existingItem = currentCart.find(item => item.product_id === newProduct.product_id);
   
