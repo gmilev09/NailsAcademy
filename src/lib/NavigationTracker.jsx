@@ -5,8 +5,7 @@ export default function NavigationTracker() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Автоматично превъртане най-горе при всяка нова страница
-    window.scrollTo(0, 0);
+window.scrollTo(0, 0);
   }, [pathname]);
 
   return null;
