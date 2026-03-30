@@ -82,7 +82,7 @@ export default function About() {
 
               <div className="absolute -top-6 -right-6 w-64 h-64 bg-gradient-to-br from-pink-200 to-rose-200 rounded-full blur-3xl opacity-40" />
               <img
-                src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80"
+                src="https://i.postimg.cc/cLmMh4B2/4688f69d-6212-4324-818b-1fb5d9ef678e.jpg"
                 alt="Nails Academy team"
                 className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px]" />
 
