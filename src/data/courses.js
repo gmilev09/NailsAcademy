@@ -65,7 +65,7 @@ export const courses = [
     short_description:
       "Надграждащо обучение по комбиниран маникюр. Прецизност, контрол и дълготраен резултат.",
     image_url:
-      "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697ccaab3e4993397f9cee62/fa1312ba1_attO0HSrdtIgmvZjcIGW5OHzCiwuDtzIMapjbzRHgMEuF4.jpg",
+      "https://i.postimg.cc/vBW4wnrK/1dcae7bb-6074-4f1a-9e22-fd1bc098a055.jpg",
     description: `Надграждащо обучение по комбиниран маникюр
 Прецизност. Контрол. Съвършен резултат.
 Продължителност: 20 учебни часа
