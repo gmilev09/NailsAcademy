@@ -55,7 +55,7 @@ export default function InstructorSection() {
               Вашият път към <span className="font-semibold text-rose-500">успеха</span>
             </h2>
             <p className="mb-10 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">
-              В Nails Academy не просто преподаваме техники за нокти – ние изграждаме кариери. Нашите цялостни програми съчетават теория, практика и бизнес умения, за да ви подготвим за успех в beauty индустрията.
+              В Nails Academy не просто преподаваме техники за нокти – ние изграждаме кариери. Нашите цялостни програми съчетават теория, практика и бизнес умения, за да ви подготвим за успех в бюти индустрията.
             </p>
 
             <div className="grid gap-6 sm:grid-cols-2">
