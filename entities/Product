@@ -1,4 +1,3 @@
-// Изчистен модел за Продукт (Product)
 export const ProductSchema = {
   name: "",
   description: "",
@@ -11,7 +10,6 @@ export const ProductSchema = {
   featured: false
 };
 
-// Примерни данни за твоя онлайн магазин
 export const mockProducts = [
   {
     id: "p1",
@@ -51,7 +49,6 @@ export const mockProducts = [
   }
 ];
 
-// Функция за филтриране по категория
 export const getProductsByCategory = (category) => {
   if (!category || category === 'all') return mockProducts;
   return mockProducts.filter(product => product.category === category);
