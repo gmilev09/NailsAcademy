@@ -1,4 +1,3 @@
-// Изчистен модел за Записване в курс (CourseBooking)
 export const CourseBookingSchema = {
   student_name: "",
   email: "",
@@ -10,7 +9,6 @@ export const CourseBookingSchema = {
   status: "pending" // pending, confirmed, paid, completed, cancelled
 };
 
-// Примерни данни за записвания
 export const mockCourseBookings = [
   {
     id: "cb1",
@@ -25,7 +23,6 @@ export const mockCourseBookings = [
   }
 ];
 
-// Функция за обработка на ново записване (локална)
 export const bookCourse = (bookingData) => {
   console.log("Ново записване за курс е получено локално:", bookingData);
   return { 
