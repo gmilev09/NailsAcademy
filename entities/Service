@@ -1,4 +1,3 @@
-// Изчистен модел за Услуга (Service)
 export const ServiceSchema = {
   title: "", // Име на услугата или курса
   description: "",
@@ -9,7 +8,6 @@ export const ServiceSchema = {
   featured: false
 };
 
-// Примерни данни за твоите услуги
 export const mockServices = [
   {
     id: "s1",
@@ -43,7 +41,6 @@ export const mockServices = [
   }
 ];
 
-// Функция за филтриране по категория
 export const getServicesByCategory = (category) => {
   if (!category || category === 'all') return mockServices;
   return mockServices.filter(service => service.category === category);
