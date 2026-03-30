@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 
-// Твоите реални отзиви (запазени точно както са в дизайна ти)
 const reviews = [
   {
     id: 1,
