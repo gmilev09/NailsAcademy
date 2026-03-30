@@ -24,7 +24,6 @@ export default function ReviewForm() {
     e.preventDefault();
     setIsPending(true);
     
-    // Симулация на изпращане - тук по-късно ще свържем Netlify Forms
     setTimeout(() => {
       toast.success("Благодарим за отзива! Ще бъде публикуван след одобрение.");
       setFormData({ author_name: "", rating: 5, comment: "", course_title: "", author_image: "" });
