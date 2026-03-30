@@ -6,7 +6,6 @@ import pluginUnusedImports from "eslint-plugin-unused-imports";
 
 export default [
   {
-    // Променяме обхвата, за да обхване всички JS/JSX файлове в src
     files: ["src/**/*.{js,mjs,cjs,jsx}"],
     // Игнорираме само готовата папка dist
     ignores: ["dist/**"],
