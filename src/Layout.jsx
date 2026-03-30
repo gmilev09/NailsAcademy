@@ -5,7 +5,6 @@ import { Button } from "./components/ui/button";
 import {
   Menu,
   X,
-  Sparkles,
   Instagram,
   MapPin,
   Phone,
@@ -15,6 +14,7 @@ import {
   Facebook } from "lucide-react";
 import CookieBanner from "./components/CookieBanner";
 import { useAuth } from "./lib/AuthContext";
+import siteLogo from "./NailsAcademy/logo.jpg";
 
 const navLinks = [
   { name: "Начало", page: "" },
@@ -56,9 +56,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
         <nav className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-rose-400 to-pink-500 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
+              <img src={siteLogo} alt="Nails Academy" className="w-12 h-12 rounded-full object-cover" />
               <div>
                 <span className="text-xl font-light text-gray-900">Nails</span>
                 <span className="text-xl font-semibold text-rose-500 ml-1">Academy</span>
@@ -148,9 +146,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
           <div className="grid md:grid-cols-4 gap-12">
             <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-br from-rose-400 to-pink-500 rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
+                <img src={siteLogo} alt="Nails Academy" className="w-12 h-12 rounded-full object-cover" />
                 <div><span className="text-xl font-light">Nails</span><span className="text-xl font-semibold text-rose-400 ml-1">Academy</span></div>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">Професионални курсове и сертификати за маникюристи.Стартирайте кариерата си в бюти индустрията.</p>
