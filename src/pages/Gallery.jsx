@@ -23,6 +23,19 @@ import img16 from "../NailsAcademy/Gallery/472256950_620429400467006_47704443698
 import img17 from "../NailsAcademy/Gallery/472359432_619815443861735_4239270986900913185_n.jpg";
 import img18 from "../NailsAcademy/Gallery/472391424_620429390467007_1058566023368138993_n.jpg";
 import img19 from "../NailsAcademy/Gallery/587504285_18048329723675195_6197362676033051046_n.jpg";
+import img22 from "../NailsAcademy/Gallery/1a628a78-465b-4af1-abec-9f9127f6cda9.jpg";
+import img23 from "../NailsAcademy/Gallery/1b5f7468-c341-42a3-9525-d79513056d1f.jpg";
+import img24 from "../NailsAcademy/Gallery/1dcae7bb-6074-4f1a-9e22-fd1bc098a055.jpg";
+import img25 from "../NailsAcademy/Gallery/24e6fabc-9cac-4585-8500-4e277e0f1739.jpg";
+import img26 from "../NailsAcademy/Gallery/500a2540-318c-4242-9686-384c3f130e16.jpg";
+import img27 from "../NailsAcademy/Gallery/7fbc9099-8f0d-4a95-8323-33ef3778d1e3.jpg";
+import img28 from "../NailsAcademy/Gallery/8a8af2f6-3af7-4950-b66f-70d011c7eb7c.jpg";
+import img29 from "../NailsAcademy/Gallery/98313308-68ac-46f6-abc3-47ef12564f58.jpg";
+import img31 from "../NailsAcademy/Gallery/a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg";
+import img32 from "../NailsAcademy/Gallery/b5d0c5d5-21d8-4882-b828-c7dbce8cd66c.jpg";
+import img33 from "../NailsAcademy/Gallery/c97fd50d-de3c-450a-9937-2d975001c3bc.jpg";
+import img34 from "../NailsAcademy/Gallery/decd5a90-38f2-4855-acaf-179e3bfbe306.jpg";
+import img35 from "../NailsAcademy/Gallery/e1aaf6e9-032d-456a-97df-636ec298749f.jpg";
 
 const categories = [
   { value: "all", label: "Всички" },
@@ -50,6 +63,19 @@ const initialGalleryItems = [
   { id: 17, category: "manicure", title: "Ежедневен маникюр", image_url: img17 },
   { id: 18, category: "manicure", title: "Празничен маникюр", image_url: img18 },
   { id: 19, category: "manicure", title: "Празничен маникюр", image_url: img19 },
+  { id: 22, category: "manicure", title: "Маникюр дизайн", image_url: img22 },
+  { id: 23, category: "manicure", title: "Маникюр дизайн", image_url: img23 },
+  { id: 24, category: "manicure", title: "Маникюр дизайн", image_url: img24 },
+  { id: 25, category: "manicure", title: "Маникюр дизайн", image_url: img25 },
+  { id: 26, category: "manicure", title: "Маникюр дизайн", image_url: img26 },
+  { id: 27, category: "manicure", title: "Маникюр дизайн", image_url: img27 },
+  { id: 28, category: "manicure", title: "Маникюр дизайн", image_url: img28 },
+  { id: 29, category: "manicure", title: "Маникюр дизайн", image_url: img29 },
+  { id: 31, category: "manicure", title: "Маникюр дизайн", image_url: img31 },
+  { id: 32, category: "manicure", title: "Маникюр дизайн", image_url: img32 },
+  { id: 33, category: "manicure", title: "Маникюр дизайн", image_url: img33 },
+  { id: 34, category: "manicure", title: "Маникюр дизайн", image_url: img34 },
+  { id: 35, category: "manicure", title: "Маникюр дизайн", image_url: img35 },
 ];
 
 export default function Gallery() {
