@@ -1,4 +1,3 @@
-// Изчистен модел за Отзив (Review)
 export const ReviewSchema = {
   author_name: "",
   rating: 5, // оценка от 1 до 5
@@ -8,7 +7,6 @@ export const ReviewSchema = {
   approved: false // Дали е одобрен за показване
 };
 
-// Примерни данни за отзиви от клиенти
 export const mockReviews = [
   {
     id: "r1",
@@ -39,12 +37,10 @@ export const mockReviews = [
   }
 ];
 
-// Функция за извличане само на одобрените отзиви
 export const getApprovedReviews = () => {
   return mockReviews.filter(review => review.approved);
 };
 
-// Функция за добавяне на нов отзив (локално)
 export const submitReview = (reviewData) => {
   console.log("Вашият отзив е изпратен за одобрение:", reviewData);
   return { 
