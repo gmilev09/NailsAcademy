@@ -1,4 +1,3 @@
-// Изчистен модел за Поръчка (Order)
 export const OrderSchema = {
   customer_name: "",
   customer_email: "",
@@ -15,7 +14,6 @@ export const OrderSchema = {
   payment_method: "cod" // наложен платеж
 };
 
-// Примерни данни за поръчки
 export const mockOrders = [
   {
     id: "ord_101",
@@ -38,7 +36,6 @@ export const mockOrders = [
   }
 ];
 
-// Функция за създаване на поръчка (локална)
 export const placeOrder = (orderData) => {
   console.log("Поръчката е приета локално:", orderData);
   return { 
