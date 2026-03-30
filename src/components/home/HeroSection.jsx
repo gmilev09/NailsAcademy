@@ -89,7 +89,7 @@ export default function HeroSection() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-rose-200 to-pink-200 rounded-[3rem] rotate-6 scale-95" />
               <img 
-                src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80"
+                src="https://i.postimg.cc/cLmMh4B2/4688f69d-6212-4324-818b-1fb5d9ef678e.jpg"
                 alt="Обучение по маникюр"
                 className="relative rounded-[3rem] shadow-2xl w-full object-cover h-[550px]"
               />
