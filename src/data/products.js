@@ -308,6 +308,17 @@ export const shopProducts = [
     image_url: "https://ae01.alicdn.com/kf/S378316ffa374451abeb161596780849fA.jpg?width=900&height=900&hash=1800",
     description: ""
   },
+   {
+    id: "35",
+    name: "Масажни свещи ",
+    price: 15.99,
+    category: " масажни_свещи",
+    in_stock: true,
+    image_url: "https://i.postimg.cc/7L3KdG2w/12779591-3cf1-4d68-abc5-4b9abd7a5670.jpg",
+    image_url_2: "https://i.postimg.cc/3R6nVPZ0/18ba628e-8a04-4b9e-b432-10b6b2c8e45e.jpg",
+    image_url_3: "https://i.postimg.cc/xdpRNWBq/a2448134-f14c-4379-8008-2925ddc3e595.jpg",
+    description: "AYA Skin Ritual Candle "
+  },
 ];
 
 export const getProductById = (id) => shopProducts.find((product) => product.id === String(id));
