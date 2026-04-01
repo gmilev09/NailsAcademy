@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import ReviewsList from "@/components/reviews/ReviewsList";
+import ReviewsModerationPanel from "@/components/reviews/ReviewsModerationPanel";
 import { useAuth } from "@/lib/AuthContext";
+import aboutMissionImage from "@/NailsAcademy/Salon/viber_image_2026-03-31_20-45-23-923.jpg";
 
 const stats = [
 { icon: Users, value: "500+", label: "Доволни клиенти" },
@@ -165,7 +167,7 @@ export default function About() {
               viewport={{ once: true }}>
 
               <img
-                src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=600&q=80"
+                src={aboutMissionImage}
                 alt="Nail service"
                 className="rounded-3xl shadow-xl w-full object-cover h-[450px]" />
 
@@ -225,7 +227,10 @@ export default function About() {
               <ReviewsList />
             </div>
             <div className="lg:col-span-1">
-              <ReviewForm />
+              <div className="space-y-6">
+                <ReviewForm />
+                <ReviewsModerationPanel />
+              </div>
             </div>
           </div>
         </div>

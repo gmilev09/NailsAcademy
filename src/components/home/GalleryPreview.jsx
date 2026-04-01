@@ -3,11 +3,11 @@ import { Button } from "../ui/button";
 import { ArrowRight, Images } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import previewImg1 from "../../NailsAcademy/Gallery/471188084_611016031408343_4644402612634271318_n.jpg";
-import previewImg2 from "../../NailsAcademy/Gallery/472248704_619798720530074_5608259127382265833_n.jpg";
-import previewImg3 from "../../NailsAcademy/Gallery/472255776_620429253800354_3345317363692821482_n.jpg";
-import previewImg4 from "../../NailsAcademy/Gallery/472391424_620429390467007_1058566023368138993_n.jpg";
-import previewImg5 from "../../NailsAcademy/Gallery/472359432_619815443861735_4239270986900913185_n.jpg";
+import previewImg1 from "../../NailsAcademy/Gallery/e1aaf6e9-032d-456a-97df-636ec298749f.jpg";
+import previewImg2 from "../../NailsAcademy/Gallery/587504285_18048329723675195_6197362676033051046_n.jpg";
+import previewImg3 from "../../NailsAcademy/Gallery/a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg";
+import previewImg4 from "../../NailsAcademy/Gallery/c97fd50d-de3c-450a-9937-2d975001c3bc.jpg";
+import previewImg5 from "../../NailsAcademy/Gallery/258485917-105852801924671-3250341266998586301-n.jpg";
 
 const galleryImages = [
   { url: previewImg1, span: "col-span-2 row-span-2" },

@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
-import { Star, Send, Upload, X } from "lucide-react";
+import { Star, Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReviewForm() {
@@ -23,12 +23,26 @@ export default function ReviewForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsPending(true);
-    
-    setTimeout(() => {
+
+    try {
+      const response = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Неуспешно изпращане на отзива.");
+      }
+
       toast.success("Благодарим за отзива! Ще бъде публикуван след одобрение.");
       setFormData({ author_name: "", rating: 5, comment: "", course_title: "", author_image: "" });
+    } catch (error) {
+      toast.error(error?.message || "Възникна проблем при изпращането.");
+    } finally {
       setIsPending(false);
-    }, 1500);
+    }
   };
 
   return (
