@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star } from "lucide-react";
+import { toast } from "sonner";
 
-const reviews = [
+const fallbackReviews = [
   {
     id: 1,
     author_name: "Мария П.",
@@ -21,6 +23,44 @@ const reviews = [
 ];
 
 export default function ReviewsList() {
+  const [reviews, setReviews] = useState(fallbackReviews);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadApprovedReviews = async () => {
+      try {
+        const response = await fetch("/api/reviews");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Неуспешно зареждане на отзиви.");
+        }
+
+        if (!isMounted) return;
+        const loadedReviews = Array.isArray(data?.reviews) ? data.reviews : [];
+        setReviews(loadedReviews.length ? loadedReviews : fallbackReviews);
+      } catch (error) {
+        if (!isMounted) return;
+        setReviews(fallbackReviews);
+        toast.error(error?.message || "Проблем при зареждането на отзивите.");
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    loadApprovedReviews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (isLoading) {
+    return <p className="text-sm text-gray-500">Зареждане на отзиви...</p>;
+  }
+
   return (
     <div className="grid md:grid-cols-2 gap-6">
       {reviews.map((review, index) => (
