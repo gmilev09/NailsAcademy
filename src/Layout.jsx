@@ -57,7 +57,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center gap-2">
               <img src={siteLogo} alt="Nails Academy" className="w-12 h-12 rounded-full object-cover" />
-              <div className="flex flex-col items-center leading-tight">
+              <div className="flex flex-col items-start text-left leading-tight">
                 <span className="text-xl font-semibold text-rose-500">ARTAYA</span>
                 <span className="text-xl">
                   <span className="font-light text-black">Nails</span>
