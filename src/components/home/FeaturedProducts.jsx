@@ -48,7 +48,7 @@ export default function FeaturedProducts() {
   const intervalRef = useRef(null);
   const { isAuthenticated, navigateToLogin } = useAuth();
 
-  const visibleCount = 4;
+  const visibleCount = 3;
   const maxIndex = Math.max(0, productsData.length - visibleCount);
 
   const next = useCallback(() => {
