@@ -6,7 +6,7 @@ export const courses = [
     category: "manicure",
     level: "beginner",
     price: 1300,
-    duration: "80 учебни работни часа",
+    duration: "80 учебни часа",
     certificate: true,
     max_students: 2,
     short_description:
