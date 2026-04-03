@@ -29,7 +29,7 @@ export default function HeroSection() {
               transition={{ delay: 0.2 }}
             >
               <GraduationCap className="w-4 h-4 text-rose-400" />
-              <span className="text-sm font-medium text-gray-600">Професионално обучение за нокти</span>
+              <span className="text-sm font-medium text-gray-600">Професионално обучение за маникюр</span>
             </motion.div>
             
             <h1 className="text-5xl md:text-7xl font-light tracking-tight text-gray-900 mb-6">
