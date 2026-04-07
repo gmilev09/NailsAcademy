@@ -53,7 +53,6 @@ const initialGalleryItems = [
   { id: 2, category: "manicure", title: "", image_url: img2 },
   { id: 3, category: "manicure", title: "Изграждане с гел", image_url: img3 },
   { id: 4, category: "manicure", title: "Работа на курсист по време на базово обучение", image_url: img4 },
-  { id: 5, category: "manicure", title: "Класическо червено с арт декорация", image_url: img5 },
   { id: 6, category: "manicure", title: "", image_url: img6 },
   { id: 7, category: "manicure", title: "Арт дизайн", image_url: img7 },
   { id: 8, category: "manicure", title: "Гел лак с геометричен дизайн", image_url: img8 },
