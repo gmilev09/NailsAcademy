@@ -1,7 +1,7 @@
 import { useState, useEffect, useLayoutEffect } from "react";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,7 @@ const FREE_SHIPPING_THRESHOLD = 50; // Free shipping over 50 EUR
 export default function Checkout() {
   const { user, isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();
   const formatItemName = (name) => (name || "").replace(/,\s*/g, ", ");
+  const netlifyFormAttrs = { "netlify-honeypot": "bot-field" };
   const [formData, setFormData] = useState({
     customer_name: "",
     customer_email: "",
@@ -66,28 +67,7 @@ export default function Checkout() {
   const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal + shippingCost;
 
-  const createOrderMutation = useMutation({
-    mutationFn: async (orderData) => {
-      // Create order
-      const order = await base44.entities.Order.create(orderData);
-      
-      // Clear cart
-      for (const item of cartItems) {
-        await base44.entities.CartItem.delete(item.id);
-      }
-      
-      return order;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-      base44.analytics.track({ eventName: "purchase_product", properties: { total, items: cartItems.length } });
-      setOrderComplete(true);
-    },
-    onError: (error) => {
-      const message = error instanceof Error ? error.message : "Неуспешно финализиране на поръчката";
-      toast.error(message);
-    },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -110,28 +90,64 @@ export default function Checkout() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
       toast.error("Моля, попълнете всички задължителни полета");
       return;
     }
-    
-    createOrderMutation.mutate({
-      ...formData,
-      customer_email: user?.email || formData.customer_email,
-      items: cartItems.map(item => ({
+
+    setIsSubmitting(true);
+    try {
+      const items = cartItems.map((item) => ({
         product_id: item.product_id,
         name: item.product_name,
         price: item.product_price,
-        quantity: item.quantity
-      })),
-      subtotal,
-      shipping_cost: shippingCost,
-      total,
-      payment_method: "cod"
-    });
+        quantity: item.quantity,
+      }));
+
+      const payload = new URLSearchParams({
+        "form-name": "orders",
+        customer_name: formData.customer_name.trim(),
+        customer_email: (user?.email || formData.customer_email).trim(),
+        customer_phone: formData.customer_phone.trim(),
+        city: formData.city.trim(),
+        delivery_type: formData.delivery_type,
+        delivery_address: formData.delivery_address.trim(),
+        courier: formData.courier,
+        payment_method: "cod",
+        items: JSON.stringify(items),
+        agreed_to_terms: String(agreedToTerms),
+        agreed_to_privacy: String(agreedToPrivacy),
+        subtotal: subtotal.toFixed(2),
+        shipping_cost: shippingCost.toFixed(2),
+        total: total.toFixed(2),
+      });
+
+      const response = await fetch("/__forms.html", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: payload.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Неуспешно финализиране на поръчката");
+      }
+
+      for (const item of cartItems) {
+        await base44.entities.CartItem.delete(item.id);
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      base44.analytics.track({ eventName: "purchase_product", properties: { total, items: cartItems.length } });
+      setOrderComplete(true);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Неуспешно финализиране на поръчката";
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isLoadingAuth) {
@@ -216,7 +232,39 @@ export default function Checkout() {
             </h1>
           </motion.div>
 
-          <form onSubmit={handleSubmit}>
+          <form
+            name="orders"
+            method="POST"
+            data-netlify="true"
+            {...netlifyFormAttrs}
+            onSubmit={handleSubmit}
+          >
+            <input type="hidden" name="form-name" value="orders" />
+            <input type="hidden" name="delivery_type" value={formData.delivery_type} />
+            <input type="hidden" name="courier" value={formData.courier} />
+            <input type="hidden" name="payment_method" value="cod" />
+            <input
+              type="hidden"
+              name="items"
+              value={JSON.stringify(
+                cartItems.map((item) => ({
+                  product_id: item.product_id,
+                  name: item.product_name,
+                  price: item.product_price,
+                  quantity: item.quantity,
+                }))
+              )}
+            />
+            <input type="hidden" name="agreed_to_terms" value={String(agreedToTerms)} />
+            <input type="hidden" name="agreed_to_privacy" value={String(agreedToPrivacy)} />
+            <input type="hidden" name="subtotal" value={subtotal.toFixed(2)} />
+            <input type="hidden" name="shipping_cost" value={shippingCost.toFixed(2)} />
+            <input type="hidden" name="total" value={total.toFixed(2)} />
+            <p className="hidden" aria-hidden="true">
+              <label>
+                Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
+              </label>
+            </p>
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Left Column - Forms */}
               <div className="lg:col-span-2 space-y-6">
@@ -234,6 +282,7 @@ export default function Checkout() {
                     <div className="space-y-2">
                       <Label>Име и фамилия *</Label>
                       <Input
+                        name="customer_name"
                         value={formData.customer_name}
                         onChange={(e) => setFormData({...formData, customer_name: e.target.value})}
                         className={errors.customer_name ? "border-red-500" : ""}
@@ -244,6 +293,7 @@ export default function Checkout() {
                     <div className="space-y-2">
                       <Label>Телефон *</Label>
                       <Input
+                        name="customer_phone"
                         value={formData.customer_phone}
                         onChange={(e) => setFormData({...formData, customer_phone: e.target.value})}
                         className={errors.customer_phone ? "border-red-500" : ""}
@@ -254,6 +304,7 @@ export default function Checkout() {
                     <div className="md:col-span-2 space-y-2">
                       <Label>Имейл *</Label>
                       <Input
+                        name="customer_email"
                         type="email"
                         value={formData.customer_email}
                         onChange={(e) => setFormData({...formData, customer_email: e.target.value})}
@@ -283,6 +334,7 @@ export default function Checkout() {
                     <div className="space-y-2">
                       <Label>Град *</Label>
                       <Input
+                        name="city"
                         value={formData.city}
                         onChange={(e) => setFormData({...formData, city: e.target.value})}
                         className={errors.city ? "border-red-500" : ""}
@@ -316,6 +368,7 @@ export default function Checkout() {
                     <div className="space-y-2">
                       <Label>{formData.delivery_type === "office" ? "Офис на куриера *" : "Адрес за доставка *"}</Label>
                       <Input
+                        name="delivery_address"
                         value={formData.delivery_address}
                         onChange={(e) => setFormData({...formData, delivery_address: e.target.value})}
                         className={errors.delivery_address ? "border-red-500" : ""}
@@ -460,10 +513,10 @@ export default function Checkout() {
                   </p>
                   <Button 
                     type="submit"
-                    disabled={createOrderMutation.isPending}
+                    disabled={isSubmitting}
                     className="w-full mt-3 bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white rounded-full py-6"
                   >
-                    {createOrderMutation.isPending ? (
+                    {isSubmitting ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                         Обработва се...

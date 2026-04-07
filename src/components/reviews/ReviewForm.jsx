@@ -7,6 +7,7 @@ import { Star, Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReviewForm() {
+  const netlifyFormAttrs = { "netlify-honeypot": "bot-field" };
   const [formData, setFormData] = useState({
     author_name: "",
     rating: 5,
@@ -25,15 +26,23 @@ export default function ReviewForm() {
     setIsPending(true);
 
     try {
-      const response = await fetch("/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const payload = new URLSearchParams({
+        "form-name": "reviews",
+        author_name: formData.author_name.trim(),
+        rating: String(formData.rating),
+        comment: formData.comment.trim(),
+        course_title: formData.course_title.trim(),
+        author_image: formData.author_image.trim(),
       });
-      const data = await response.json();
+
+      const response = await fetch("/__forms.html", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: payload.toString(),
+      });
 
       if (!response.ok) {
-        throw new Error(data?.error || "Неуспешно изпращане на отзива.");
+        throw new Error("Неуспешно изпращане на отзива.");
       }
 
       toast.success("Благодарим за отзива! Ще бъде публикуван след одобрение.");
@@ -46,13 +55,28 @@ export default function ReviewForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 max-w-xl mx-auto">
+    <form
+      name="reviews"
+      method="POST"
+      data-netlify="true"
+      {...netlifyFormAttrs}
+      onSubmit={handleSubmit}
+      className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 max-w-xl mx-auto"
+    >
+      <input type="hidden" name="form-name" value="reviews" />
+      <input type="hidden" name="rating" value={String(formData.rating)} />
+      <p className="hidden" aria-hidden="true">
+        <label>
+          Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
+        </label>
+      </p>
       <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Оставете отзив</h3>
       
       <div className="space-y-4">
         <div className="space-y-2">
           <Label>Вашето име *</Label>
           <Input 
+            name="author_name"
             placeholder="Име и фамилия"
             value={formData.author_name}
             onChange={(e) => setFormData({ ...formData, author_name: e.target.value })}
@@ -82,6 +106,7 @@ export default function ReviewForm() {
         <div className="space-y-2">
           <Label>Курс (незадължително)</Label>
           <Input 
+            name="course_title"
             placeholder="Кой курс посетихте?"
             value={formData.course_title}
             onChange={(e) => setFormData({ ...formData, course_title: e.target.value })}
@@ -92,6 +117,7 @@ export default function ReviewForm() {
         <div className="space-y-2">
           <Label>Вашият отзив *</Label>
           <Textarea 
+            name="comment"
             placeholder="Споделете вашето мнение..."
             value={formData.comment}
             onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
@@ -106,6 +132,7 @@ export default function ReviewForm() {
             onClick={handleImagePlaceholder}
             className="flex items-center gap-2 px-4 py-2 border border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-rose-300 transition-colors"
           >
+            <input type="hidden" name="author_image" value={formData.author_image} />
             <Upload className="w-4 h-4 text-gray-400" />
             <span className="text-sm text-gray-500">Добавете снимка</span>
           </div>
