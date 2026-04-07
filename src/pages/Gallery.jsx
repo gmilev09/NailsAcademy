@@ -45,6 +45,11 @@ const categories = [
 
 const initialGalleryItems = [
   { id: 1, category: "manicure", title: "Гел лак котешко око", image_url: img1 },
+  { id: 33, category: "manicure", title: "Класически червен маникюр с арт дизайн", image_url: img33 },
+  { id: 26, category: "manicure", title: "Изграждане с горни форми", image_url: img26 },
+  { id: 31, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img31 },
+  { id: 35, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img35 },
+  { id: 27, category: "manicure", title: "Арт дизайн", image_url: img27 },
   { id: 2, category: "manicure", title: "", image_url: img2 },
   { id: 3, category: "manicure", title: "Изграждане с гел", image_url: img3 },
   { id: 4, category: "manicure", title: "Работа на курсист по време на базово обучение", image_url: img4 },
@@ -67,15 +72,10 @@ const initialGalleryItems = [
   { id: 23, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img23 },
   { id: 24, category: "manicure", title: "Изграждане с горни форми", image_url: img24 },
   { id: 25, category: "manicure", title: "", image_url: img25 },
-  { id: 26, category: "manicure", title: "Изграждане с горни форми", image_url: img26 },
-  { id: 27, category: "manicure", title: "Арт дизайн", image_url: img27 },
   { id: 28, category: "manicure", title: "Нежен френски маникюр", image_url: img28 },
   { id: 29, category: "manicure", title: "", image_url: img29 },
-  { id: 31, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img31 },
   { id: 32, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img32 },
-  { id: 33, category: "manicure", title: "Класически червен маникюр с арт дизайн", image_url: img33 },
   { id: 34, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img34 },
-  { id: 35, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img35 },
 ];
 
 export default function Gallery() {
