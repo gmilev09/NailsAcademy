@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ShoppingBag, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { shopProducts } from "../../data/products";
 import { addProductToCart } from "@/lib/cart";
 import { useAuth } from "@/lib/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-const productsData = shopProducts;
+const featuredProductIds = ["1", "3", "4", "2", "25", "26"];
+const productsData = featuredProductIds
+  .map((id) => shopProducts.find((product) => product.id === id))
+  .filter(Boolean);
 
 function AddToCartButton({ product, isAuthenticated, navigateToLogin }) {
   const [added, setAdded] = useState(false);
@@ -45,28 +49,97 @@ function AddToCartButton({ product, isAuthenticated, navigateToLogin }) {
 export default function FeaturedProducts() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [slideDirection, setSlideDirection] = useState(0);
+  const [pendingIndex, setPendingIndex] = useState(null);
   const intervalRef = useRef(null);
+  const resumeTimeoutRef = useRef(null);
+  const touchStartXRef = useRef(0);
+  const touchEndXRef = useRef(0);
   const { isAuthenticated, navigateToLogin } = useAuth();
+  const isMobile = useIsMobile();
 
-  const visibleCount = 3;
+  const visibleCount = isMobile ? 2 : 4;
   const maxIndex = Math.max(0, productsData.length - visibleCount);
+  const isAnimating = slideDirection !== 0;
+
+  const getWindowProducts = useCallback(
+    (startIndex) => productsData.slice(startIndex, startIndex + visibleCount),
+    [visibleCount]
+  );
+
+  const beginSlide = useCallback(
+    (direction) => {
+      if (isAnimating || maxIndex <= 0) return;
+
+      const targetIndex =
+        direction === 1
+          ? (currentIndex >= maxIndex ? 0 : currentIndex + 1)
+          : (currentIndex <= 0 ? maxIndex : currentIndex - 1);
+
+      setPendingIndex(targetIndex);
+      setSlideDirection(direction);
+    },
+    [currentIndex, isAnimating, maxIndex]
+  );
 
   const next = useCallback(() => {
-    setCurrentIndex(i => (i >= maxIndex ? 0 : i + 1));
-  }, [maxIndex]);
+    beginSlide(1);
+  }, [beginSlide]);
 
   const prev = useCallback(() => {
-    setCurrentIndex(i => (i <= 0 ? maxIndex : i - 1));
-  }, [maxIndex]);
+    beginSlide(-1);
+  }, [beginSlide]);
 
   useEffect(() => {
-    if (!isPaused && productsData.length > 1) {
-      intervalRef.current = setInterval(next, 3500);
+    if (!isPaused && !isAnimating && productsData.length > 1 && maxIndex > 0) {
+      intervalRef.current = setInterval(next, 4500);
     }
     return () => clearInterval(intervalRef.current);
-  }, [isPaused, next]);
+  }, [isPaused, isAnimating, maxIndex, next]);
 
-  const displayProducts = productsData.slice(currentIndex, currentIndex + 4);
+  useEffect(() => {
+    setCurrentIndex((index) => Math.min(index, maxIndex));
+  }, [maxIndex]);
+
+  useEffect(() => () => clearTimeout(resumeTimeoutRef.current), []);
+
+  const pauseAndResumeAutoplay = () => {
+    clearTimeout(resumeTimeoutRef.current);
+    setIsPaused(true);
+    resumeTimeoutRef.current = setTimeout(() => setIsPaused(false), 2500);
+  };
+
+  const handleTouchStart = (event) => {
+    touchStartXRef.current = event.changedTouches[0]?.clientX ?? 0;
+    touchEndXRef.current = touchStartXRef.current;
+    pauseAndResumeAutoplay();
+  };
+
+  const handleTouchMove = (event) => {
+    touchEndXRef.current = event.changedTouches[0]?.clientX ?? touchEndXRef.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (isAnimating) return;
+    const deltaX = touchStartXRef.current - touchEndXRef.current;
+    if (Math.abs(deltaX) < 50) return;
+    if (deltaX > 0) next();
+    if (deltaX < 0) prev();
+  };
+
+  const currentProducts = getWindowProducts(currentIndex);
+  const incomingProducts = pendingIndex === null ? [] : getWindowProducts(pendingIndex);
+  const isMobileGrid = isMobile ? "grid-cols-2" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+  const slidePages = slideDirection === -1 ? [incomingProducts, currentProducts] : [currentProducts, incomingProducts];
+  const slideFrom = slideDirection === -1 ? "-100%" : "0%";
+  const slideTo = slideDirection === -1 ? "0%" : "-100%";
+
+  const handleSlideComplete = () => {
+    if (pendingIndex === null || slideDirection === 0) return;
+    setCurrentIndex(pendingIndex);
+    setPendingIndex(null);
+    setSlideDirection(0);
+  };
 
   return (
     <section
@@ -87,44 +160,85 @@ export default function FeaturedProducts() {
         </motion.div>
 
         <div className="relative">
-          {productsData.length > 4 && (
+          {productsData.length > visibleCount && (
             <>
-              <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors"><ChevronLeft className="w-5 h-5 text-gray-600" /></button>
-              <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors"><ChevronRight className="w-5 h-5 text-gray-600" /></button>
+              <button onClick={prev} disabled={isAnimating} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><ChevronLeft className="w-5 h-5 text-gray-600" /></button>
+              <button onClick={next} disabled={isAnimating} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-rose-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><ChevronRight className="w-5 h-5 text-gray-600" /></button>
             </>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-hidden">
-            <AnimatePresence mode="popLayout">
-              {displayProducts.map((product, idx) => (
-                <motion.div
-                  key={`${product.id}`}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50"
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  transition={{ duration: 0.3, delay: idx * 0.05 }}
-                >
-                  <div className="relative h-48 bg-gray-100">
-                    <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+          <div
+            className="overflow-hidden touch-pan-y"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {isAnimating ? (
+              <motion.div
+                key={`${currentIndex}-${pendingIndex}-${slideDirection}`}
+                className="flex w-[200%]"
+                initial={{ x: slideFrom }}
+                animate={{ x: slideTo }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                onAnimationComplete={handleSlideComplete}
+              >
+                {slidePages.map((products, pageIdx) => (
+                  <div key={pageIdx} className={`w-1/2 shrink-0 grid gap-6 ${isMobileGrid}`}>
+                    {products.map((product) => (
+                      <div
+                        key={`${pageIdx}-${product.id}`}
+                        className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50"
+                      >
+                        <div className="relative h-48 bg-gray-100">
+                          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-5">
+                          <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
+                          <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-rose-500">
+                              {`€${product.price}`}
+                            </span>
+                            <AddToCartButton
+                              product={product}
+                              isAuthenticated={isAuthenticated}
+                              navigateToLogin={navigateToLogin}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
-                    <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-rose-500">
-                        {`€${product.price}`}
-                      </span>
-                      <AddToCartButton
-                        product={product}
-                        isAuthenticated={isAuthenticated}
-                        navigateToLogin={navigateToLogin}
-                      />
+                ))}
+              </motion.div>
+            ) : (
+              <div className={`grid gap-6 ${isMobileGrid}`}>
+                {currentProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50"
+                  >
+                    <div className="relative h-48 bg-gray-100">
+                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
+                      <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-bold text-rose-500">
+                          {`€${product.price}`}
+                        </span>
+                        <AddToCartButton
+                          product={product}
+                          isAuthenticated={isAuthenticated}
+                          navigateToLogin={navigateToLogin}
+                        />
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex justify-center mt-12">
