@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { GraduationCap, ArrowRight, Award, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
+import heroImage from "@/NailsAcademy/Salon/884c3f0c-fa89-4cc0-8dd4-346ae9fec656.jpg";
 
 export default function HeroSection() {
   const { isAuthenticated } = useAuth();
@@ -89,7 +90,7 @@ export default function HeroSection() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-rose-200 to-pink-200 rounded-[3rem] rotate-6 scale-95" />
               <img 
-                src="https://i.postimg.cc/cLmMh4B2/4688f69d-6212-4324-818b-1fb5d9ef678e.jpg"
+                src={heroImage}
                 alt="Обучение по маникюр"
                 className="relative rounded-[3rem] shadow-2xl w-full object-cover h-[550px]"
               />

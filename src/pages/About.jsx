@@ -9,6 +9,7 @@ import ReviewsList from "@/components/reviews/ReviewsList";
 import ReviewsModerationPanel from "@/components/reviews/ReviewsModerationPanel";
 import { useAuth } from "@/lib/AuthContext";
 import aboutMissionImage from "@/NailsAcademy/Salon/viber_image_2026-03-31_20-45-23-923.jpg";
+import aboutHeroImage from "@/NailsAcademy/Salon/884c3f0c-fa89-4cc0-8dd4-346ae9fec656.jpg";
 
 const stats = [
 { icon: Users, value: "500+", label: "Доволни клиенти" },
@@ -84,7 +85,7 @@ export default function About() {
 
               <div className="absolute -top-6 -right-6 w-64 h-64 bg-gradient-to-br from-pink-200 to-rose-200 rounded-full blur-3xl opacity-40" />
               <img
-                src="https://i.postimg.cc/cLmMh4B2/4688f69d-6212-4324-818b-1fb5d9ef678e.jpg"
+                src={aboutHeroImage}
                 alt="Nails Academy team"
                 className="relative rounded-3xl shadow-2xl w-full object-cover h-[500px]" />
 

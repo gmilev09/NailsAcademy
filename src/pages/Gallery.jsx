@@ -36,6 +36,7 @@ import img32 from "../NailsAcademy/Gallery/b5d0c5d5-21d8-4882-b828-c7dbce8cd66c.
 import img33 from "../NailsAcademy/Gallery/c97fd50d-de3c-450a-9937-2d975001c3bc.jpg";
 import img34 from "../NailsAcademy/Gallery/decd5a90-38f2-4855-acaf-179e3bfbe306.jpg";
 import img35 from "../NailsAcademy/Gallery/e1aaf6e9-032d-456a-97df-636ec298749f.jpg";
+import img36 from "../NailsAcademy/Gallery/6e1a355d-bb92-4cf8-9b97-684cda07154c.jpg";
 
 const categories = [
   { value: "all", label: "Всички" },
@@ -75,6 +76,7 @@ const initialGalleryItems = [
   { id: 29, category: "manicure", title: "", image_url: img29 },
   { id: 32, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img32 },
   { id: 34, category: "manicure", title: "Работа на наш курсист по време на базово обучение", image_url: img34 },
+  { id: 36, category: "manicure", title: "", image_url: img36 },
 ];
 
 export default function Gallery() {
