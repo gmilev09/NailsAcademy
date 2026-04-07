@@ -10,8 +10,16 @@ import { courses, normalizeCourseTitle } from "../data/courses";
 export default function Enroll() {
   const [searchParams] = useSearchParams();
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [contactData, setContactData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const phoneDisplay = "+359 89 5737470";
   const phoneHref = "tel:+359895737470";
+  const netlifyFormAttrs = { "netlify-honeypot": "bot-field" };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,12 +43,49 @@ export default function Enroll() {
     setSelectedCourse(course);
   };
 
-  const handleEnroll = () => {
+  const handleEnroll = async (e) => {
+    e.preventDefault();
+
     if (!selectedCourse) {
       toast.error("Изберете курс.");
       return;
     }
-    window.location.href = phoneHref;
+
+    if (!contactData.name.trim() || !contactData.email.trim() || !contactData.phone.trim()) {
+      toast.error("Попълнете име, имейл и телефон.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const payload = new URLSearchParams({
+        "form-name": "enrollment",
+        name: contactData.name.trim(),
+        email: contactData.email.trim(),
+        phone: contactData.phone.trim(),
+        course_title: selectedCourse.title,
+        course_price: String(selectedCourse.price),
+        course_duration: selectedCourse.duration,
+        message: contactData.message.trim(),
+      });
+
+      const response = await fetch("/__forms.html", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: payload.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
+
+      toast.success("Заявката за записване е изпратена успешно.");
+      setContactData({ name: "", email: "", phone: "", message: "" });
+    } catch {
+      toast.error("Неуспешно изпращане. Моля, опитайте отново.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -94,21 +139,77 @@ export default function Enroll() {
               ))}
             </div>
 
-            <div className="bg-gray-50 rounded-3xl p-6 md:p-8 text-center border border-pink-100">
-              <p className="text-gray-600 text-lg mb-6">
-                За записване, моля свържете се с нас по телефона:
+            <form
+              name="enrollment"
+              method="POST"
+              data-netlify="true"
+              {...netlifyFormAttrs}
+              onSubmit={handleEnroll}
+              className="bg-gray-50 rounded-3xl p-6 md:p-8 text-center border border-pink-100"
+            >
+              <input type="hidden" name="form-name" value="enrollment" />
+              <input type="hidden" name="course_title" value={selectedCourse?.title || ""} />
+              <input type="hidden" name="course_price" value={selectedCourse?.price || ""} />
+              <input type="hidden" name="course_duration" value={selectedCourse?.duration || ""} />
+              <p className="hidden" aria-hidden="true">
+                <label>
+                  Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
+                </label>
               </p>
+              <p className="text-gray-600 text-lg mb-6">
+                Попълнете данни за записване и ще се свържем с вас.
+              </p>
+              <div className="space-y-3 text-left mb-5">
+                <input
+                  name="name"
+                  type="text"
+                  placeholder="Име и фамилия *"
+                  value={contactData.name}
+                  onChange={(e) => setContactData((prev) => ({ ...prev, name: e.target.value }))}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                  required
+                />
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Имейл *"
+                  value={contactData.email}
+                  onChange={(e) => setContactData((prev) => ({ ...prev, email: e.target.value }))}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                  required
+                />
+                <input
+                  name="phone"
+                  type="tel"
+                  placeholder="Телефон *"
+                  value={contactData.phone}
+                  onChange={(e) => setContactData((prev) => ({ ...prev, phone: e.target.value }))}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+                  required
+                />
+                <textarea
+                  name="message"
+                  placeholder="Съобщение (незадължително)"
+                  value={contactData.message}
+                  onChange={(e) => setContactData((prev) => ({ ...prev, message: e.target.value }))}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm min-h-[90px] focus:outline-none focus:ring-2 focus:ring-rose-300"
+                />
+              </div>
               <Button
-                type="button"
-                onClick={handleEnroll}
+                type="submit"
                 className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full py-7 text-lg font-bold shadow-lg hover:shadow-xl transition-shadow"
-                disabled={!selectedCourse}
+                disabled={!selectedCourse || isSubmitting}
               >
                 <Phone className="w-5 h-5 mr-2" />
-                Свържете се с нас
+                {isSubmitting ? "Изпращане..." : "Запиши ме"}
               </Button>
-              <p className="text-2xl text-gray-400 mt-6 tracking-wide">{phoneDisplay}</p>
-            </div>
+              <p className="text-sm text-gray-500 mt-4">
+                Може и директно обаждане:{" "}
+                <a href={phoneHref} className="font-semibold text-rose-500 hover:underline">
+                  {phoneDisplay}
+                </a>
+              </p>
+            </form>
           </motion.div>
 
           {/* Preview */}
