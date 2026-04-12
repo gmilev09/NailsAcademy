@@ -189,7 +189,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
           </div>
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col items-center space-y-4">
   <p className="text-sm text-gray-500">
-    © {new Date().getFullYear()} Nails Academy. Всички права запазени.
+    © {new Date().getFullYear()} ARTAYA Nails Academy. Всички права запазени.
   </p>
   
   <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-400">
