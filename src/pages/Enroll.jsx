@@ -19,7 +19,6 @@ export default function Enroll() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const phoneDisplay = "+359 89 5737470";
   const phoneHref = "tel:+359895737470";
-  const netlifyFormAttrs = { "netlify-honeypot": "bot-field" };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -58,25 +57,23 @@ export default function Enroll() {
 
     setIsSubmitting(true);
     try {
-      const payload = new URLSearchParams({
-        "form-name": "enrollment",
-        name: contactData.name.trim(),
-        email: contactData.email.trim(),
-        phone: contactData.phone.trim(),
-        course_title: selectedCourse.title,
-        course_price: String(selectedCourse.price),
-        course_duration: selectedCourse.duration,
-        message: contactData.message.trim(),
-      });
-
-      const response = await fetch("/__forms.html", {
+      const response = await fetch("/api/enrollments", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: payload.toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_name: contactData.name.trim(),
+          email: contactData.email.trim(),
+          phone: contactData.phone.trim(),
+          course_title: selectedCourse.title,
+          course_price: Number(selectedCourse.price) || 0,
+          course_duration: selectedCourse.duration,
+          message: contactData.message.trim(),
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Form submission failed");
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || "Form submission failed");
       }
 
       toast.success("Заявката за записване е изпратена успешно.");
@@ -142,20 +139,9 @@ export default function Enroll() {
             <form
               name="enrollment"
               method="POST"
-              data-netlify="true"
-              {...netlifyFormAttrs}
               onSubmit={handleEnroll}
               className="bg-gray-50 rounded-3xl p-6 md:p-8 text-center border border-pink-100"
             >
-              <input type="hidden" name="form-name" value="enrollment" />
-              <input type="hidden" name="course_title" value={selectedCourse?.title || ""} />
-              <input type="hidden" name="course_price" value={selectedCourse?.price || ""} />
-              <input type="hidden" name="course_duration" value={selectedCourse?.duration || ""} />
-              <p className="hidden" aria-hidden="true">
-                <label>
-                  Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
-                </label>
-              </p>
               <p className="text-gray-600 text-lg mb-6">
                 Попълнете данни за записване и ще се свържем с вас.
               </p>

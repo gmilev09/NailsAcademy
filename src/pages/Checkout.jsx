@@ -29,7 +29,6 @@ const FREE_SHIPPING_THRESHOLD = 50; // Free shipping over 50 EUR
 export default function Checkout() {
   const { user, isAuthenticated, isLoadingAuth, navigateToLogin } = useAuth();
   const formatItemName = (name) => (name || "").replace(/,\s*/g, ", ");
-  const netlifyFormAttrs = { "netlify-honeypot": "bot-field" };
   const [formData, setFormData] = useState({
     customer_name: "",
     customer_email: "",
@@ -107,8 +106,10 @@ export default function Checkout() {
         quantity: item.quantity,
       }));
 
-      const payload = new URLSearchParams({
-        "form-name": "orders",
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
         customer_name: formData.customer_name.trim(),
         customer_email: (user?.email || formData.customer_email).trim(),
         customer_phone: formData.customer_phone.trim(),
@@ -123,16 +124,12 @@ export default function Checkout() {
         subtotal: subtotal.toFixed(2),
         shipping_cost: shippingCost.toFixed(2),
         total: total.toFixed(2),
-      });
-
-      const response = await fetch("/__forms.html", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: payload.toString(),
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Неуспешно финализиране на поръчката");
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || "Неуспешно финализиране на поръчката");
       }
 
       for (const item of cartItems) {
@@ -235,36 +232,8 @@ export default function Checkout() {
           <form
             name="orders"
             method="POST"
-            data-netlify="true"
-            {...netlifyFormAttrs}
             onSubmit={handleSubmit}
           >
-            <input type="hidden" name="form-name" value="orders" />
-            <input type="hidden" name="delivery_type" value={formData.delivery_type} />
-            <input type="hidden" name="courier" value={formData.courier} />
-            <input type="hidden" name="payment_method" value="cod" />
-            <input
-              type="hidden"
-              name="items"
-              value={JSON.stringify(
-                cartItems.map((item) => ({
-                  product_id: item.product_id,
-                  name: item.product_name,
-                  price: item.product_price,
-                  quantity: item.quantity,
-                }))
-              )}
-            />
-            <input type="hidden" name="agreed_to_terms" value={String(agreedToTerms)} />
-            <input type="hidden" name="agreed_to_privacy" value={String(agreedToPrivacy)} />
-            <input type="hidden" name="subtotal" value={subtotal.toFixed(2)} />
-            <input type="hidden" name="shipping_cost" value={shippingCost.toFixed(2)} />
-            <input type="hidden" name="total" value={total.toFixed(2)} />
-            <p className="hidden" aria-hidden="true">
-              <label>
-                Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
-              </label>
-            </p>
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Left Column - Forms */}
               <div className="lg:col-span-2 space-y-6">
