@@ -16,6 +16,21 @@ function formatOrderItems(items = []) {
     .join("\n");
 }
 
+function normalizeOrderItems(items) {
+  if (Array.isArray(items)) return items;
+
+  if (typeof items === "string") {
+    try {
+      const parsed = JSON.parse(items);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
 async function sendAdminOrderNotification(order) {
   const resendApiKey = Netlify.env.get("RESEND_API_KEY");
   if (!resendApiKey) {
@@ -93,8 +108,9 @@ export default async (req, context) => {
       total,
       payment_method,
     } = body;
+    const normalizedItems = normalizeOrderItems(items);
 
-    if (!customer_name || !customer_phone || !items?.length) {
+    if (!customer_name || !customer_phone || !normalizedItems.length) {
       return Response.json(
         { error: "Missing required fields: customer_name, customer_phone, items" },
         { status: 400 }
@@ -112,7 +128,7 @@ export default async (req, context) => {
       delivery_type: delivery_type || "office",
       delivery_address: delivery_address || "",
       courier: courier || "econt",
-      items,
+      items: normalizedItems,
       subtotal: Number(subtotal) || 0,
       shipping_cost: Number(shipping_cost) || 0,
       total: Number(total) || 0,

@@ -118,7 +118,7 @@ export default function Checkout() {
         delivery_address: formData.delivery_address.trim(),
         courier: formData.courier,
         payment_method: "cod",
-        items: JSON.stringify(items),
+        items,
         agreed_to_terms: String(agreedToTerms),
         agreed_to_privacy: String(agreedToPrivacy),
         subtotal: subtotal.toFixed(2),
