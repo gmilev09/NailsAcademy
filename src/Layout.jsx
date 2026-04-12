@@ -150,7 +150,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
             <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-6">
                 <img src={siteLogo} alt="Nails Academy" className="w-12 h-12 rounded-full object-cover" />
-                <div><span className="text-xl font-light">Nails</span><span className="text-xl font-semibold text-rose-400 ml-1">Academy</span></div>
+                <div><span className="text-xl font-light">ARTAYA</span><span className="text-xl font-semibold text-rose-400 ml-1">Nails Academy</span></div>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">Професионални курсове и сертификати за маникюристи.Стартирайте кариерата си в бюти индустрията.</p>
               <div className="flex gap-3">
