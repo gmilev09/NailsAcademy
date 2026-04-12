@@ -43,15 +43,13 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/contact", {
+      const form = e.currentTarget;
+      const formDataPayload = new FormData(form);
+
+      const response = await fetch("/__forms.html", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          subject: formData.subject.trim(),
-          message: formData.message.trim(),
-        }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formDataPayload).toString(),
       });
 
       if (!response.ok) {
@@ -150,9 +148,18 @@ export default function Contact() {
                 <form
                   name="contact"
                   method="POST"
+                  data-netlify="true"
+                  netlify-honeypot="bot-field"
                   onSubmit={handleSubmit}
                   className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-pink-50 space-y-6"
                 >
+                  <input type="hidden" name="form-name" value="contact" />
+                  <p className="hidden" aria-hidden="true">
+                    <label>
+                      Не попълвайте това поле:
+                      <input name="bot-field" />
+                    </label>
+                  </p>
                   <h2 className="text-2xl font-semibold text-gray-900 mb-8 italic">Изпратете ни съобщение</h2>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
