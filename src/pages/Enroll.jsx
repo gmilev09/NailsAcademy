@@ -57,18 +57,17 @@ export default function Enroll() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/enrollments", {
+      const form = e.currentTarget;
+      const formDataPayload = new FormData(form);
+
+      formDataPayload.set("course_title", selectedCourse.title);
+      formDataPayload.set("course_price", String(Number(selectedCourse.price) || 0));
+      formDataPayload.set("course_duration", selectedCourse.duration || "");
+
+      const response = await fetch("/__forms.html", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          student_name: contactData.name.trim(),
-          email: contactData.email.trim(),
-          phone: contactData.phone.trim(),
-          course_title: selectedCourse.title,
-          course_price: Number(selectedCourse.price) || 0,
-          course_duration: selectedCourse.duration,
-          message: contactData.message.trim(),
-        }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formDataPayload).toString(),
       });
 
       if (!response.ok) {
@@ -139,9 +138,21 @@ export default function Enroll() {
             <form
               name="enrollment"
               method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
               onSubmit={handleEnroll}
               className="bg-gray-50 rounded-3xl p-6 md:p-8 text-center border border-pink-100"
             >
+              <input type="hidden" name="form-name" value="enrollment" />
+              <input type="hidden" name="course_title" value={selectedCourse?.title || ""} />
+              <input type="hidden" name="course_price" value={selectedCourse ? String(Number(selectedCourse.price) || 0) : ""} />
+              <input type="hidden" name="course_duration" value={selectedCourse?.duration || ""} />
+              <p className="hidden" aria-hidden="true">
+                <label>
+                  Не попълвайте това поле:
+                  <input name="bot-field" />
+                </label>
+              </p>
               <p className="text-gray-600 text-lg mb-6">
                 Попълнете данни за записване и ще се свържем с вас.
               </p>
