@@ -34,9 +34,9 @@ export default function HeroSection() {
             </motion.div>
             
             <h1 className="text-5xl md:text-7xl font-light tracking-tight text-gray-900 mb-6">
-              <span className="block">Nails</span>
+              <span className="block">ARTAYA</span>
               <span className="block font-semibold bg-gradient-to-r from-rose-400 via-pink-400 to-rose-500 bg-clip-text text-transparent">
-                Academy
+                Nails Academy
               </span>
             </h1>
             
