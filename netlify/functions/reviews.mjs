@@ -3,6 +3,7 @@ import { getUser } from "@netlify/identity";
 
 const REVIEWS_STORE = { name: "reviews", consistency: "strong" };
 const DEFAULT_ADMIN_EMAIL = "bozhinova.nails.academy@gmail.com";
+const DEFAULT_FROM_EMAIL = "onboarding@resend.dev";
 
 function jsonResponse(body, status = 200) {
   return Response.json(body, { status });
@@ -11,6 +12,60 @@ function jsonResponse(body, status = 200) {
 function normalizeText(value, maxLength = 5000) {
   if (typeof value !== "string") return "";
   return value.trim().slice(0, maxLength);
+}
+
+function normalizeRating(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return 5;
+  return Math.max(1, Math.min(5, Math.round(parsed)));
+}
+
+function normalizeIsoDate(value) {
+  const text = normalizeText(value, 64);
+  if (!text) return "";
+  const date = new Date(text);
+  return Number.isNaN(date.getTime()) ? "" : date.toISOString();
+}
+
+function normalizeStoredReview(rawReview, fallbackId = "") {
+  if (!rawReview || typeof rawReview !== "object") return null;
+
+  const id = normalizeText(rawReview.id || fallbackId, 160);
+  if (!id) return null;
+
+  const author_name = normalizeText(rawReview.author_name ?? rawReview.authorName, 120);
+  const comment = normalizeText(rawReview.comment ?? rawReview.message, 2000);
+  const course_title = normalizeText(rawReview.course_title ?? rawReview.courseTitle, 160);
+  const author_image = normalizeText(rawReview.author_image ?? rawReview.authorImage, 1000);
+
+  if (!author_name || !comment) return null;
+
+  const rawStatus = normalizeText(rawReview.status, 24).toLowerCase();
+  let status = "pending";
+  if (["pending", "approved", "rejected"].includes(rawStatus)) {
+    status = rawStatus;
+  } else if (rawReview.approved === true) {
+    status = "approved";
+  }
+
+  const created_at = normalizeIsoDate(rawReview.created_at ?? rawReview.createdAt) || new Date().toISOString();
+  const approved_at = normalizeIsoDate(rawReview.approved_at ?? rawReview.approvedAt) || null;
+  const rejected_at = normalizeIsoDate(rawReview.rejected_at ?? rawReview.rejectedAt) || null;
+  const moderated_by = normalizeText(rawReview.moderated_by ?? rawReview.moderatedBy, 320) || null;
+
+  return {
+    id,
+    author_name,
+    rating: normalizeRating(rawReview.rating),
+    comment,
+    course_title,
+    author_image,
+    status,
+    created_at,
+    approved_at,
+    rejected_at,
+    moderated_by,
+  };
 }
 
 function parseAllowedModerators() {
@@ -33,13 +88,62 @@ function isModerator(user) {
   return moderators.has(String(user.email).toLowerCase());
 }
 
+async function sendReviewNotification(review) {
+  const resendApiKey = Netlify.env.get("RESEND_API_KEY");
+  if (!resendApiKey) {
+    return;
+  }
+
+  const toEmail = Netlify.env.get("REVIEW_NOTIFICATION_TO") || DEFAULT_ADMIN_EMAIL;
+  const fromEmail = Netlify.env.get("REVIEW_NOTIFICATION_FROM") || DEFAULT_FROM_EMAIL;
+
+  const payload = {
+    from: fromEmail,
+    to: [toEmail],
+    subject: `Нов отзив от ${review.author_name}`,
+    text: [
+      "Получен е нов отзив, който чака модерация.",
+      "",
+      `Име: ${review.author_name}`,
+      `Оценка: ${review.rating}/5`,
+      `Курс: ${review.course_title || "не е посочен"}`,
+      "",
+      "Коментар:",
+      review.comment,
+      "",
+      `ID: ${review.id}`,
+      `Създадено: ${review.created_at}`,
+    ].join("\n"),
+  };
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Resend API error (${response.status}): ${errorText}`);
+  }
+}
+
 async function listReviews(store) {
   const { blobs } = await store.list();
-  const reviews = await Promise.all(blobs.map((blob) => store.get(blob.key, { type: "json" })));
+  const reviews = await Promise.all(
+    blobs.map(async (blob) => {
+      const rawReview = await store.get(blob.key, { type: "json" });
+      return normalizeStoredReview(rawReview, blob.key);
+    })
+  );
+
   return reviews.filter(Boolean);
 }
 
-export default async (req) => {
+export default async (req, context) => {
   const store = getStore(REVIEWS_STORE);
 
   if (req.method === "POST") {
@@ -49,7 +153,7 @@ export default async (req) => {
     const comment = normalizeText(body?.comment, 2000);
     const course_title = normalizeText(body?.course_title, 160);
     const author_image = normalizeText(body?.author_image, 1000);
-    const rating = Math.max(1, Math.min(5, Number(body?.rating) || 0));
+    const rating = normalizeRating(body?.rating);
 
     if (!author_name || !comment || !Number.isFinite(rating)) {
       return jsonResponse({ error: "Missing required fields: author_name, comment, rating" }, 400);
@@ -71,6 +175,12 @@ export default async (req) => {
     };
 
     await store.setJSON(id, review);
+    context.waitUntil(
+      sendReviewNotification(review).catch((error) => {
+        console.error("Failed to send review notification email:", error);
+      })
+    );
+
     return jsonResponse({ success: true, review }, 201);
   }
 
@@ -112,7 +222,8 @@ export default async (req) => {
       return jsonResponse({ error: "Missing required fields: id, action(approve|reject)" }, 400);
     }
 
-    const review = await store.get(id, { type: "json" });
+    const storedReview = await store.get(id, { type: "json" });
+    const review = normalizeStoredReview(storedReview, id);
     if (!review) {
       return jsonResponse({ error: "Review not found" }, 404);
     }
