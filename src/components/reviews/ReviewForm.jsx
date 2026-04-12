@@ -7,7 +7,6 @@ import { Star, Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReviewForm() {
-  const netlifyFormAttrs = { "netlify-honeypot": "bot-field" };
   const [formData, setFormData] = useState({
     author_name: "",
     rating: 5,
@@ -26,23 +25,21 @@ export default function ReviewForm() {
     setIsPending(true);
 
     try {
-      const payload = new URLSearchParams({
-        "form-name": "reviews",
-        author_name: formData.author_name.trim(),
-        rating: String(formData.rating),
-        comment: formData.comment.trim(),
-        course_title: formData.course_title.trim(),
-        author_image: formData.author_image.trim(),
-      });
-
-      const response = await fetch("/__forms.html", {
+      const response = await fetch("/api/reviews", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: payload.toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          author_name: formData.author_name.trim(),
+          rating: Number(formData.rating),
+          comment: formData.comment.trim(),
+          course_title: formData.course_title.trim(),
+          author_image: formData.author_image.trim(),
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Неуспешно изпращане на отзива.");
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || "Неуспешно изпращане на отзива.");
       }
 
       toast.success("Благодарим за отзива! Ще бъде публикуван след одобрение.");
@@ -58,18 +55,9 @@ export default function ReviewForm() {
     <form
       name="reviews"
       method="POST"
-      data-netlify="true"
-      {...netlifyFormAttrs}
       onSubmit={handleSubmit}
       className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 max-w-xl mx-auto"
     >
-      <input type="hidden" name="form-name" value="reviews" />
-      <input type="hidden" name="rating" value={String(formData.rating)} />
-      <p className="hidden" aria-hidden="true">
-        <label>
-          Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
-        </label>
-      </p>
       <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Оставете отзив</h3>
       
       <div className="space-y-4">

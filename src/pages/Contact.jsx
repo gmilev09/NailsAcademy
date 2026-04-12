@@ -41,17 +41,22 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const form = e.currentTarget;
 
     try {
-      const response = await fetch("/__forms.html", {
+      const response = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(new FormData(form)).toString(),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Form submission failed");
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || "Form submission failed");
       }
 
       setSubmitted(true);
@@ -145,17 +150,9 @@ export default function Contact() {
                 <form
                   name="contact"
                   method="POST"
-                  data-netlify="true"
-                  netlify-honeypot="bot-field"
                   onSubmit={handleSubmit}
                   className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-pink-50 space-y-6"
                 >
-                  <input type="hidden" name="form-name" value="contact" />
-                  <p className="hidden" aria-hidden="true">
-                    <label>
-                      Don&apos;t fill this out: <input name="bot-field" tabIndex="-1" autoComplete="off" />
-                    </label>
-                  </p>
                   <h2 className="text-2xl font-semibold text-gray-900 mb-8 italic">Изпратете ни съобщение</h2>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
