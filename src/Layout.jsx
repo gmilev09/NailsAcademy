@@ -56,12 +56,15 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
         <nav className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <a href="/" className="flex items-center gap-2">
-              <img src={siteLogo} alt="Nails Academy" className="w-12 h-12 rounded-full object-cover" />
+              <img
+                src={siteLogo}
+                alt="Nails Academy"
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-rose-300/80"
+              />
               <div className="flex flex-col items-start text-left leading-tight">
-                <span className="text-xl font-semibold text-rose-500">ARTAYA</span>
-                <span className="text-xl">
-                  <span className="font-light text-black">Nails</span>
-                  <span className="font-semibold text-rose-500 ml-1">Academy</span>
+                <span className="text-xl font-normal text-[#0f172a]">ARTAYA</span>
+                <span className="text-xl font-semibold bg-gradient-to-r from-[#F43F5E] via-[#EC4899] to-[#DB2777] bg-clip-text text-transparent">
+                  Nails Academy
                 </span>
               </div>
             </a>
@@ -150,7 +153,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
             <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-6">
                 <img src={siteLogo} alt="Nails Academy" className="w-12 h-12 rounded-full object-cover" />
-                <div><span className="text-xl font-light">ARTAYA</span><span className="text-xl font-semibold text-rose-400 ml-1">Nails Academy</span></div>
+                <div><span className="text-xl font-normal text-gray-100">ARTAYA</span><span className="text-xl font-semibold text-rose-300 ml-1">Nails Academy</span></div>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">Професионални курсове и сертификати за маникюристи.Стартирайте кариерата си в бюти индустрията.</p>
               <div className="flex gap-3">
