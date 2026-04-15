@@ -8,7 +8,7 @@ import InstructorSection from "../components/home/InstructorSection";
 
 export default function Home() {
   useEffect(() => {
-    document.title = "Nails Academy - Професионални курсове за маникюр в Петрич";
+    document.title = "ARTAYA Nails Academy - Професионални курсове за маникюр в Петрич";
     
     const setMeta = (name, content, property = false) => {
       const attr = property ? 'property' : 'name';
@@ -21,8 +21,8 @@ export default function Home() {
       meta.setAttribute('content', content);
     };
     
-    setMeta('description', 'Nails Academy предлага професионални курсове за маникюр в Петрич.');
-    setMeta('og:title', 'Nails Academy - Професионални курсове за маникюр', true);
+    setMeta('description', 'ARTAYA Nails Academy предлага професионални курсове за маникюр в Петрич.');
+    setMeta('og:title', 'ARTAYA Nails Academy - Професионални курсове за маникюр', true);
   }, []);
 
   return (
