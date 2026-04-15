@@ -59,10 +59,34 @@ export default function Enroll() {
     try {
       const form = e.currentTarget;
       const formDataPayload = new FormData(form);
+      const payload = {
+        name: contactData.name.trim(),
+        email: contactData.email.trim(),
+        phone: contactData.phone.trim(),
+        message: contactData.message.trim(),
+        course_title: selectedCourse.title,
+        course_price: String(Number(selectedCourse.price) || 0),
+        course_duration: selectedCourse.duration || "",
+      };
 
-      formDataPayload.set("course_title", selectedCourse.title);
-      formDataPayload.set("course_price", String(Number(selectedCourse.price) || 0));
-      formDataPayload.set("course_duration", selectedCourse.duration || "");
+      formDataPayload.set("name", payload.name);
+      formDataPayload.set("email", payload.email);
+      formDataPayload.set("phone", payload.phone);
+      formDataPayload.set("message", payload.message);
+      formDataPayload.set("course_title", payload.course_title);
+      formDataPayload.set("course_price", payload.course_price);
+      formDataPayload.set("course_duration", payload.course_duration);
+
+      const apiResponse = await fetch("/api/enrollments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!apiResponse.ok) {
+        const data = await apiResponse.json().catch(() => ({}));
+        throw new Error(data?.error || "Enrollment submission failed");
+      }
 
       const response = await fetch("/__forms.html", {
         method: "POST",
