@@ -36,7 +36,7 @@ function normalizeStoredReview(rawReview, fallbackId = "") {
   const author_name = normalizeText(rawReview.author_name ?? rawReview.authorName, 120);
   const comment = normalizeText(rawReview.comment ?? rawReview.message, 2000);
   const course_title = normalizeText(rawReview.course_title ?? rawReview.courseTitle, 160);
-  const author_image = normalizeText(rawReview.author_image ?? rawReview.authorImage, 1000);
+  const author_image = normalizeText(rawReview.author_image ?? rawReview.authorImage, 1_000_000);
 
   if (!author_name || !comment) return null;
 
@@ -152,7 +152,7 @@ export default async (req, context) => {
     const author_name = normalizeText(body?.author_name, 120);
     const comment = normalizeText(body?.comment, 2000);
     const course_title = normalizeText(body?.course_title, 160);
-    const author_image = normalizeText(body?.author_image, 1000);
+    const author_image = normalizeText(body?.author_image, 1_000_000);
     const rating = normalizeRating(body?.rating);
 
     if (!author_name || !comment || !Number.isFinite(rating)) {

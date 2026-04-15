@@ -45,6 +45,28 @@ export default function Contact() {
     try {
       const form = e.currentTarget;
       const formDataPayload = new FormData(form);
+      const payload = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+      };
+
+      formDataPayload.set("name", payload.name);
+      formDataPayload.set("email", payload.email);
+      formDataPayload.set("subject", payload.subject);
+      formDataPayload.set("message", payload.message);
+
+      const apiResponse = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!apiResponse.ok) {
+        const data = await apiResponse.json().catch(() => ({}));
+        throw new Error(data?.error || "Contact submission failed");
+      }
 
       const response = await fetch("/__forms.html", {
         method: "POST",
