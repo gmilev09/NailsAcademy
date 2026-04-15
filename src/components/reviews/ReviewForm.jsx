@@ -42,6 +42,20 @@ export default function ReviewForm() {
         throw new Error(data?.error || "Неуспешно изпращане на отзива.");
       }
 
+      // Submit to Netlify Forms for tracking
+      const netlifyFormData = new URLSearchParams();
+      netlifyFormData.append("form-name", "reviews");
+      netlifyFormData.append("author_name", formData.author_name.trim());
+      netlifyFormData.append("rating", String(formData.rating));
+      netlifyFormData.append("comment", formData.comment.trim());
+      netlifyFormData.append("course_title", formData.course_title.trim());
+      netlifyFormData.append("author_image", formData.author_image.trim());
+      await fetch("/__forms.html", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: netlifyFormData.toString(),
+      }).catch(() => {});
+
       toast.success("Благодарим за отзива! Ще бъде публикуван след одобрение.");
       setFormData({ author_name: "", rating: 5, comment: "", course_title: "", author_image: "" });
     } catch (error) {
@@ -55,9 +69,18 @@ export default function ReviewForm() {
     <form
       name="reviews"
       method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
       onSubmit={handleSubmit}
       className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 max-w-xl mx-auto"
     >
+      <input type="hidden" name="form-name" value="reviews" />
+      <p className="hidden" aria-hidden="true">
+        <label>
+          Не попълвайте това поле:
+          <input name="bot-field" />
+        </label>
+      </p>
       <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Оставете отзив</h3>
       
       <div className="space-y-4">

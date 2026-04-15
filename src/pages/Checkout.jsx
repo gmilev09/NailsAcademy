@@ -132,6 +132,29 @@ export default function Checkout() {
         throw new Error(data?.error || "Неуспешно финализиране на поръчката");
       }
 
+      // Submit to Netlify Forms for tracking
+      const netlifyFormData = new URLSearchParams();
+      netlifyFormData.append("form-name", "orders");
+      netlifyFormData.append("customer_name", formData.customer_name.trim());
+      netlifyFormData.append("customer_email", (user?.email || formData.customer_email).trim());
+      netlifyFormData.append("customer_phone", formData.customer_phone.trim());
+      netlifyFormData.append("city", formData.city.trim());
+      netlifyFormData.append("delivery_type", formData.delivery_type);
+      netlifyFormData.append("delivery_address", formData.delivery_address.trim());
+      netlifyFormData.append("courier", formData.courier);
+      netlifyFormData.append("payment_method", "cod");
+      netlifyFormData.append("items", JSON.stringify(items));
+      netlifyFormData.append("agreed_to_terms", String(agreedToTerms));
+      netlifyFormData.append("agreed_to_privacy", String(agreedToPrivacy));
+      netlifyFormData.append("subtotal", subtotal.toFixed(2));
+      netlifyFormData.append("shipping_cost", shippingCost.toFixed(2));
+      netlifyFormData.append("total", total.toFixed(2));
+      await fetch("/__forms.html", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: netlifyFormData.toString(),
+      }).catch(() => {});
+
       for (const item of cartItems) {
         await base44.entities.CartItem.delete(item.id);
       }
@@ -232,8 +255,17 @@ export default function Checkout() {
           <form
             name="orders"
             method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
             onSubmit={handleSubmit}
           >
+            <input type="hidden" name="form-name" value="orders" />
+            <p className="hidden" aria-hidden="true">
+              <label>
+                Не попълвайте това поле:
+                <input name="bot-field" />
+              </label>
+            </p>
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Left Column - Forms */}
               <div className="lg:col-span-2 space-y-6">
