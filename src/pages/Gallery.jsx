@@ -11,7 +11,7 @@ import img4 from "../NailsAcademy/Gallery/258397093-105849925258292-220047029706
 import img5 from "../NailsAcademy/Gallery/258405558-105852005258084-4226010845577433639-n.jpg";
 import img6 from "../NailsAcademy/Gallery/258457483-105854031924548-2292339568805999732-n.jpg";
 import img7 from "../NailsAcademy/Gallery/258470754-105853311924620-5228187720907141976-n.jpg";
-import img8 from "../NailsAcademy/Gallery/258485917-105852801924671-3250341266998586301-n.jpg";
+import img8 from "../NailsAcademy/Gallery/viber_image_2026-04-23_13-38-29-918.jpg";
 import img9 from "../NailsAcademy/Gallery/258558742-105849218591696-9138844759808013988-n.jpg";
 import img10 from "../NailsAcademy/Gallery/258615794-105851095258175-44783706752791787-n.jpg";
 import img11 from "../NailsAcademy/Gallery/263902421-117499347426683-8723268371839043654-n.jpg";
@@ -33,7 +33,7 @@ import img28 from "../NailsAcademy/Gallery/8a8af2f6-3af7-4950-b66f-70d011c7eb7c.
 import img29 from "../NailsAcademy/Gallery/98313308-68ac-46f6-abc3-47ef12564f58.jpg";
 import img31 from "../NailsAcademy/Gallery/a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg";
 import img32 from "../NailsAcademy/Gallery/b5d0c5d5-21d8-4882-b828-c7dbce8cd66c.jpg";
-import img33 from "../NailsAcademy/Gallery/c97fd50d-de3c-450a-9937-2d975001c3bc.jpg";
+import img33 from "../NailsAcademy/Gallery/viber_image_2026-04-23_13-40-57-131.jpg";
 import img34 from "../NailsAcademy/Gallery/decd5a90-38f2-4855-acaf-179e3bfbe306.jpg";
 import img35 from "../NailsAcademy/Gallery/e1aaf6e9-032d-456a-97df-636ec298749f.jpg";
 import img36 from "../NailsAcademy/Gallery/6e1a355d-bb92-4cf8-9b97-684cda07154c.jpg";

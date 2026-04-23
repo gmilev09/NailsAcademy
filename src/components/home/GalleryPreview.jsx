@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import previewImg1 from "../../NailsAcademy/Gallery/e1aaf6e9-032d-456a-97df-636ec298749f.jpg";
 import previewImg2 from "../../NailsAcademy/Gallery/587504285_18048329723675195_6197362676033051046_n.jpg";
 import previewImg3 from "../../NailsAcademy/Gallery/a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg";
-import previewImg4 from "../../NailsAcademy/Gallery/c97fd50d-de3c-450a-9937-2d975001c3bc.jpg";
-import previewImg5 from "../../NailsAcademy/Gallery/258485917-105852801924671-3250341266998586301-n.jpg";
+import previewImg4 from "../../NailsAcademy/Gallery/viber_image_2026-04-23_13-40-57-131.jpg";
+import previewImg5 from "../../NailsAcademy/Gallery/viber_image_2026-04-23_13-38-29-918.jpg";
 
 const galleryImages = [
   { url: previewImg1, span: "col-span-2 row-span-2" },
