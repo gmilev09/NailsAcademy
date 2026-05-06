@@ -62,7 +62,7 @@ export default function Shipping() {
             </div>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-rose-50/50 rounded-2xl p-6 text-center border border-rose-100">
-                <p className="text-3xl font-bold text-rose-500 mb-1 italic">1–3</p>
+                <p className="text-3xl font-bold text-rose-500 mb-1 italic">5–7</p>
                 <p className="text-gray-900 font-bold text-sm">работни дни</p>
                 <p className="text-xs text-gray-400 mt-2 italic text-center">стандартна доставка</p>
               </div>
