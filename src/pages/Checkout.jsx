@@ -510,7 +510,7 @@ export default function Checkout() {
 
                   <p className="text-center text-sm text-gray-500 mt-4 flex items-center justify-center gap-1">
                     <Truck className="w-4 h-4 text-rose-400" />
-                    Доставка: 1–3 работни дни
+                    Доставка: 5–7 работни дни
                   </p>
                   <Button 
                     type="submit"

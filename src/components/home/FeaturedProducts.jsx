@@ -36,7 +36,7 @@ function AddToCartButton({ product, isAuthenticated, navigateToLogin }) {
   return (
     <motion.button
       onClick={handleAdd}
-      className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+      className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
         added ? "bg-green-500 text-white" : "bg-gradient-to-r from-rose-400 to-pink-500 text-white hover:from-rose-500 hover:to-pink-600"
       }`}
       whileTap={{ scale: 0.92 }}
@@ -179,7 +179,7 @@ export default function FeaturedProducts() {
                 className="flex w-[200%]"
                 initial={{ x: slideFrom }}
                 animate={{ x: slideTo }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.85, ease: [0.32, 0.72, 0, 1] }}
                 onAnimationComplete={handleSlideComplete}
               >
                 {slidePages.map((products, pageIdx) => (
@@ -194,8 +194,8 @@ export default function FeaturedProducts() {
                         </div>
                         <div className="p-5">
                           <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
-                          <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
-                          <div className="flex items-center justify-between">
+                          <p className="text-gray-400 text-xs mb-4 line-clamp-1">{product.description}</p>
+                          <div className="flex flex-col gap-3">
                             <span className="text-lg font-bold text-rose-500">
                               {`€${product.price}`}
                             </span>
@@ -223,8 +223,8 @@ export default function FeaturedProducts() {
                     </div>
                     <div className="p-5">
                       <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
-                      <p className="text-gray-400 text-xs mb-3 line-clamp-1">{product.description}</p>
-                      <div className="flex items-center justify-between">
+                      <p className="text-gray-400 text-xs mb-4 line-clamp-1">{product.description}</p>
+                      <div className="flex flex-col gap-3">
                         <span className="text-lg font-bold text-rose-500">
                           {`€${product.price}`}
                         </span>
