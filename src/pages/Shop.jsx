@@ -17,9 +17,11 @@ function ProductImageGallery({ product }) {
   
   return (
     <div className="relative h-56 bg-gray-50 group overflow-hidden">
-      <img 
-        src={images[currentIndex] || "https://images.unsplash.com"} 
+      <img
+        src={images[currentIndex] || "https://images.unsplash.com"}
         alt={product.name}
+        loading="lazy"
+        decoding="async"
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
       {!product.in_stock && (

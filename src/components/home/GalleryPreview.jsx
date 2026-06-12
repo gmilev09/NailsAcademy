@@ -60,6 +60,8 @@ export default function GalleryPreview() {
               <img 
                 src={image.url}
                 alt={`Nail art ${index + 1}`}
+                loading="lazy"
+                decoding="async"
                 className={`w-full object-cover transition-transform duration-700 group-hover:scale-110 ${image.span ? 'h-full min-h-[300px]' : 'h-48 md:h-56'}`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-rose-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

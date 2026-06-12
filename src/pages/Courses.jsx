@@ -98,7 +98,7 @@ export default function Courses() {
                 <div className="bg-white rounded-3xl p-3 shadow-sm hover:shadow-xl transition-all border border-gray-50 flex flex-col h-full">
                   <div className="relative overflow-hidden rounded-2xl aspect-[4/3]">
                     <Link to={`/courses/${course.slug}`}>
-                      <img src={course.image_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      <img src={course.image_url} alt={course.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     </Link>
                     <div className="absolute top-4 left-4 flex gap-2">
                       <Badge className={levelColors[course.level]}>{levelLabels[course.level]}</Badge>

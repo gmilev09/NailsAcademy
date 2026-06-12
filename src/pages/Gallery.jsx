@@ -147,7 +147,7 @@ export default function Gallery() {
             {filteredItems.map((item, index) => (
               <motion.div key={item.id} className="break-inside-avoid group cursor-pointer" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: index * 0.05 }} onClick={() => openLightbox(item, index)}>
                 <div className="relative overflow-hidden rounded-2xl border-4 border-white shadow-sm hover:shadow-xl transition-all">
-                  <img src={item.image_url} alt={item.title} className="w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <img src={item.image_url} alt={item.title} loading="lazy" decoding="async" className="w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-rose-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   {item.title && (
                     <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
