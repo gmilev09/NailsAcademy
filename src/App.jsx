@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { Toaster } from "./components/ui/toaster"
 import { Toaster as SonnerToaster } from "sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
@@ -6,10 +6,15 @@ import { queryClientInstance } from './lib/query-client'
 import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider } from './lib/AuthContext';
 import NavigationTracker from './lib/NavigationTracker';
-import CourseDetail from './pages/CourseDetail';
+
+// Lazy-loaded so its code (and any analytics network calls) stay out of the
+// critical path and don't compete with first paint.
+const Analytics = lazy(() =>
+  import('@vercel/analytics/react').then((m) => ({ default: m.Analytics }))
+);
+const CourseDetail = lazy(() => import('./pages/CourseDetail'));
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -27,54 +32,58 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <NavigationTracker />
-          <Routes>
-            {/* Начална страница */}
-            <Route path="/" element={
-              <LayoutWrapper currentPageName={mainPageKey}>
-                <MainPage />
-              </LayoutWrapper>
-            } />
-
-            {/* Canonical auth path (lowercase) */}
-            {Pages.Auth && (
-              <Route
-                path="/auth"
-                element={
-                  <LayoutWrapper currentPageName="Auth">
-                    <Pages.Auth />
-                  </LayoutWrapper>
-                }
-              />
-            )}
-
-            <Route
-              path="/courses/:slug"
-              element={
-                <LayoutWrapper currentPageName="Courses">
-                  <CourseDetail />
+          <Suspense fallback={null}>
+            <Routes>
+              {/* Начална страница */}
+              <Route path="/" element={
+                <LayoutWrapper currentPageName={mainPageKey}>
+                  <MainPage />
                 </LayoutWrapper>
-              }
-            />
+              } />
 
-            {/* Всички останали страници от твоя сайт */}
-            {Object.entries(Pages).map(([path, Page]) => (
+              {/* Canonical auth path (lowercase) */}
+              {Pages.Auth && (
+                <Route
+                  path="/auth"
+                  element={
+                    <LayoutWrapper currentPageName="Auth">
+                      <Pages.Auth />
+                    </LayoutWrapper>
+                  }
+                />
+              )}
+
               <Route
-                key={path}
-                path={`/${path}`}
+                path="/courses/:slug"
                 element={
-                  <LayoutWrapper currentPageName={path}>
-                    <Page />
+                  <LayoutWrapper currentPageName="Courses">
+                    <CourseDetail />
                   </LayoutWrapper>
                 }
               />
-            ))}
 
-            {/* Страница за грешка 404 */}
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
+              {/* Всички останали страници от твоя сайт */}
+              {Object.entries(Pages).map(([path, Page]) => (
+                <Route
+                  key={path}
+                  path={`/${path}`}
+                  element={
+                    <LayoutWrapper currentPageName={path}>
+                      <Page />
+                    </LayoutWrapper>
+                  }
+                />
+              ))}
+
+              {/* Страница за грешка 404 */}
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          </Suspense>
           <Toaster />
           <SonnerToaster position="top-center" />
-          <Analytics />
+          <Suspense fallback={null}>
+            <Analytics />
+          </Suspense>
         </Router>
       </QueryClientProvider>
     </AuthProvider>

@@ -44,7 +44,7 @@ export default function CoursesPreview() {
               <div className="relative overflow-hidden rounded-3xl bg-gray-50 p-2 h-full border border-gray-100">
                 <div className="relative overflow-hidden rounded-2xl">
                   <Link to={`/courses/${course.slug}`}>
-                    <img src={course.image_url} alt={course.title} className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <img src={course.image_url} alt={course.title} loading="lazy" decoding="async" className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110" />
                   </Link>
                   <div className="absolute top-4 left-4 flex gap-2">
                     <Badge className={`${levelColors[course.level]} border-0`}>{levelLabels[course.level]}</Badge>

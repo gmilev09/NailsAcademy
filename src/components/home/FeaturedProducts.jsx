@@ -190,7 +190,7 @@ export default function FeaturedProducts() {
                         className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50"
                       >
                         <div className="relative h-48 bg-gray-100">
-                          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                          <img src={product.image_url} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         </div>
                         <div className="p-5">
                           <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>
@@ -219,7 +219,7 @@ export default function FeaturedProducts() {
                     className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50"
                   >
                     <div className="relative h-48 bg-gray-100">
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                      <img src={product.image_url} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </div>
                     <div className="p-5">
                       <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 text-sm">{product.name}</h3>

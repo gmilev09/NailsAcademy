@@ -157,7 +157,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">Професионални курсове и сертификати за маникюристи.Стартирайте кариерата си в бюти индустрията.</p>
               <div className="flex gap-3">
-                <a href="https://www.instagram.com/nailsacademy22" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-rose-500 transition-colors"><Instagram className="w-5 h-5" /></a>
+                <a href="https://www.instagram.com/artaya_nails_academy?igsh=MTdrdGxzeXNnaGJ6Zg==" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-rose-500 transition-colors"><Instagram className="w-5 h-5" /></a>
                 <a href="https://www.facebook.com/share/1a3J1NbP87/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-rose-500 transition-colors"><Facebook className="w-5 h-5" /></a>
               </div>
             </div>

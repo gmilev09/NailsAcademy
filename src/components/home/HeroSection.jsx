@@ -92,6 +92,10 @@ export default function HeroSection() {
               <img 
                 src={heroImage}
                 alt="Обучение по маникюр"
+                width={500}
+                height={550}
+                fetchPriority="high"
+                decoding="async"
                 className="relative rounded-[3rem] shadow-2xl w-full object-cover h-[550px]"
               />
               

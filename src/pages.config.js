@@ -1,20 +1,26 @@
-import About from './pages/About';
-import Auth from './pages/Auth';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import Contact from './pages/Contact';
-import CookiePolicy from './pages/CookiePolicy';
-import Courses from './pages/Courses';
-import Enroll from './pages/Enroll';
-import Gallery from './pages/Gallery';
+import { lazy } from 'react';
 import Home from './pages/Home';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import ProductDetail from './pages/ProductDetail';
-import Returns from './pages/Returns';
-import Shipping from './pages/Shipping';
-import Shop from './pages/Shop';
-import Terms from './pages/Terms';
 import __Layout from './Layout.jsx';
+
+// The landing page (Home) is imported eagerly so it renders immediately.
+// Every other route is lazy-loaded, so its JavaScript is only fetched when the
+// route is visited. This keeps the initial bundle small for faster FCP/LCP and
+// less main-thread work on load (better INP/FID).
+const About = lazy(() => import('./pages/About'));
+const Auth = lazy(() => import('./pages/Auth'));
+const Cart = lazy(() => import('./pages/Cart'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const Contact = lazy(() => import('./pages/Contact'));
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
+const Courses = lazy(() => import('./pages/Courses'));
+const Enroll = lazy(() => import('./pages/Enroll'));
+const Gallery = lazy(() => import('./pages/Gallery'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const Returns = lazy(() => import('./pages/Returns'));
+const Shipping = lazy(() => import('./pages/Shipping'));
+const Shop = lazy(() => import('./pages/Shop'));
+const Terms = lazy(() => import('./pages/Terms'));
 
 export const PAGES = {
     "About": About,

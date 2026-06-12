@@ -16,5 +16,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    // Split large, rarely-changing dependencies into separate chunks so the
+    // initial page load downloads less JavaScript and the browser can cache
+    // vendor code across deploys.
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'motion-vendor': ['framer-motion'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
   }
 })

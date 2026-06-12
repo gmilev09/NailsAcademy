@@ -144,7 +144,7 @@ export default function Contact() {
                 <div className="mt-12 pt-8 border-t border-white/20">
                   <p className="font-medium mb-4">Последвайте ни</p>
                   <div className="flex gap-3">
-                    <a href="https://www.instagram.com/nailsacademy22" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+                    <a href="https://www.instagram.com/artaya_nails_academy?igsh=MTdrdGxzeXNnaGJ6Zg==" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
                       <Instagram className="w-5 h-5" />
                     </a>
                     <a href="https://www.facebook.com/share/1a3J1NbP87/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
