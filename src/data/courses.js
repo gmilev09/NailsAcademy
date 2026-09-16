@@ -117,7 +117,7 @@ export const courses = [
     title: "Изграждане с горни форми",
     category: "advanced",
     level: "intermediate",
-    price: 130,
+    price: 200,
     duration: "10 учебни часа",
     certificate: true,
     max_students: 2,
