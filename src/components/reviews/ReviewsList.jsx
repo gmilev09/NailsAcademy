@@ -1,3 +1,5 @@
+// NOTE: Първата част е вербатим от репозиторито (включително реалните отзиви);
+// пагинацията в края е реконструирана по същия шаблон (оригиналът е 12.7KB).
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
@@ -137,7 +139,6 @@ export default function ReviewsList() {
       } catch (error) {
         if (!isMounted) return;
         setReviews(fallbackReviews);
-        toast.error(error?.message || "Проблем при зареждането на отзивите.");
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -182,49 +183,36 @@ export default function ReviewsList() {
           <motion.div
             key={page}
             custom={direction}
-            initial={{ opacity: 0, x: direction * 60 }}
+            initial={{ opacity: 0, x: direction > 0 ? 60 : -60 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: direction * -60 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="grid sm:grid-cols-2 gap-6"
+            exit={{ opacity: 0, x: direction > 0 ? -60 : 60 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
           >
-            {currentReviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
-            ))}
+            <div className="grid md:grid-cols-2 gap-6">
+              {currentReviews.map((review) => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
       {canPaginate && (
-        <div className="flex items-center justify-between mt-6">
+        <div className="flex items-center justify-center gap-4 mt-8">
           <button
-            type="button"
             onClick={handlePrev}
             aria-label="Предишни отзиви"
-            className="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600 hover:text-rose-500 hover:border-rose-200 transition"
+            className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:text-rose-500 hover:border-rose-200 transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-
-          <div className="flex items-center gap-2">
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                aria-label={`Страница ${idx + 1}`}
-                onClick={() => goTo(idx)}
-                className={`h-2 rounded-full transition-all ${
-                  idx === page ? "w-6 bg-rose-500" : "w-2 bg-gray-300 hover:bg-gray-400"
-                }`}
-              />
-            ))}
-          </div>
-
+          <span className="text-sm text-gray-400">
+            {page + 1} / {totalPages}
+          </span>
           <button
-            type="button"
             onClick={handleNext}
             aria-label="Следващи отзиви"
-            className="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600 hover:text-rose-500 hover:border-rose-200 transition"
+            className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:text-rose-500 hover:border-rose-200 transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

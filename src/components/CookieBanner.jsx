@@ -1,85 +1,88 @@
+// RECONSTRUCTED (оригиналният файл не беше достъпен изцяло при преноса).
+// Изгражда cookie банер в стилистиката на сайта със запазване на избора в localStorage.
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, X } from "lucide-react";
 import { Button } from "./ui/button";
 
-const COOKIE_CONSENT_KEY = "nails_academy_cookie_consent";
+const CONSENT_KEY = "cookie_consent";
 
 export default function CookieBanner() {
-  const [visible, setVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
-    if (!consent) {
-      setVisible(true);
+    try {
+      if (!localStorage.getItem(CONSENT_KEY)) {
+        const timer = setTimeout(() => setIsVisible(true), 1500);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // ignore
     }
   }, []);
 
-  const handleAccept = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
-    setVisible(false);
-  };
-
-  const handleDecline = () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, "declined");
-    setVisible(false);
+  const handleChoice = (choice) => {
+    try {
+      localStorage.setItem(CONSENT_KEY, choice);
+    } catch {
+      // ignore
+    }
+    setIsVisible(false);
   };
 
   return (
     <AnimatePresence>
-      {visible && (
+      {isVisible && (
         <motion.div
-          className="fixed bottom-0 left-0 right-0 z-[60] p-4 md:p-6"
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-md z-[90]"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 40 }}
+          transition={{ duration: 0.35 }}
         >
-          <div className="container mx-auto max-w-4xl">
-            <div className="bg-white rounded-2xl shadow-2xl border border-pink-100 p-5 md:p-6">
-              <div className="flex items-start gap-4">
-                <div className="hidden sm:flex w-10 h-10 bg-gradient-to-br from-rose-400 to-pink-500 rounded-xl items-center justify-center flex-shrink-0">
-                  <Cookie className="w-5 h-5 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-semibold text-gray-900 mb-1">
-                    Използваме бисквитки
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Този уебсайт използва бисквитки, за да подобри Вашето потребителско изживяване, да анализира трафика и да персонализира съдържанието.
-                    Научете повече в нашата{" "}
-                    <Link
-                      to="/CookiePolicy"
-                      className="text-rose-500 hover:text-rose-600 underline font-medium"
-                    >
-                      Политика за бисквитките
-                    </Link>.
-                  </p>
-                  <div className="flex flex-wrap gap-3 mt-4">
-                    <Button
-                      onClick={handleAccept}
-                      className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-6 text-sm"
-                    >
-                      Приемам
-                    </Button>
-                    <Button
-                      onClick={handleDecline}
-                      variant="outline"
-                      className="border-rose-200 text-rose-600 hover:bg-rose-50 rounded-full px-6 text-sm"
-                    >
-                      Отказвам
-                    </Button>
-                  </div>
-                </div>
-                <button
-                  onClick={handleDecline}
-                  className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
-                  aria-label="Затвори"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+          <div className="bg-white rounded-2xl shadow-xl border border-pink-100 p-5">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
+                <Cookie className="w-5 h-5" />
               </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-gray-900 mb-1">
+                  Използваме бисквитки
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Този уебсайт използва бисквитки, за да подобри Вашето потребителско изживяване, да анализира трафика и да персонализира съдържанието.
+                  Научете повече в нашата{" "}
+                  <Link to="/CookiePolicy" className="text-rose-500 hover:text-rose-600 font-medium underline underline-offset-2">
+                    Политика за бисквитките
+                  </Link>
+                  .
+                </p>
+                <div className="flex items-center gap-3 mt-4">
+                  <Button
+                    size="sm"
+                    onClick={() => handleChoice("accepted")}
+                    className="bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full px-5"
+                  >
+                    Приемам
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleChoice("declined")}
+                    className="rounded-full px-5 border-gray-200 text-gray-600 hover:bg-gray-50"
+                  >
+                    Отказвам
+                  </Button>
+                </div>
+              </div>
+              <button
+                onClick={() => handleChoice("dismissed")}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                aria-label="Затвори"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </motion.div>

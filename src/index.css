@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
 
 @layer base {
   :root {
@@ -77,12 +76,90 @@
 
 
 
+/* =============  REFINED DESIGN SYSTEM  ============= */
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-feature-settings: "ss01", "cv05";
   }
+
+  /* Елегантен дисплей шрифт за всички заглавия */
+  h1, h2, h3 {
+    font-family: "Fraunces", "Georgia", serif;
+    font-variation-settings: "opsz" auto, "SOFT" 50;
+    letter-spacing: -0.015em;
+  }
+
+  /* Нежна зърнеста текстура — край с "плоския" AI вид */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.032'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+
+  ::selection {
+    background: hsl(343 85% 90%);
+    color: hsl(343 65% 28%);
+  }
+
+  /* Фин скролбар в темата на сайта */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(343 40% 97%);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(343 45% 82%);
+    border-radius: 999px;
+    border: 2px solid hsl(343 40% 97%);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(343 60% 72%);
+  }
+}
+
+/* Дисплей шрифт достъпен и като клас */
+.font-display {
+  font-family: "Fraunces", "Georgia", serif;
+  font-variation-settings: "opsz" auto, "SOFT" 50;
+  letter-spacing: -0.015em;
+}
+
+/* Анимирана подчертавка за навигацията */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1.5px;
+  background: linear-gradient(90deg, hsl(343 85% 65%), hsl(330 80% 60%));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-link:hover::after {
+  transform: scaleX(1);
 }

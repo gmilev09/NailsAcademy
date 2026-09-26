@@ -1,32 +1,31 @@
-import { useEffect } from "react";
+// RECONSTRUCTED wrapper — текстът на политиката е автентичен (от оригиналния файл).
 import { motion } from "framer-motion";
 import { Cookie, ExternalLink } from "lucide-react";
 
 export default function CookiePolicy() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50/50 to-white">
-      <section className="pt-32 pb-16 px-6">
-        <div className="container mx-auto max-w-4xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 shadow-sm mb-6">
-              <Cookie className="w-4 h-4 text-rose-400" />
-              <span className="text-sm font-medium text-rose-600">Правна информация</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-8">
-              Политика за <span className="font-semibold text-rose-500">бисквитките</span>
-            </h1>
-          </motion.div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-pink-50/30 pt-32 pb-24">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 shadow-sm mb-6">
+            <Cookie className="w-4 h-4 text-rose-400" />
+            <span className="text-sm font-medium text-rose-600">Прозрачност за бисквитките</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+            Политика за <span className="font-semibold text-rose-500">бисквитките</span>
+          </h1>
+        </motion.div>
 
-          <motion.div
-            className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-pink-50 prose prose-gray max-w-none"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
+        <motion.div
+          className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-pink-50 prose prose-gray max-w-none"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
             <p className="text-gray-700 leading-relaxed">
               Настоящата Политика за бисквитките обяснява какво представляват бисквитките (cookies), какви видове бисквитки използваме на уебсайта на ARTAYA Nails Academy, как ги използваме и как можете да управлявате Вашите предпочитания. Тази политика е част от нашата{" "}
               <a href="/PrivacyPolicy" className="text-rose-500 hover:underline">Политика за поверителност</a>{" "}
@@ -119,10 +118,7 @@ export default function CookiePolicy() {
             <p>
               Ако имате въпроси относно нашата Политика за бисквитките, можете да се свържете с нас на:
             </p>
-            <a
-              href="mailto:bozhinova.nails.academy@gmail.com"
-              className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-full text-sm font-medium transition-colors no-underline"
-            >
+            <a href="mailto:bozhinova.nails.academy@gmail.com" className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-full text-sm font-medium transition-colors no-underline">
               <ExternalLink className="w-4 h-4" />
               bozhinova.nails.academy@gmail.com
             </a>
@@ -130,9 +126,8 @@ export default function CookiePolicy() {
             <p className="text-sm text-gray-500 mt-8">
               Последна актуализация: {new Date().toLocaleDateString('bg-BG')}
             </p>
-          </motion.div>
-        </div>
-      </section>
+        </motion.div>
+      </div>
     </div>
   );
 }

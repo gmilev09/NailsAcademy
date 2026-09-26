@@ -1,3 +1,5 @@
+// NOTE: header + навигация са вербатим от репозиторито; footer-ът е реконструиран
+// в същия стил (оригиналът е 10.5KB). Логото сочи към GitHub raw.
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,7 +16,8 @@ import {
   Facebook } from "lucide-react";
 import CookieBanner from "./components/CookieBanner";
 import { useAuth } from "./lib/AuthContext";
-import siteLogo from "./NailsAcademy/logo.jpg";
+
+const siteLogo = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/logo.jpg";
 
 const navLinks = [
   { name: "Начало", page: "" },
@@ -23,6 +26,21 @@ const navLinks = [
   { name: "Галерия", page: "Gallery" },
   { name: "За нас", page: "About" },
   { name: "Контакти", page: "Contact" }
+];
+
+const courseLinks = [
+  { name: "Базов курс", slug: "bazov-kurs-manikyur-pedikyur-noktoplastika" },
+  { name: "Комбиниран маникюр", slug: "kombiniran-manikyur" },
+  { name: "Изграждане с горни форми", slug: "izgrazhdane-s-gorni-formi" },
+  { name: "Работа с гел", slug: "rabota-s-gel" }
+];
+
+const legalLinks = [
+  { name: "Общи условия", page: "Terms" },
+  { name: "Политика за поверителност", page: "PrivacyPolicy" },
+  { name: "Политика за бисквитки", page: "CookiePolicy" },
+  { name: "Доставка", page: "Shipping" },
+  { name: "Връщане", page: "Returns" }
 ];
 
 export default function Layout({ children, currentPageName: _currentPageName }) {
@@ -62,8 +80,8 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-rose-300/80"
               />
               <div className="flex flex-col items-start text-left leading-tight">
-                <span className="text-xl font-normal text-[#0f172a]">ARTAYA</span>
-                <span className="text-xl font-semibold bg-gradient-to-r from-[#F43F5E] via-[#EC4899] to-[#DB2777] bg-clip-text text-transparent">
+                <span className="font-display text-xl font-medium text-[#0f172a] tracking-wide">ARTAYA</span>
+                <span className="font-display text-xl font-semibold italic bg-gradient-to-r from-[#F43F5E] via-[#EC4899] to-[#DB2777] bg-clip-text text-transparent">
                   Nails Academy
                 </span>
               </div>
@@ -74,7 +92,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
                 <Link
                   key={link.page}
                   to={`/${link.page}`}
-                  className={`text-sm font-medium transition-colors hover:text-rose-500 ${
+                  className={`nav-link text-[11px] uppercase tracking-[0.16em] font-semibold transition-colors hover:text-rose-500 ${
                     location.pathname === `/${link.page}` ? "text-rose-500" : "text-gray-600"
                   }`}
                 >
@@ -153,7 +171,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
             <div className="md:col-span-1">
               <div className="flex items-center gap-2 mb-6">
                 <img src={siteLogo} alt="Nails Academy" className="w-12 h-12 rounded-full object-cover" />
-                <div><span className="text-xl font-normal text-gray-100">ARTAYA</span><span className="text-xl font-semibold text-rose-300 ml-1">Nails Academy</span></div>
+                <div><span className="font-display text-xl font-medium text-gray-100 tracking-wide">ARTAYA</span><span className="font-display text-xl font-semibold italic text-rose-300 ml-1">Nails Academy</span></div>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed mb-6">Професионални курсове и сертификати за маникюристи.Стартирайте кариерата си в бюти индустрията.</p>
               <div className="flex gap-3">
@@ -174,36 +192,35 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
             <div>
               <h4 className="font-semibold mb-6">Курсове</h4>
               <ul className="space-y-3 text-sm text-gray-400">
-                <li><Link to="/courses/bazov-kurs-manikyur-pedikyur-noktoplastika" className="hover:text-rose-400 transition-colors">Базов курс по маникюр, педикюр и ноктопластика</Link></li>
-                <li><Link to="/courses/kombiniran-manikyur" className="hover:text-rose-400 transition-colors">Комбиниран маникюр</Link></li>
-                <li><Link to="/courses/izgrazhdane-s-gorni-formi" className="hover:text-rose-400 transition-colors">Изграждане с горни форми</Link></li>
-                <li><Link to="/courses/rabota-s-gel" className="hover:text-rose-400 transition-colors">Работа с гел</Link></li>
+                {courseLinks.map((course) => (
+                  <li key={course.slug}>
+                    <Link to={`/courses/${course.slug}`} className="hover:text-rose-400">{course.name}</Link>
+                  </li>
+                ))}
+                <li><Link to="/Courses" className="hover:text-rose-400">Всички курсове</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-semibold mb-6">Контакти</h4>
-              <ul className="space-y-4 text-sm text-gray-400">
-                <li className="flex items-start gap-3"><MapPin className="w-5 h-5 text-rose-400" />гр. Петрич 2850</li>
-                <li className="flex items-center gap-3"><Phone className="w-5 h-5 text-rose-400" /><a href="tel:+359895737470" className="hover:text-rose-400">+359 89 5737470</a></li>
-                <li className="flex items-center gap-3"><Mail className="w-5 h-5 text-rose-400" /><a href="mailto:bozhinova.nails.academy@gmail.com" className="hover:text-rose-400 transition-colors">bozhinova.nails.academy@gmail.com</a></li>
+              <ul className="space-y-3 text-sm text-gray-400">
+                <li className="flex items-start gap-2"><MapPin className="w-4 h-4 mt-0.5 text-rose-300 shrink-0" /> гр. Петрич, България</li>
+                <li className="flex items-start gap-2"><Phone className="w-4 h-4 mt-0.5 text-rose-300 shrink-0" /> <a href="tel:+359895737470" className="hover:text-rose-400">+359 89 5737470</a></li>
+                <li className="flex items-start gap-2"><Mail className="w-4 h-4 mt-0.5 text-rose-300 shrink-0" /> <a href="mailto:bozhinova.nails.academy@gmail.com" className="hover:text-rose-400 break-all">bozhinova.nails.academy@gmail.com</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col items-center space-y-4">
-  <p className="text-sm text-gray-500">
-    © {new Date().getFullYear()} ARTAYA Nails Academy. Всички права запазени.
-  </p>
-  
-  <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-400">
-    <Link to="/Returns" className="hover:text-rose-400 transition-colors">Връщане</Link>
-    <Link to="/Shipping" className="hover:text-rose-400 transition-colors">Доставка</Link>
-    <Link to="/PrivacyPolicy" className="hover:text-rose-400 transition-colors">Поверителност</Link>
-    <Link to="/CookiePolicy" className="hover:text-rose-400 transition-colors">Бисквитки</Link>
-    <Link to="/Terms" className="hover:text-rose-400 transition-colors">Общи условия</Link>
-  </div>
-</div>
 
+          <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-gray-500 text-sm">© {new Date().getFullYear()} ARTAYA Nails Academy. Всички права запазени.</p>
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+              {legalLinks.map((link) => (
+                <Link key={link.page} to={`/${link.page}`} className="text-gray-500 hover:text-rose-400 text-xs transition-colors">
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </footer>
 

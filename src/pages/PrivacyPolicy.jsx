@@ -1,32 +1,31 @@
-import { useEffect } from "react";
+// RECONSTRUCTED wrapper — текстът на политиката е автентичен (от оригиналния файл).
 import { motion } from "framer-motion";
-import { Shield, ExternalLink } from "lucide-react";
+import { ShieldCheck, ExternalLink } from "lucide-react";
 
 export default function PrivacyPolicy() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50/50 to-white">
-      <section className="pt-32 pb-16 px-6">
-        <div className="container mx-auto max-w-4xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 shadow-sm mb-6">
-              <Shield className="w-4 h-4 text-rose-400" />
-              <span className="text-sm font-medium text-rose-600">Правна информация</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-8">
-              Политика за <span className="font-semibold text-rose-500">поверителност</span>
-            </h1>
-          </motion.div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-pink-50/30 pt-32 pb-24">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 shadow-sm mb-6">
+            <ShieldCheck className="w-4 h-4 text-rose-400" />
+            <span className="text-sm font-medium text-rose-600">Вашите данни са защитени</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+            Политика за <span className="font-semibold text-rose-500">поверителност</span>
+          </h1>
+        </motion.div>
 
-          <motion.div
-            className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-pink-50 prose prose-gray max-w-none"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
+        <motion.div
+          className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-pink-50 prose prose-gray max-w-none"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
             <p className="text-gray-700 leading-relaxed">
               Настоящата Политика за поверителност урежда отношенията по събиране и обработване на лични данни между Администратора на този уебсайт и потребителите на услугите, предоставяни чрез платформата на Академията. Документът е изготвен в пълно съответствие с Общия регламент относно защитата на данните (ЕС) 2016/679 (GDPR) и приложимото българско законодателство.
             </p>
@@ -78,12 +77,7 @@ export default function PrivacyPolicy() {
             <p>
               При установяване на нарушения, всеки потребител има право да се обърне към надзорния орган — Комисията за защита на личните данни (КЗЛД):
             </p>
-            <a
-              href="https://www.cpdp.bg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-full text-sm font-medium transition-colors no-underline"
-            >
+            <a href="https://www.cpdp.bg" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-full text-sm font-medium transition-colors no-underline">
               <ExternalLink className="w-4 h-4" />
               Комисия за защита на личните данни (КЗЛД) — www.cpdp.bg
             </a>
@@ -96,9 +90,8 @@ export default function PrivacyPolicy() {
             <p className="text-sm text-gray-500 mt-8">
               Последна актуализация: {new Date().toLocaleDateString('bg-BG')}
             </p>
-          </motion.div>
-        </div>
-      </section>
+        </motion.div>
+      </div>
     </div>
   );
 }

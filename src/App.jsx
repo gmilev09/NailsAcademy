@@ -9,11 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider } from './lib/AuthContext';
 import NavigationTracker from './lib/NavigationTracker';
 
-// Lazy-loaded so its code (and any analytics network calls) stay out of the
-// critical path and don't compete with first paint.
-const Analytics = lazy(() =>
-  import('@vercel/analytics/react').then((m) => ({ default: m.Analytics }))
-);
+// @vercel/analytics removed for local preview (avoids extra package/network calls)
 const CourseDetail = lazy(() => import('./pages/CourseDetail'));
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -81,9 +77,6 @@ function App() {
           </Suspense>
           <Toaster />
           <SonnerToaster position="top-center" />
-          <Suspense fallback={null}>
-            <Analytics />
-          </Suspense>
         </Router>
       </QueryClientProvider>
     </AuthProvider>

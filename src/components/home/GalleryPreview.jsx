@@ -3,11 +3,12 @@ import { Button } from "../ui/button";
 import { ArrowRight, Images } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import previewImg4 from "../../NailsAcademy/Gallery/e1aaf6e9-032d-456a-97df-636ec298749f.jpg";
-import previewImg2 from "../../NailsAcademy/Gallery/587504285_18048329723675195_6197362676033051046_n.jpg";
-import previewImg3 from "../../NailsAcademy/Gallery/a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg";
-import previewImg1 from "../../NailsAcademy/Gallery/viber_image_2026-04-23_13-40-57-131.jpg";
-import previewImg5 from "../../NailsAcademy/Gallery/viber_image_2026-04-23_13-38-29-918.jpg";
+const RAW = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/Gallery";
+const previewImg4 = `${RAW}/e1aaf6e9-032d-456a-97df-636ec298749f.jpg`;
+const previewImg2 = `${RAW}/587504285_18048329723675195_6197362676033051046_n.jpg`;
+const previewImg3 = `${RAW}/a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg`;
+const previewImg1 = `${RAW}/viber_image_2026-04-23_13-40-57-131.jpg`;
+const previewImg5 = `${RAW}/viber_image_2026-04-23_13-38-29-918.jpg`;
 
 const galleryImages = [
   { url: previewImg1, span: "col-span-2 row-span-2" },

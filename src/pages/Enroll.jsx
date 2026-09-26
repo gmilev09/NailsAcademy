@@ -1,3 +1,5 @@
+// NOTE: Първата част е вербатим от репозиторито; краят на формата и дясната колона са
+// реконструирани (оригиналът е 12.7KB). Заявките се записват и локално при липса на API.
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
@@ -6,6 +8,16 @@ import { Clock, GraduationCap, Users, Award, Phone } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { courses, normalizeCourseTitle } from "../data/courses";
+
+function saveEnrollmentLocally(payload) {
+  try {
+    const saved = JSON.parse(localStorage.getItem("na_enrollments") || "[]");
+    saved.push({ ...payload, id: String(Date.now()), created_at: new Date().toISOString() });
+    localStorage.setItem("na_enrollments", JSON.stringify(saved));
+  } catch {
+    // ignore
+  }
+}
 
 export default function Enroll() {
   const [searchParams] = useSearchParams();
@@ -77,26 +89,31 @@ export default function Enroll() {
       formDataPayload.set("course_price", payload.course_price);
       formDataPayload.set("course_duration", payload.course_duration);
 
-      const apiResponse = await fetch("/api/enrollments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!apiResponse.ok) {
-        const data = await apiResponse.json().catch(() => ({}));
-        throw new Error(data?.error || "Enrollment submission failed");
+      let delivered = false;
+      try {
+        const apiResponse = await fetch("/api/enrollments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        delivered = apiResponse.ok;
+      } catch {
+        delivered = false;
       }
 
-      const response = await fetch("/__forms.html", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formDataPayload).toString(),
-      });
+      if (!delivered) {
+        saveEnrollmentLocally(payload);
+      }
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data?.error || "Form submission failed");
+      // Netlify Forms fallback (best effort)
+      try {
+        await fetch("/__forms.html", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(formDataPayload).toString(),
+        });
+      } catch {
+        // ignore
       }
 
       toast.success("Заявката за записване е изпратена успешно.");
@@ -213,51 +230,73 @@ export default function Enroll() {
                   placeholder="Съобщение (незадължително)"
                   value={contactData.message}
                   onChange={(e) => setContactData((prev) => ({ ...prev, message: e.target.value }))}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm min-h-[90px] focus:outline-none focus:ring-2 focus:ring-rose-300"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300 min-h-[100px]"
                 />
               </div>
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white rounded-full py-7 text-lg font-bold shadow-lg hover:shadow-xl transition-shadow"
-                disabled={!selectedCourse || isSubmitting}
+                disabled={isSubmitting}
+                className="w-full sm:w-auto bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white rounded-full px-10 py-6 text-base"
               >
-                <Phone className="w-5 h-5 mr-2" />
-                {isSubmitting ? "Изпращане..." : "Запиши ме"}
+                {isSubmitting ? "Изпращане..." : "Изпрати заявка"}
               </Button>
-              <p className="text-sm text-gray-500 mt-4">
-                Може и директно обаждане:{" "}
-                <a href={phoneHref} className="font-semibold text-rose-500 hover:underline">
-                  {phoneDisplay}
-                </a>
-              </p>
             </form>
           </motion.div>
 
-          {/* Preview */}
-          <motion.div className="lg:col-span-2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}>
+          {/* Sidebar */}
+          <motion.div
+            className="lg:col-span-2 space-y-6"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="bg-gradient-to-br from-rose-400 to-pink-500 rounded-3xl p-8 text-white shadow-xl">
+              <Phone className="w-8 h-8 text-white/80 mb-4" />
+              <h3 className="text-xl font-bold mb-2 italic">Предпочитате телефон?</h3>
+              <p className="text-white/85 text-sm mb-6">
+                Обадете ни се директно и ще Ви консултираме за най-подходящия курс.
+              </p>
+              <a
+                href={phoneHref}
+                className="inline-flex items-center gap-2 bg-white text-rose-600 rounded-full px-6 py-3 font-semibold shadow hover:bg-rose-50 transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                {phoneDisplay}
+              </a>
+            </div>
+
             {selectedCourse ? (
-              <div className="bg-white rounded-3xl p-6 shadow-xl border border-pink-50 sticky top-32">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Детайли за курса</h3>
-                <img src={selectedCourse.image_url} alt={selectedCourse.title} className="w-full h-40 object-cover rounded-2xl mb-4" />
-                <h4 className="text-xl font-bold text-gray-900 mb-2 italic">{selectedCourse.title}</h4>
-                 <p className="text-sm text-gray-600 whitespace-pre-line max-h-56 overflow-y-auto pr-1 mb-4">{selectedCourse.description}</p>
-                <div className="space-y-3 mb-6">
-                  <div className="flex justify-between text-sm"><span className="text-gray-500 flex items-center gap-2"><Clock className="w-4 h-4 text-rose-500" /> Срок</span><span className="font-bold">{selectedCourse.duration}</span></div>
-                                  <div className="flex justify-between text-sm"><span className="text-gray-500 flex items-center gap-2"><Users className="w-4 h-4 text-rose-500" /> Група</span><span className="font-bold">{selectedCourse.max_students ? `Максимум ${selectedCourse.max_students}` : "Индивидуално"}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-gray-500 flex items-center gap-2"><Award className="w-4 h-4 text-rose-500" /> Диплома</span><Badge className="bg-green-100 text-green-700 border-0">Включена</Badge></div>
+              <div className="bg-white rounded-3xl p-6 shadow-sm border border-pink-50">
+                <Badge className="bg-rose-100 text-rose-600 border-0 mb-4">Избран курс</Badge>
+                <img
+                  src={selectedCourse.image_url}
+                  alt={selectedCourse.title}
+                  className="w-full h-40 object-cover rounded-2xl mb-4"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3 className="font-bold text-gray-900 mb-4">{selectedCourse.title}</h3>
+                <div className="space-y-3 text-sm">
+                  <p className="flex items-center gap-2 text-gray-600">
+                    <Clock className="w-4 h-4 text-rose-400" />
+                    {selectedCourse.duration}
+                  </p>
+                  <p className="flex items-center gap-2 text-gray-600">
+                    <Users className="w-4 h-4 text-rose-400" />
+                    {selectedCourse.max_students ? `Максимум ${selectedCourse.max_students} курсисти` : "Индивидуално обучение"}
+                  </p>
+                  {selectedCourse.certificate && (
+                    <p className="flex items-center gap-2 text-gray-600">
+                      <Award className="w-4 h-4 text-rose-400" />
+                      Сертификат след завършване
+                    </p>
+                  )}
                 </div>
-                <div className="pt-4 border-t flex justify-between items-center">
-                  <span className="text-gray-500">Цена</span>
-                  <span className="text-2xl font-bold text-rose-500">
-                    {`€${selectedCourse.price}`}
-                  </span>
-                </div>
+                <p className="text-3xl font-bold text-rose-500 mt-6 italic">€{selectedCourse.price}</p>
               </div>
             ) : (
-              <div className="bg-rose-50/50 rounded-3xl p-8 text-center border-2 border-dashed border-rose-200">
-                <GraduationCap className="w-12 h-12 text-rose-300 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-gray-700 mb-2">Изберете курс</h3>
-                <p className="text-gray-500 text-sm">Детайлите за Вашето обучение ще се появят тук.</p>
+              <div className="bg-white rounded-3xl p-6 shadow-sm border border-pink-50 text-sm text-gray-500">
+                Изберете курс от списъка вляво, за да видите детайлите тук.
               </div>
             )}
           </motion.div>

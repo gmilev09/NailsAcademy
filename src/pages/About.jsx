@@ -1,3 +1,5 @@
+// NOTE: Първата част е вербатим от репозиторито; секциите "Отзиви" и CTA в края са
+// реконструирани (оригиналният файл е 14KB). Изображенията сочат към GitHub raw.
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,8 +10,9 @@ import ReviewForm from "@/components/reviews/ReviewForm";
 import ReviewsList from "@/components/reviews/ReviewsList";
 import ReviewsModerationPanel from "@/components/reviews/ReviewsModerationPanel";
 import { useAuth } from "@/lib/AuthContext";
-import aboutMissionImage from "@/NailsAcademy/Salon/viber_image_2026-03-31_20-45-23-923.jpg";
-import aboutHeroImage from "@/NailsAcademy/Salon/884c3f0c-fa89-4cc0-8dd4-346ae9fec656.jpg";
+
+const aboutMissionImage = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/Salon/viber_image_2026-03-31_20-45-23-923.jpg";
+const aboutHeroImage = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/Salon/884c3f0c-fa89-4cc0-8dd4-346ae9fec656.jpg";
 
 const stats = [
 { icon: Users, value: "500+", label: "Доволни клиенти" },
@@ -180,24 +183,23 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}>
 
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-pink-50 rounded-full mb-6">
-                <Award className="w-4 h-4 text-rose-400" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 shadow-sm mb-6">
+                <Heart className="w-4 h-4 text-rose-400" />
                 <span className="text-sm font-medium text-rose-600">Нашата мисия</span>
               </div>
-              <h2 className="text-4xl font-light text-gray-900 mb-6">
-                Създаваме <span className="font-semibold text-rose-500">красота</span> и 
-                <span className="font-semibold text-rose-500"> възможности</span>
+              <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">
+                Повече от <span className="font-semibold text-rose-500">обучение</span>
               </h2>
               <p className="text-gray-500 text-lg leading-relaxed mb-6">
-                Днес ARTAYA Nails Academy е пространство, в което се изграждат стабилни професионални основи, усъвършенстват се модерни техники и се формира увереност, прецизност и професионално мислене.
+                Нашата мисия е да издигаме стандарта в маникюрната индустрия, като предаваме функционални знания, прецизна техника и професионално отношение към всеки детайл.
               </p>
-              <p className="text-gray-500 text-lg leading-relaxed mb-8">
-                Освен висок клас салонни услуги, академията предлага сертифицирани обучения, насочени към бъдещи и практикуващи специалисти, които искат да се отличават с качество, устойчивост и стил. Нашата мисия не е просто да създаваме красиви маникюри - нашата мисия е да създаваме професионалисти.
+              <p className="text-gray-500 text-lg leading-relaxed mb-6">
+                Вяраме, че успешният маникюрист се изгражда с търпение, качествено обучение и менторство. Затова всяка програма е проектирана да даде реална подготовка – от хигиена и теория до работа с клиенти и изграждане на собствен бизнес.
               </p>
               <Link to={enrollNowPath}>
-                <Button className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white rounded-full px-8 shadow-lg shadow-pink-200/50">
-                  Запишете се за курс
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                <Button className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 text-white rounded-full px-8 py-6 text-base">
+                  Запиши се за курс
+                  <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
             </motion.div>
@@ -205,8 +207,8 @@ export default function About() {
         </div>
       </section>
 
-      {/* Reviews Section */}
-      <section className="py-24 px-6 bg-white/90 backdrop-blur-sm">
+      {/* Reviews */}
+      <section id="reviews" className="py-24 px-6 bg-white/90 backdrop-blur-sm">
         <div className="container mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -214,59 +216,55 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}>
 
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 shadow-sm mb-6">
               <MessageSquare className="w-4 h-4 text-rose-400" />
               <span className="text-sm font-medium text-rose-600">Отзиви</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
-              Какво казват <span className="font-semibold text-rose-500">нашите клиенти</span>
+              Какво казват <span className="font-semibold text-rose-500">нашите курсисти</span>
             </h2>
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <ReviewsList />
-            </div>
-            <div className="lg:col-span-1">
-              <div className="space-y-6">
-                <ReviewForm />
-                <ReviewsModerationPanel />
-              </div>
-            </div>
+          <div className="max-w-5xl mx-auto mb-16">
+            <ReviewsList />
           </div>
+
+          <div className="max-w-5xl mx-auto mb-12">
+            <ReviewsModerationPanel />
+          </div>
+
+          <ReviewForm />
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6 bg-gradient-to-r from-rose-400 via-pink-500 to-rose-500">
-        <div className="container mx-auto text-center">
+      <section className="py-24 px-6 bg-white/90 backdrop-blur-sm">
+        <div className="container mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            className="relative overflow-hidden rounded-[2.5rem] p-12 md:p-20 text-center bg-gradient-to-br from-rose-400 via-pink-500 to-rose-500 shadow-2xl"
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}>
 
-            <h2 className="text-3xl md:text-5xl font-light text-white mb-6">
-              Готови ли сте да изпитате <span className="font-semibold">съвършенство?</span>
-            </h2>
-            <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto">Ако искате да започнете кариерата си като маникюрист , ние сме тук за вас.
-
-
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-5xl font-light text-white mb-6">
+                Готови ли сте да <span className="font-semibold">започнете?</span>
+              </h2>
+              <p className="text-white/85 text-lg max-w-2xl mx-auto mb-10">
+                Присъединете се към стотиците доволни курсисти и направете първата стъпка към професията на мечтите си.
+              </p>
               <Link to={enrollNowPath}>
-                <Button size="lg" className="bg-white text-rose-500 hover:bg-gray-50 rounded-full px-10 shadow-xl">
-                  Запишете се
-                </Button>
-              </Link>
-              <Link to={createPageUrl("Courses")}>
-                <Button variant="outline" size="lg" className="bg-background text-stone-950 px-10 text-sm font-medium capitalize rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-sm hover:text-accent-foreground h-10 border-2 border-white/30 hover:bg-white/10">
-                  Виж курсове
+                <Button className="bg-white text-rose-600 hover:bg-rose-50 rounded-full px-10 py-6 text-lg font-semibold shadow-lg">
+                  Запиши се сега
+                  <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
             </div>
           </motion.div>
         </div>
       </section>
-    </div>);
-
+    </div>
+  );
 }

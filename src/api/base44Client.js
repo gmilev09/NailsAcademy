@@ -1,4 +1,12 @@
-import { getUser } from "@netlify/identity";
+// LOCAL PREVIEW SHIM — replaces `@netlify/identity` so the app works fully offline.
+// User session is persisted in localStorage (see src/lib/AuthContext.jsx).
+async function getUser() {
+  try {
+    return JSON.parse(localStorage.getItem("na_mock_user") || "null");
+  } catch {
+    return null;
+  }
+}
 
 const CART_STORAGE_KEY = "nails_academy_cart";
 
@@ -50,22 +58,27 @@ export const base44 = {
         return Promise.resolve();
       },
     },
-          Order: {
+    Order: {
       create: async (data) => {
+        // Hybrid: на Netlify пращаме към реалната функция /api/orders,
+        // а при локално превю записваме поръчката в localStorage.
         try {
           const response = await fetch("/api/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
           });
-          const result = await response.json();
-          if (!response.ok) {
-            throw new Error(result.error || "Неуспешна поръчка");
+          if (response.ok) {
+            const result = await response.json().catch(() => ({}));
+            if (result?.order) return result.order;
           }
-          return result.order;
+          throw new Error("orders api unavailable");
         } catch (err) {
-          console.error("Error saving order to backend:", err);
-          throw err;
+          const orders = getStoredItems("nails_academy_orders");
+          const order = { ...data, id: String(++idCounter), created_at: new Date().toISOString() };
+          orders.push(order);
+          setStoredItems("nails_academy_orders", orders);
+          return order;
         }
       },
     },

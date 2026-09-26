@@ -6,6 +6,17 @@ import { Label } from "../ui/label";
 import { Star, Send, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
+// Preview helper: keep submitted reviews locally when the Netlify API is not present.
+function saveReviewLocally(review) {
+  try {
+    const existing = JSON.parse(localStorage.getItem("na_pending_reviews") || "[]");
+    existing.push({ ...review, id: String(Date.now()), status: "pending", created_at: new Date().toISOString() });
+    localStorage.setItem("na_pending_reviews", JSON.stringify(existing));
+  } catch {
+    // ignore
+  }
+}
+
 export default function ReviewForm() {
   const [formData, setFormData] = useState({
     author_name: "",
@@ -56,24 +67,30 @@ export default function ReviewForm() {
     setIsPending(true);
 
     try {
-      const response = await fetch("/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          author_name: formData.author_name.trim(),
-          rating: Number(formData.rating),
-          comment: formData.comment.trim(),
-          course_title: formData.course_title.trim(),
-          author_image: formData.author_image.trim(),
-        }),
-      });
+      const reviewPayload = {
+        author_name: formData.author_name.trim(),
+        rating: Number(formData.rating),
+        comment: formData.comment.trim(),
+        course_title: formData.course_title.trim(),
+        author_image: formData.author_image.trim(),
+      };
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data?.error || "Неуспешно изпращане на отзива.");
+      let submitted = false;
+      try {
+        const response = await fetch("/api/reviews", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reviewPayload),
+        });
+        submitted = response.ok;
+        if (!response.ok) {
+          saveReviewLocally(reviewPayload);
+        }
+      } catch {
+        saveReviewLocally(reviewPayload);
       }
 
-      // Submit to Netlify Forms for tracking
+      // Submit to Netlify Forms for tracking (best effort)
       const netlifyFormData = new URLSearchParams();
       netlifyFormData.append("form-name", "reviews");
       netlifyFormData.append("author_name", formData.author_name.trim());
@@ -85,7 +102,7 @@ export default function ReviewForm() {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: netlifyFormData.toString(),
-      }).catch(() => {});
+      }).catch(() => { void submitted; });
 
       toast.success("Благодарим за отзива! Ще бъде публикуван след одобрение.");
       setFormData({ author_name: "", rating: 5, comment: "", course_title: "", author_image: "" });

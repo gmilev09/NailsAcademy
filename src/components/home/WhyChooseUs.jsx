@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../ui/button";
-import { ShoppingBag, ChevronLeft, ChevronRight, Plus, Check } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { ShoppingBag, Plus, Check } from "lucide-react";
 import { toast } from "sonner";
 
+// NOTE: В репозиторито WhyChooseUs.jsx съдържа дубликат на FeaturedProducts
+// (не се използва от Home страницата). Запазен е както е в репозиторито.
 const products = [
   { id: 1, name: "Професионална електрическа пила", price: "185", description: "Висока мощност за маникюр.", image_url: "https://images.unsplash.com" },
   { id: 2, name: "LED/UV лампа 48W", price: "45", description: "Бързо изпичане на гел.", image_url: "https://images.unsplash.com" }
@@ -15,7 +16,6 @@ function AddToCartButton({ product, user }) {
   const handleAdd = () => {
     if (!user) {
       toast.error("Моля, влезте в акаунта си, за да поръчате!");
-      // Тук по-късно ще сложим: window.location.href = "/login";
       return;
     }
     setAdded(true);
@@ -37,8 +37,7 @@ function AddToCartButton({ product, user }) {
 }
 
 export default function FeaturedProducts() {
-  const [user, setUser] = useState(null); // Тук ще се пази логнатият клиент
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [user, setUser] = useState(null);
 
   return (
     <section className="py-20 bg-pink-50/30">

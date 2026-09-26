@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
-import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { shopProducts } from "../data/products";
+import { getDisplayProducts } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -47,6 +47,33 @@ function ProductImageGallery({ product }) {
   );
 }
 
+// Мини-визуализация на вариантите (цветни кръгчета или чипове)
+function VariantPreview({ group }) {
+  if (!group) return null;
+  const hasSwatches = group.variants.some((v) => v.swatch);
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      {hasSwatches ? (
+        <div className="flex items-center">
+          {group.variants.map((variant, index) => (
+            <span
+              key={variant.productId}
+              className="w-4 h-4 rounded-full border border-white shadow-sm ring-1 ring-gray-200"
+              style={{ backgroundColor: variant.swatch, marginLeft: index === 0 ? 0 : -5 }}
+              title={variant.label}
+            />
+          ))}
+        </div>
+      ) : (
+        <Layers className="w-3.5 h-3.5 text-rose-400" />
+      )}
+      <span className="text-xs text-gray-400 italic">
+        {group.variants.length} {hasSwatches ? "цвята" : "модела"}
+      </span>
+    </div>
+  );
+}
+
 const categories = [
   { value: "all", label: "Всички" },
   { value: "електроуреди", label: "Електроуреди" },
@@ -62,11 +89,13 @@ export default function Shop() {
   const [addedProductId, setAddedProductId] = useState(null);
   const { isAuthenticated, navigateToLogin } = useAuth();
 
+  const displayProducts = useMemo(() => getDisplayProducts(), []);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const filteredProducts = shopProducts
+  const filteredProducts = displayProducts
     .filter(p => activeCategory === "all" || p.category === activeCategory)
     .filter(p => searchQuery === "" || p.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -137,7 +166,7 @@ export default function Shop() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {filteredProducts.map((product, index) => (
                 <motion.div
-                  key={product.id}
+                  key={product.group ? product.group.id : product.id}
                   className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-50 flex flex-col group"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -150,23 +179,39 @@ export default function Shop() {
                     <Link to={`/ProductDetail?id=${product.id}`}>
                       <h3 className="font-bold text-gray-900 mb-2 hover:text-rose-500 transition-colors italic">{product.name}</h3>
                     </Link>
-                    <p className="text-gray-500 text-sm mb-4 line-clamp-2 italic">{product.description}</p>
+                    {product.group ? (
+                      <VariantPreview group={product.group} />
+                    ) : (
+                      <p className="text-gray-500 text-sm mb-4 line-clamp-2 italic">{product.description}</p>
+                    )}
                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
                       <span className="text-2xl font-bold text-rose-500 italic">
                         {`€${product.price}`}
                       </span>
-                      <Button
-                        size="sm"
-                        className={`rounded-full px-4 ${
-                          addedProductId === product.id
-                            ? "bg-green-500 text-white hover:bg-green-600"
-                            : "bg-rose-500 text-white hover:bg-rose-600"
-                        }`}
-                        disabled={!product.in_stock}
-                        onClick={() => handleAddToCart(product)}
-                      >
-                        {addedProductId === product.id ? "✔ Добавено!" : <><Plus className="w-4 h-4 mr-1" /> {isAuthenticated ? "Добави" : "Вход"}</>}
-                      </Button>
+                      {product.group ? (
+                        <Link to={`/ProductDetail?id=${product.id}`}>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="rounded-full px-4 border-rose-300 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+                          >
+                            Избери {product.group.selectorLabel === "Цвят" ? "цвят" : "модел"}
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className={`rounded-full px-4 ${
+                            addedProductId === product.id
+                              ? "bg-green-500 text-white hover:bg-green-600"
+                              : "bg-rose-500 text-white hover:bg-rose-600"
+                          }`}
+                          disabled={!product.in_stock}
+                          onClick={() => handleAddToCart(product)}
+                        >
+                          {addedProductId === product.id ? "✔ Добавено!" : <><Plus className="w-4 h-4 mr-1" /> {isAuthenticated ? "Добави" : "Вход"}</>}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </motion.div>

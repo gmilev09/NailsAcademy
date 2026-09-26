@@ -1,15 +1,59 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import {
-  getUser,
-  getSettings,
-  login,
-  signup,
-  logout as netlifyLogout,
-  onAuthChange,
-  handleAuthCallback,
-  AuthError,
-  MissingIdentityError,
-} from "@netlify/identity";
+
+// LOCAL PREVIEW SHIM — replaces `@netlify/identity` with a localStorage-backed
+// auth so the site works fully offline. Public API is kept identical:
+// loginUser / signupUser / logout / navigateToLogin / useAuth()
+
+const USERS_KEY = "na_users";
+const SESSION_KEY = "na_mock_user";
+
+class AuthError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.status = status;
+  }
+}
+class MissingIdentityError extends Error {}
+
+const readUsers = () => {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || "[]"); } catch { return []; }
+};
+const writeUsers = (users) => localStorage.setItem(USERS_KEY, JSON.stringify(users));
+
+const getUser = async () => {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); } catch { return null; }
+};
+const getSettings = async () => ({ signup_disabled: false });
+const login = async (email, password) => {
+  const users = readUsers();
+  const found = users.find((u) => u.email === email && u.password === password);
+  if (!found) throw new AuthError("Невалиден имейл или парола.", 401);
+  const user = { id: found.id, email: found.email, name: found.user_metadata?.full_name || "", user_metadata: found.user_metadata };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+  notify("login", user);
+  return user;
+};
+const signup = async (email, password, metadata) => {
+  const users = readUsers();
+  if (users.some((u) => u.email === email)) throw new AuthError("Потребител с този имейл вече съществува.", 422);
+  if (!email || !password || password.length < 4) throw new AuthError("Проверете имейла и паролата.", 422);
+  const user = { id: String(Date.now()), email, password, user_metadata: metadata || {} };
+  users.push(user);
+  writeUsers(users);
+  // auto-login after signup (preview behaviour)
+  const sessionUser = { id: user.id, email: user.email, name: user.user_metadata?.full_name || "", user_metadata: user.user_metadata };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser));
+  notify("signup", sessionUser);
+  return { ...user, confirmed: true, autoconfirm: true };
+};
+const netlifyLogout = async () => {
+  localStorage.removeItem(SESSION_KEY);
+  notify("logout", null);
+};
+const listeners = new Set();
+function notify(event, user) { listeners.forEach((fn) => fn(event, user)); }
+const onAuthChange = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+const handleAuthCallback = async () => null;
 
 const AuthContext = createContext();
 
@@ -20,7 +64,7 @@ function getReadableError(error) {
   if (error instanceof AuthError) {
     if (error.status === 401) return "Невалиден имейл или парола.";
     if (error.status === 403) return "Регистрацията е изключена.";
-    if (error.status === 422) return "Проверете имейла и паролата.";
+    if (error.status === 422) return error.message || "Проверете имейла и паролата.";
     return error.message || "Възникна проблем с автентикацията.";
   }
   return "Възникна неочаквана грешка.";
@@ -46,13 +90,6 @@ export const AuthProvider = ({ children }) => {
         if (!isMounted) return;
         if (callbackResult?.type === "confirmation") {
           setCallbackNotice("Имейлът е потвърден успешно. Входът е активен.");
-        }
-        if (callbackResult?.type === "recovery") {
-          setAuthError("Възстановяването на парола е изключено. Свържете се с администратор.");
-          if (typeof window !== "undefined" && window.location.pathname.toLowerCase() !== "/auth") {
-            window.location.assign("/auth");
-            return;
-          }
         }
       } catch (error) {
         if (!isMounted) return;

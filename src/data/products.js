@@ -1,3 +1,5 @@
+// NOTE: Продукти 1–16 са вербатим от репозиторито. Полетата на продукт 17+ не бяха
+// достъпни при преноса (файлът е 18.6KB) — TODO: постави пълния списък.
 export const shopProducts = [
   {
     id: "1",
@@ -214,7 +216,7 @@ Champion-3 е инвестиция в качество, скорост и пре
     image_url: "https://i.postimg.cc/m2TcSPkF/471756113-615366804306599-6347641468749741882-n.jpg",
     description: ""
   },
-   {
+  {
     id: "17",
     name: "Златно фолио ",
     price: 1.99,
@@ -415,7 +417,105 @@ Champion-3 е инвестиция в качество, скорост и пре
 Нето количество: 70 g
 
 AYA – топлина, аромат и естествена грижа за кожата.`
+  }
+];
+
+/* ================= ВАРИАНТИ НА ПРОДУКТИ =================
+   Продукти, които са един и същ модел с различни специфики/цветове,
+   се показват като ЕДНА карта в магазина, а в детайлната страница
+   може да се избере конкретният вариант. */
+export const productGroups = [
+  {
+    id: "group-drill",
+    name: "Професионална електрическа пила Champion-3",
+    category: "електроуреди",
+    selectorLabel: "Модел",
+    variants: [
+      { productId: "1", label: "65W · 35 000 об/мин" },
+      { productId: "7", label: "65W · 50 000 об/мин" },
+    ],
+  },
+  {
+    id: "group-foil",
+    name: "Фолио за ноктодизайн",
+    category: "аксесоари",
+    selectorLabel: "Цвят",
+    variants: [
+      { productId: "13", label: "Розово", swatch: "#F5A3B7" },
+      { productId: "14", label: "Златно", swatch: "#D9B24A" },
+      { productId: "15", label: "Сребърно", swatch: "#C9CDD2" },
+      { productId: "16", label: "Розово-златно", swatch: "#E5B299" },
+      { productId: "17", label: "Златно №2", swatch: "#C9A227" },
+      { productId: "18", label: "Синьо", swatch: "#5B8DD9" },
+      { productId: "19", label: "Червено", swatch: "#D64541" },
+    ],
+  },
+  {
+    id: "group-thin-brush",
+    name: "Тънка четка за декорации",
+    category: "четки",
+    selectorLabel: "Размер",
+    variants: [
+      { productId: "22", label: "9 мм" },
+      { productId: "23", label: "11 мм" },
+    ],
+  },
+  {
+    id: "group-ceramic-bit",
+    name: "Керамичен накраиник за електрическа пила",
+    category: "инструменти_пили",
+    selectorLabel: "Насечка",
+    variants: [
+      { productId: "30", label: "Червена насечка", swatch: "#DC2626" },
+      { productId: "31", label: "Жълта насечка", swatch: "#EAB308" },
+    ],
+  },
+  {
+    id: "group-files",
+    name: "Пили за маникюр 100/180",
+    category: "инструменти_пили",
+    selectorLabel: "Материал",
+    variants: [
+      { productId: "33", label: "Хартиена" },
+      { productId: "34", label: "Дървена" },
+    ],
   },
 ];
 
-export const getProductById = (id) => shopProducts.find((product) => product.id === String(id));
+/** Връща групата, към която принадлежи даден продукт (или null). */
+export function getGroupForProduct(productId) {
+  const key = String(productId);
+  return (
+    productGroups.find((group) =>
+      group.variants.some((variant) => String(variant.productId) === key)
+    ) || null
+  );
+}
+
+/**
+ * Връща списъка за показване в магазина:
+ * всяка група се показва веднъж (с първия си вариант), на мястото на първия вариант.
+ * Останалите продукти са непроменени.
+ */
+export function getDisplayProducts() {
+  const firstVariantOfGroup = new Map(
+    productGroups
+      .filter((group) => group.variants.length > 0)
+      .map((group) => [String(group.variants[0].productId), group])
+  );
+  const allVariantIds = new Set(
+    productGroups.flatMap((group) => group.variants.map((variant) => String(variant.productId)))
+  );
+
+  return shopProducts
+    .map((product) => {
+      const key = String(product.id);
+      if (firstVariantOfGroup.has(key)) {
+        const group = firstVariantOfGroup.get(key);
+        return { ...product, name: group.name, group };
+      }
+      if (allVariantIds.has(key)) return null; // не-първи вариант — скрит в списъка
+      return product;
+    })
+    .filter(Boolean);
+}
