@@ -11,8 +11,10 @@ function sanitizeText(value, maxLength = 5000) {
 
 async function sendEnrollmentNotification(enrollment) {
   const resendApiKey = Netlify.env.get("RESEND_API_KEY");
+
   if (!resendApiKey) {
-    return;
+    console.warn("RESEND_API_KEY not configured. Email notifications will not be sent. To enable email notifications, add your Resend API key to your environment variables.");
+    return { success: false, reason: "RESEND_API_KEY not configured" };
   }
 
   const toEmail = Netlify.env.get("ENROLLMENT_NOTIFICATION_TO") || DEFAULT_ADMIN_EMAIL;
@@ -31,7 +33,7 @@ async function sendEnrollmentNotification(enrollment) {
       `Телефон: ${enrollment.phone}`,
       "",
       `Курс: ${enrollment.course_title}`,
-      `Цена: ${enrollment.course_price.toFixed(2)} EUR`,
+      `Цена: ${enrollment.course_price}`,
       `Продължителност: ${enrollment.course_duration || "не е посочена"}`,
       "",
       "Съобщение:",
@@ -41,22 +43,31 @@ async function sendEnrollmentNotification(enrollment) {
     ].join("\n"),
   };
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Resend API error (${response.status}): ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Resend API error (${response.status}):`, errorText);
+      return { success: false, reason: `Resend API error: ${response.status}` };
+    }
+
+    console.log("Enrollment notification email sent successfully");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to send enrollment notification email:", error.message);
+    return { success: false, reason: error.message };
   }
 }
 
-export default async (req) => {
+export default async (req, context) => {
   const store = getStore({ name: "enrollments", consistency: "strong" });
   const user = await getUser();
 
@@ -72,7 +83,7 @@ export default async (req) => {
     const course_title = sanitizeText(body.course_title, 200);
     const course_duration = sanitizeText(body.course_duration, 200);
     const message = sanitizeText(body.message, 5000);
-    const course_price = Number(body.course_price) || 0;
+    const course_price = String(body.course_price || "0");
 
     if (!student_name || !phone || !course_title) {
       return Response.json(
@@ -96,12 +107,24 @@ export default async (req) => {
       created_at: new Date().toISOString(),
     };
 
-    await store.setJSON(id, enrollment);
-    sendEnrollmentNotification(enrollment).catch((error) => {
-      console.error("Failed to send enrollment notification email:", error);
-    });
+    try {
+      await store.setJSON(id, enrollment);
 
-    return Response.json({ success: true, enrollment }, { status: 201 });
+      // Try to send email notification (non-blocking)
+      context.waitUntil(
+        sendEnrollmentNotification(enrollment).catch((error) => {
+          console.error("Unexpected error in email notification:", error);
+        })
+      );
+
+      return Response.json({ success: true, enrollment }, { status: 201 });
+    } catch (error) {
+      console.error("Error storing enrollment:", error);
+      return Response.json(
+        { error: "Failed to store enrollment", details: error.message },
+        { status: 500 }
+      );
+    }
   }
 
   if (req.method === "GET") {
@@ -109,11 +132,19 @@ export default async (req) => {
       return Response.json({ error: "Authentication required" }, { status: 401 });
     }
 
-    const { blobs } = await store.list();
-    const enrollments = await Promise.all(blobs.map((blob) => store.get(blob.key, { type: "json" })));
-    const currentUserEnrollments = enrollments.filter((enrollment) => enrollment?.user_id === user.id);
+    try {
+      const { blobs } = await store.list();
+      const enrollments = await Promise.all(blobs.map((blob) => store.get(blob.key, { type: "json" })));
+      const currentUserEnrollments = enrollments.filter((enrollment) => enrollment?.user_id === user.id);
 
-    return Response.json({ enrollments: currentUserEnrollments });
+      return Response.json({ enrollments: currentUserEnrollments });
+    } catch (error) {
+      console.error("Error retrieving enrollments:", error);
+      return Response.json(
+        { error: "Failed to retrieve enrollments", details: error.message },
+        { status: 500 }
+      );
+    }
   }
 
   return Response.json({ error: "Method not allowed" }, { status: 405 });
