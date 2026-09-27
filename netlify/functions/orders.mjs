@@ -33,9 +33,10 @@ function normalizeOrderItems(items) {
 
 async function sendAdminOrderNotification(order) {
   const resendApiKey = Netlify.env.get("RESEND_API_KEY");
+
   if (!resendApiKey) {
-    console.warn("Order email notification skipped: RESEND_API_KEY is not set.");
-    return;
+    console.warn("RESEND_API_KEY not configured. Email notifications will not be sent. To enable email notifications, add your Resend API key to your environment variables.");
+    return { success: false, reason: "RESEND_API_KEY not configured" };
   }
 
   const toEmail = Netlify.env.get("ORDER_NOTIFICATION_TO") || DEFAULT_ADMIN_EMAIL;
@@ -63,27 +64,36 @@ async function sendAdminOrderNotification(order) {
       "Продукти:",
       itemsList || "- няма",
       "",
-      `Междинна сума: ${order.subtotal.toFixed(2)} EUR`,
-      `Доставка: ${order.shipping_cost.toFixed(2)} EUR`,
-      `ОБЩО: ${order.total.toFixed(2)} EUR`,
+      `Междинна сума: ${order.subtotal}`,
+      `Доставка: ${order.shipping_cost}`,
+      `ОБЩО: ${order.total}`,
       "",
       `Плащане: ${order.payment_method || "cod"}`,
       `Създадена: ${order.created_at}`,
     ].join("\n"),
   };
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Resend API error (${response.status}): ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Resend API error (${response.status}):`, errorText);
+      return { success: false, reason: `Resend API error: ${response.status}` };
+    }
+
+    console.log("Order notification email sent successfully");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to send order notification email:", error.message);
+    return { success: false, reason: error.message };
   }
 }
 
@@ -129,22 +139,32 @@ export default async (req, context) => {
       delivery_address: delivery_address || "",
       courier: courier || "econt",
       items: normalizedItems,
-      subtotal: Number(subtotal) || 0,
-      shipping_cost: Number(shipping_cost) || 0,
-      total: Number(total) || 0,
+      subtotal: String(subtotal) || "0",
+      shipping_cost: String(shipping_cost) || "0",
+      total: String(total) || "0",
       payment_method: payment_method || "cod",
       status: "new",
       created_at: new Date().toISOString(),
     };
 
-    await store.setJSON(id, order);
-    context.waitUntil(
-      sendAdminOrderNotification(order).catch((error) => {
-        console.error("Failed to send order notification email:", error);
-      })
-    );
+    try {
+      await store.setJSON(id, order);
 
-    return Response.json({ success: true, order }, { status: 201 });
+      // Try to send email notification (non-blocking)
+      context.waitUntil(
+        sendAdminOrderNotification(order).catch((error) => {
+          console.error("Unexpected error in email notification:", error);
+        })
+      );
+
+      return Response.json({ success: true, order }, { status: 201 });
+    } catch (error) {
+      console.error("Error storing order:", error);
+      return Response.json(
+        { error: "Failed to store order", details: error.message },
+        { status: 500 }
+      );
+    }
   }
 
   if (req.method === "GET") {
@@ -152,11 +172,19 @@ export default async (req, context) => {
       return Response.json({ error: "Authentication required" }, { status: 401 });
     }
 
-    const { blobs } = await store.list();
-    const orders = await Promise.all(blobs.map((blob) => store.get(blob.key, { type: "json" })));
-    const currentUserOrders = orders.filter((order) => order?.user_id === user.id);
+    try {
+      const { blobs } = await store.list();
+      const orders = await Promise.all(blobs.map((blob) => store.get(blob.key, { type: "json" })));
+      const currentUserOrders = orders.filter((order) => order?.user_id === user.id);
 
-    return Response.json({ orders: currentUserOrders });
+      return Response.json({ orders: currentUserOrders });
+    } catch (error) {
+      console.error("Error retrieving orders:", error);
+      return Response.json(
+        { error: "Failed to retrieve orders", details: error.message },
+        { status: 500 }
+      );
+    }
   }
 
   return Response.json({ error: "Method not allowed" }, { status: 405 });

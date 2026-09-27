@@ -11,8 +11,10 @@ function sanitizeText(value, maxLength = 2000) {
 
 async function sendContactNotification(message) {
   const resendApiKey = Netlify.env.get("RESEND_API_KEY");
+
   if (!resendApiKey) {
-    return;
+    console.warn("RESEND_API_KEY not configured. Email notifications will not be sent. To enable email notifications, add your Resend API key to your environment variables.");
+    return { success: false, reason: "RESEND_API_KEY not configured" };
   }
 
   const toEmail = Netlify.env.get("CONTACT_NOTIFICATION_TO") || DEFAULT_ADMIN_EMAIL;
@@ -37,18 +39,27 @@ async function sendContactNotification(message) {
     ].join("\n"),
   };
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Resend API error (${response.status}): ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Resend API error (${response.status}):`, errorText);
+      return { success: false, reason: `Resend API error: ${response.status}` };
+    }
+
+    console.log("Contact notification email sent successfully");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to send contact notification email:", error.message);
+    return { success: false, reason: error.message };
   }
 }
 
@@ -82,16 +93,25 @@ export default async (req, context) => {
     status: "new",
   };
 
-  const store = getStore(CONTACT_STORE);
-  await store.setJSON(id, record);
+  try {
+    const store = getStore(CONTACT_STORE);
+    await store.setJSON(id, record);
 
-  context.waitUntil(
-    sendContactNotification(record).catch((error) => {
-      console.error("Failed to send contact notification email:", error);
-    })
-  );
+    // Try to send email notification (non-blocking)
+    context.waitUntil(
+      sendContactNotification(record).catch((error) => {
+        console.error("Unexpected error in email notification:", error);
+      })
+    );
 
-  return Response.json({ success: true, message: { id: record.id } }, { status: 201 });
+    return Response.json({ success: true, message: { id: record.id } }, { status: 201 });
+  } catch (error) {
+    console.error("Error storing contact message:", error);
+    return Response.json(
+      { error: "Failed to store message", details: error.message },
+      { status: 500 }
+    );
+  }
 };
 
 export const config = {

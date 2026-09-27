@@ -90,8 +90,10 @@ function isModerator(user) {
 
 async function sendReviewNotification(review) {
   const resendApiKey = Netlify.env.get("RESEND_API_KEY");
+
   if (!resendApiKey) {
-    return;
+    console.warn("RESEND_API_KEY not configured. Email notifications will not be sent. To enable email notifications, add your Resend API key to your environment variables.");
+    return { success: false, reason: "RESEND_API_KEY not configured" };
   }
 
   const toEmail = Netlify.env.get("REVIEW_NOTIFICATION_TO") || DEFAULT_ADMIN_EMAIL;
@@ -116,18 +118,27 @@ async function sendReviewNotification(review) {
     ].join("\n"),
   };
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Resend API error (${response.status}): ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Resend API error (${response.status}):`, errorText);
+      return { success: false, reason: `Resend API error: ${response.status}` };
+    }
+
+    console.log("Review notification email sent successfully");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to send review notification email:", error.message);
+    return { success: false, reason: error.message };
   }
 }
 
@@ -174,71 +185,97 @@ export default async (req, context) => {
       moderated_by: null,
     };
 
-    await store.setJSON(id, review);
-    context.waitUntil(
-      sendReviewNotification(review).catch((error) => {
-        console.error("Failed to send review notification email:", error);
-      })
-    );
+    try {
+      await store.setJSON(id, review);
 
-    return jsonResponse({ success: true, review }, 201);
+      // Try to send email notification (non-blocking)
+      context.waitUntil(
+        sendReviewNotification(review).catch((error) => {
+          console.error("Unexpected error in email notification:", error);
+        })
+      );
+
+      return jsonResponse({ success: true, review }, 201);
+    } catch (error) {
+      console.error("Error storing review:", error);
+      return jsonResponse(
+        { error: "Failed to store review", details: error.message },
+        500
+      );
+    }
   }
 
   if (req.method === "GET") {
-    const url = new URL(req.url);
-    const requestedStatus = normalizeText(url.searchParams.get("status") || "", 32).toLowerCase();
-    const user = await getUser();
-    const canModerate = isModerator(user);
-    const reviews = await listReviews(store);
+    try {
+      const url = new URL(req.url);
+      const requestedStatus = normalizeText(url.searchParams.get("status") || "", 32).toLowerCase();
+      const user = await getUser();
+      const canModerate = isModerator(user);
+      const reviews = await listReviews(store);
 
-    if (!canModerate) {
-      const approved = reviews
-        .filter((review) => review.status === "approved")
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      if (!canModerate) {
+        const approved = reviews
+          .filter((review) => review.status === "approved")
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      return jsonResponse({ reviews: approved, canModerate: false });
+        return jsonResponse({ reviews: approved, canModerate: false });
+      }
+
+      const filtered = requestedStatus
+        ? reviews.filter((review) => review.status === requestedStatus)
+        : reviews;
+
+      filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      return jsonResponse({ reviews: filtered, canModerate: true });
+    } catch (error) {
+      console.error("Error retrieving reviews:", error);
+      return jsonResponse(
+        { error: "Failed to retrieve reviews", details: error.message },
+        500
+      );
     }
-
-    const filtered = requestedStatus
-      ? reviews.filter((review) => review.status === requestedStatus)
-      : reviews;
-
-    filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-    return jsonResponse({ reviews: filtered, canModerate: true });
   }
 
   if (req.method === "PATCH") {
-    const user = await getUser();
-    if (!isModerator(user)) {
-      return jsonResponse({ error: "Forbidden" }, 403);
+    try {
+      const user = await getUser();
+      if (!isModerator(user)) {
+        return jsonResponse({ error: "Forbidden" }, 403);
+      }
+
+      const body = await req.json();
+      const id = normalizeText(body?.id, 120);
+      const action = normalizeText(body?.action, 24).toLowerCase();
+
+      if (!id || !["approve", "reject"].includes(action)) {
+        return jsonResponse({ error: "Missing required fields: id, action(approve|reject)" }, 400);
+      }
+
+      const storedReview = await store.get(id, { type: "json" });
+      const review = normalizeStoredReview(storedReview, id);
+      if (!review) {
+        return jsonResponse({ error: "Review not found" }, 404);
+      }
+
+      const now = new Date().toISOString();
+      const nextReview = {
+        ...review,
+        status: action === "approve" ? "approved" : "rejected",
+        approved_at: action === "approve" ? now : null,
+        rejected_at: action === "reject" ? now : null,
+        moderated_by: user.email || null,
+      };
+
+      await store.setJSON(id, nextReview);
+      return jsonResponse({ success: true, review: nextReview });
+    } catch (error) {
+      console.error("Error updating review:", error);
+      return jsonResponse(
+        { error: "Failed to update review", details: error.message },
+        500
+      );
     }
-
-    const body = await req.json();
-    const id = normalizeText(body?.id, 120);
-    const action = normalizeText(body?.action, 24).toLowerCase();
-
-    if (!id || !["approve", "reject"].includes(action)) {
-      return jsonResponse({ error: "Missing required fields: id, action(approve|reject)" }, 400);
-    }
-
-    const storedReview = await store.get(id, { type: "json" });
-    const review = normalizeStoredReview(storedReview, id);
-    if (!review) {
-      return jsonResponse({ error: "Review not found" }, 404);
-    }
-
-    const now = new Date().toISOString();
-    const nextReview = {
-      ...review,
-      status: action === "approve" ? "approved" : "rejected",
-      approved_at: action === "approve" ? now : null,
-      rejected_at: action === "reject" ? now : null,
-      moderated_by: user.email || null,
-    };
-
-    await store.setJSON(id, nextReview);
-    return jsonResponse({ success: true, review: nextReview });
   }
 
   return jsonResponse({ error: "Method not allowed" }, 405);
