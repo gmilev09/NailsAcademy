@@ -17,14 +17,12 @@ export default function ProductDetail() {
   const [added, setAdded] = useState(false);
   const { isAuthenticated, navigateToLogin } = useAuth();
 
-  // Ако id се смени отвън (линк), синхронизираме избора
   useEffect(() => {
     setSelectedVariantId(urlId);
   }, [urlId]);
 
   const group = useMemo(() => getGroupForProduct(urlId), [urlId]);
 
-  // Избраният вариант (или самият продукт, ако няма група)
   const selectedVariant = useMemo(() => {
     if (!group) return null;
     return group.variants.find((variant) => String(variant.productId) === String(selectedVariantId)) || group.variants[0];
@@ -88,7 +86,6 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-50/30 to-white">
       <div className="container mx-auto max-w-6xl pt-32 pb-24 px-6">
-        {/* Back button */}
         <Link to="/Shop" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-rose-500 transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" />
           Назад към магазина
@@ -97,14 +94,14 @@ export default function ProductDetail() {
         <div className="grid md:grid-cols-2 gap-12">
           {/* Images */}
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <div className="relative bg-gray-50 rounded-3xl overflow-hidden aspect-square group border border-pink-100 shadow-sm">
+            <div className="relative bg-white rounded-3xl overflow-hidden aspect-square group border border-pink-100 shadow-sm flex items-center justify-center p-4">
               <AnimatePresence mode="wait" initial={false}>
                 {images.length > 0 ? (
                   <motion.img
                     key={images[currentImageIndex] + String(product.id)}
                     src={images[currentImageIndex]}
                     alt={displayName}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain object-center"
                     initial={{ opacity: 0.4, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.35, ease: "easeOut" }}
@@ -136,16 +133,15 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {/* Thumbnails */}
             {images.length > 1 && (
               <div className="flex gap-3 mt-4">
                 {images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentImageIndex(i)}
-                    className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === currentImageIndex ? "border-rose-400 shadow-md" : "border-transparent opacity-60 hover:opacity-100"}`}
+                    className={`w-20 h-20 rounded-xl overflow-hidden border-2 bg-white flex items-center justify-center p-1.5 transition-all ${i === currentImageIndex ? "border-rose-400 shadow-md" : "border-transparent ring-1 ring-gray-100 opacity-60 hover:opacity-100"}`}
                   >
-                    <img src={img} alt={`${displayName} ${i + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                    <img src={img} alt={`${displayName} ${i + 1}`} className="w-full h-full object-contain object-center" loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
@@ -159,7 +155,6 @@ export default function ProductDetail() {
             )}
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 italic leading-tight">{displayName}</h2>
 
-            {/* Избор на вариант */}
             {group && (
               <div className="mb-8">
                 <p className="text-sm font-semibold text-gray-700 mb-3">
