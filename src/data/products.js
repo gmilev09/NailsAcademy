@@ -350,7 +350,7 @@ Champion-3 е инвестиция в качество, скорост и пре
     name: "Масажни свещи AYA",
     price: 15.99,
     category: "масажни_свещи",
-    in_stock: true,
+    in_stock: false,
     image_url: "https://i.postimg.cc/7L3KdG2w/12779591-3cf1-4d68-abc5-4b9abd7a5670.jpg",
     image_url_2: "https://i.postimg.cc/3R6nVPZ0/18ba628e-8a04-4b9e-b432-10b6b2c8e45e.jpg",
     image_url_3: "https://i.postimg.cc/xdpRNWBq/a2448134-f14c-4379-8008-2925ddc3e595.jpg",
