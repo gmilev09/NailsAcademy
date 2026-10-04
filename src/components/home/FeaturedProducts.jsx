@@ -1,13 +1,13 @@
 import { useState, useRef } from "react";
 import { motion, useAnimationFrame } from "framer-motion";
-import { ShoppingBag, Plus } from "lucide-react";
+import { ShoppingBag, Plus, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { shopProducts } from "../../data/products";
 import { addProductToCart } from "@/lib/cart";
 import { useAuth } from "@/lib/AuthContext";
 
-const featuredProductIds = ["1", "3", "4", "2", "25", "26"];
+const featuredProductIds = ["36", "3", "4", "37", "25", "26"];
 const productsData = featuredProductIds
   .map((id) => shopProducts.find((product) => product.id === id))
   .filter(Boolean);
@@ -47,15 +47,15 @@ function AddToCartButton({ product, isAuthenticated, navigateToLogin }) {
 function ProductCard({ product, isAuthenticated, navigateToLogin }) {
   return (
     <div className="w-60 sm:w-72 flex-none bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-50 transition-all duration-300 hover:-translate-y-1">
-      <div className="relative h-48 bg-gray-100">
-        <Link to={`/ProductDetail?id=${product.id}`}>
+      <div className="relative h-56 bg-white flex items-center justify-center p-3">
+        <Link to={`/ProductDetail?id=${product.id}`} className="w-full h-full flex items-center justify-center">
           <img
             src={product.image_url}
             alt={product.name}
             loading="lazy"
             decoding="async"
             draggable="false"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain object-center"
           />
         </Link>
       </div>
@@ -142,6 +142,17 @@ export default function FeaturedProducts() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Бутон към магазина */}
+      <div className="container mx-auto px-6 flex justify-center mt-10">
+        <Link
+          to="/Shop"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-400 to-pink-500 px-10 py-3.5 text-base font-semibold text-white shadow-lg shadow-pink-200/50 transition-all duration-300 hover:from-rose-500 hover:to-pink-600 hover:shadow-xl hover:-translate-y-0.5"
+        >
+          Разгледай магазина
+          <ArrowRight className="w-5 h-5" />
+        </Link>
       </div>
     </section>
   );
