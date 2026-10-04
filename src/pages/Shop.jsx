@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
-import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search, Layers } from "lucide-react";
+import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search, Layers, ArrowUpDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { getDisplayProducts } from "../data/products";
@@ -14,33 +14,41 @@ import { useAuth } from "@/lib/AuthContext";
 function ProductImageGallery({ product }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const images = [product.image_url, product.image_url_2, product.image_url_3].filter(Boolean);
-  
+
   return (
-    <div className="relative h-56 bg-gray-50 group overflow-hidden">
+    <div className="relative h-64 bg-white group overflow-hidden flex items-center justify-center p-4">
       <img
         src={images[currentIndex] || "https://images.unsplash.com"}
         alt={product.name}
         loading="lazy"
         decoding="async"
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
       />
       {!product.in_stock && (
         <Badge className="absolute top-3 right-3 bg-gray-500 text-white border-0">Изчерпан</Badge>
       )}
       {images.length > 1 && (
         <>
-          <button 
+          <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex(i => i === 0 ? images.length - 1 : i - 1); }}
             className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
           >
             <ChevronLeft className="w-4 h-4 text-gray-600" />
           </button>
-          <button 
+          <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex(i => i === images.length - 1 ? 0 : i + 1); }}
             className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
           >
             <ChevronRight className="w-4 h-4 text-gray-600" />
           </button>
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                className={`h-1.5 rounded-full transition-all ${index === currentIndex ? "w-4 bg-rose-400" : "w-1.5 bg-gray-300"}`}
+              />
+            ))}
+          </div>
         </>
       )}
     </div>
@@ -83,9 +91,17 @@ const categories = [
   { value: "масажни_свещи", label: "Масажни свещи AYA" },
 ];
 
+const sortOptions = [
+  { value: "default", label: "Подредба по подразбиране" },
+  { value: "price-asc", label: "Цена: от ниска към висока" },
+  { value: "price-desc", label: "Цена: от висока към ниска" },
+  { value: "name-asc", label: "Име: А → Я" },
+];
+
 export default function Shop() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("default");
   const [addedProductId, setAddedProductId] = useState(null);
   const { isAuthenticated, navigateToLogin } = useAuth();
 
@@ -95,9 +111,30 @@ export default function Shop() {
     window.scrollTo(0, 0);
   }, []);
 
-  const filteredProducts = displayProducts
-    .filter(p => activeCategory === "all" || p.category === activeCategory)
-    .filter(p => searchQuery === "" || p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredProducts = useMemo(() => {
+    const list = displayProducts
+      .filter((p) => activeCategory === "all" || p.category === activeCategory)
+      .filter((p) => searchQuery === "" || p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    if (sortBy === "default") return list;
+
+    const sorted = [...list];
+    if (sortBy === "name-asc") {
+      sorted.sort((a, b) => a.name.localeCompare(b.name, "bg"));
+      return sorted;
+    }
+
+    // Продукти без въведена цена (0) винаги остават накрая
+    sorted.sort((a, b) => {
+      const priceA = Number(a.price) || 0;
+      const priceB = Number(b.price) || 0;
+      if (priceA === 0 && priceB === 0) return 0;
+      if (priceA === 0) return 1;
+      if (priceB === 0) return -1;
+      return sortBy === "price-asc" ? priceA - priceB : priceB - priceA;
+    });
+    return sorted;
+  }, [displayProducts, activeCategory, searchQuery, sortBy]);
 
   const handleAddToCart = async (product) => {
     if (!isAuthenticated) {
@@ -145,7 +182,7 @@ export default function Shop() {
         </section>
 
         {/* Category Filters */}
-        <section className="flex justify-center flex-wrap gap-2 mb-12">
+        <section className="flex justify-center flex-wrap gap-2 mb-6">
           {categories.map((cat) => (
             <Button
               key={cat.value}
@@ -156,6 +193,27 @@ export default function Shop() {
               {cat.label}
             </Button>
           ))}
+        </section>
+
+        {/* Sorting */}
+        <section className="flex items-center justify-between gap-4 mb-10 flex-wrap">
+          <p className="text-sm text-gray-400 italic">
+            {filteredProducts.length} продукта
+          </p>
+          <div className="flex items-center gap-2">
+            <ArrowUpDown className="w-4 h-4 text-rose-400" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 focus:border-rose-300 focus:outline-none focus:ring-1 focus:ring-rose-200 cursor-pointer"
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </section>
 
         {/* Products Grid */}
