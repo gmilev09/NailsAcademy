@@ -206,9 +206,30 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <p className="text-4xl font-bold text-rose-500 mb-8 italic">
-              {`€${product.price}`}
-            </p>
+            <div className="mb-8">
+              {product.on_sale && product.old_price ? (
+                <>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-4xl font-bold text-rose-500 italic">
+                      {`€${product.price}`}
+                    </span>
+                    <span className="text-xl text-gray-400 line-through italic">
+                      {`€${product.old_price}`}
+                    </span>
+                    <Badge className="bg-rose-500 text-white border-0 px-3 py-1 font-bold shadow-sm shadow-rose-200">
+                      −{product.discount_percent}%
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm font-medium text-green-600">
+                    Спестявате €{Math.round(product.old_price - product.price)}
+                  </p>
+                </>
+              ) : (
+                <p className="text-4xl font-bold text-rose-500 italic">
+                  {`€${product.price}`}
+                </p>
+              )}
+            </div>
 
             <AnimatePresence mode="wait" initial={false}>
               <motion.p
