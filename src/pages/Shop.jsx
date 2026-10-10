@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search, Layers, ArrowUpDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { getDisplayProducts } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
@@ -24,6 +24,11 @@ function ProductImageGallery({ product }) {
         decoding="async"
         className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
       />
+      {product.on_sale && product.discount_percent > 0 && (
+        <Badge className="absolute top-3 left-3 bg-rose-500 text-white border-0 shadow-md shadow-rose-200 px-2.5 py-1 font-bold">
+          −{product.discount_percent}%
+        </Badge>
+      )}
       {!product.in_stock && (
         <Badge className="absolute top-3 right-3 bg-gray-500 text-white border-0">Изчерпан</Badge>
       )}
@@ -99,6 +104,7 @@ const sortOptions = [
 ];
 
 export default function Shop() {
+  const [searchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("default");
@@ -110,6 +116,12 @@ export default function Shop() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Отваряне директно в дадена категория (напр. от промо флайера)
+  useEffect(() => {
+    const requested = searchParams.get("category");
+    if (requested) setActiveCategory(requested);
+  }, [searchParams]);
 
   const filteredProducts = useMemo(() => {
     const list = displayProducts
@@ -243,9 +255,16 @@ export default function Shop() {
                       <p className="text-gray-500 text-sm mb-4 line-clamp-2 italic">{product.description}</p>
                     )}
                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
-                      <span className="text-2xl font-bold text-rose-500 italic">
-                        {`€${product.price}`}
-                      </span>
+                      <div className="flex flex-col leading-tight">
+                        {product.on_sale && product.old_price && (
+                          <span className="text-sm text-gray-400 line-through italic">
+                            {`€${product.old_price}`}
+                          </span>
+                        )}
+                        <span className="text-2xl font-bold text-rose-500 italic">
+                          {`€${product.price}`}
+                        </span>
+                      </div>
                       {product.group ? (
                         <Link to={`/ProductDetail?id=${product.id}`}>
                           <Button
