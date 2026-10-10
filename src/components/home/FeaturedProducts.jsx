@@ -7,7 +7,7 @@ import { shopProducts } from "../../data/products";
 import { addProductToCart } from "@/lib/cart";
 import { useAuth } from "@/lib/AuthContext";
 
-const featuredProductIds = ["36", "3", "4", "37", "25", "26"];
+const featuredProductIds = ["36", "3", "4", "37", "25", "41"];
 const productsData = featuredProductIds
   .map((id) => shopProducts.find((product) => product.id === id))
   .filter(Boolean);
@@ -48,6 +48,11 @@ function ProductCard({ product, isAuthenticated, navigateToLogin }) {
   return (
     <div className="w-60 sm:w-72 flex-none bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-50 transition-all duration-300 hover:-translate-y-1">
       <div className="relative h-56 bg-white flex items-center justify-center p-3">
+        {product.on_sale && product.discount_percent > 0 && (
+          <span className="absolute top-3 left-3 z-10 rounded-full bg-rose-500 px-2.5 py-1 text-xs font-bold text-white shadow-md shadow-rose-200">
+            −{product.discount_percent}%
+          </span>
+        )}
         <Link to={`/ProductDetail?id=${product.id}`} className="w-full h-full flex items-center justify-center">
           <img
             src={product.image_url}
@@ -65,7 +70,12 @@ function ProductCard({ product, isAuthenticated, navigateToLogin }) {
             {product.name}
           </h3>
         </Link>
-        <p className="text-lg font-bold text-rose-500 mb-3">€{product.price}</p>
+        <div className="mb-3 flex items-baseline gap-2">
+          <p className="text-lg font-bold text-rose-500">€{product.price}</p>
+          {product.on_sale && product.old_price && (
+            <p className="text-sm text-gray-400 line-through">€{product.old_price}</p>
+          )}
+        </div>
         <AddToCartButton product={product} isAuthenticated={isAuthenticated} navigateToLogin={navigateToLogin} />
       </div>
     </div>
