@@ -1,5 +1,3 @@
-// NOTE: header + навигация са вербатим от репозиторито; footer-ът е реконструиран
-// в същия стил (оригиналът е 10.5KB). Логото сочи към GitHub raw.
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +13,7 @@ import {
   LogIn,
   Facebook } from "lucide-react";
 import CookieBanner from "./components/CookieBanner";
+import PromoFlyer from "./components/PromoFlyer";
 import { useAuth } from "./lib/AuthContext";
 
 const siteLogo = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/logo.jpg";
@@ -225,6 +224,7 @@ export default function Layout({ children, currentPageName: _currentPageName }) 
       </footer>
 
       <CookieBanner />
+      <PromoFlyer />
     </div>
   );
 }
