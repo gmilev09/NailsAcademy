@@ -1,4 +1,3 @@
-
 const PRODUCT_IMG =
   "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/public/Products";
 
@@ -288,6 +287,8 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
     category: "електроуреди",
     in_stock: true,
     image_url: `${PRODUCT_IMG}/lamp/viber_image_2026-10-10_11-42-01-854.jpg`,
+    image_url_2: `${PRODUCT_IMG}/lamp/viber_image_2026-10-12_20-48-26-247.jpg`,
+    image_url_3: `${PRODUCT_IMG}/lamp/viber_image_2026-10-12_20-48-26-786.jpg`,
     description: `Професионална LED лампа за маникюр и педикюр
 
 Перфектната светлина за прецизна работа и безупречни резултати!
@@ -310,39 +311,6 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
     image_url: "https://i.postimg.cc/8cj36h3d/Ekranna-snimka-2026-03-01-204502.png",
     image_url_2: "https://i.postimg.cc/VvphBJPf/Ekranna-snimka-2026-03-01-204526.png",
     description: "UV/LED лампа с 45 диода."
-  },
-  {
-    id: "3",
-    name: "Прахоуловител",
-    price: 99.9,
-    category: "електроуреди",
-    in_stock: true,
-    image_url: "https://ae01.alicdn.com/kf/S2ed36052861f4496ac755dd36c049c15F.jpg",
-    image_url_2: "https://ae01.alicdn.com/kf/Sb0d0265f910b4c3c81e060724b925f4cn.jpg",
-    image_url_3: "https://ae01.alicdn.com/kf/S91b63083317d445c8290b4c0238a858bx.jpg",
-    description: `Професионален прахоулавител с два вентилатора - Twin Turbo система
-
-Осигурете си чиста и безопасна работна среда с този мощен прахоулавител с два вентилатора, създаден специално за нуждите на професионалния маникюр и ноктопластика. Благодарение на Twin Turbo технологията, устройството улавя ефективно праха от пилене, като поддържа въздуха чист и предпазва както Вас, така и Вашите клиенти.
-
-Основни характеристики:
-
-• Двойна турбо система с два мощни вентилатора
-• Висока степен на абсорбиране на прах
-• Безчетков мотор за по-дълъг живот
-• Компактен и ергономичен дизайн
-• Лесен за поддръжка и почистване
-• Стабилна конструкция за професионална употреба
-
-Предимства:
-
-• Минимизира разпространението на прах в работната зона
-• 5 степени на работа
-• LED дисплей
-• Осигурява по-хигиенична и здравословна среда
-• Подобрява комфорта по време на работа
-• Подходящ за интензивна салонна натовареност
-
-Това е незаменим инструмент за всеки маникюрист, който държи на чистотата, комфорта и професионалното ниво на услугите си.`
   },
   {
     id: "4",
@@ -415,6 +383,77 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
     in_stock: true,
     image_url: "https://i.postimg.cc/63dPtjdX/Ekranna-snimka-2026-03-01-192942.png", image_url_2:"https://i.postimg.cc/GhM5Lssk/Ekranna-snimka-2026-03-01-193034.png", image_url_3:"https://i.postimg.cc/4xq2tk5W/Ekranna-snimka-2026-03-01-193000.png",
     description: "100бр."
+  },  {
+    id: "42",
+    name: "Крем за ръце AYA - Жасмин",
+    price: 9.9,
+    category: "кремове",
+    in_stock: true,
+    image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-37-453.jpg`,
+    description: `Крем за ръце AYA - Полнощно цъфтене
+
+Богата подхранваща формула за мека и копринена кожа.
+
+• Интензивна хидратация
+• Бързо попиващ, без мазен слой
+• Нежен, траен аромат
+• Подходящ за ежедневна употреба след маникюр
+
+Перфектен завършек на всяка процедура.`
+  },
+  {
+    id: "43",
+    name: "Крем за ръце AYA - Sweet Vanilla Woods",
+    price: 8.9,
+    category: "кремове",
+    in_stock: true,
+    image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-37-959.jpg`,
+    description: `Крем за ръце AYA - Сладки ванилови дървета
+
+Богата подхранваща формула за мека и копринена кожа.
+
+• Интензивна хидратация
+• Бързо попиващ, без мазен слой
+• Нежен, траен аромат
+• Подходящ за ежедневна употреба след маникюр
+
+Перфектен завършек на всяка процедура.`
+  },
+  {
+    id: "44",
+    name: "Крем за ръце AYA - Лавандула",
+    price: 9.9,
+    category: "кремове",
+    in_stock: true,
+    image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-38-146.jpg`,
+    description: `Крем за ръце AYA - Лавандула
+
+Богата подхранваща формула за мека и копринена кожа.
+
+• Интензивна хидратация
+• Бързо попиващ, без мазен слой
+• Нежен, траен аромат
+• Подходящ за ежедневна употреба след маникюр
+
+Перфектен завършек на всяка процедура.`
+  },
+  {
+    id: "45",
+    name: "Крем за ръце AYA - Twilight",
+    price: 8.9,
+    category: "кремове",
+    in_stock: true,
+    image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-38-321.jpg`,
+    description: `Крем за ръце AYA - Здрач
+
+Богата подхранваща формула за мека и копринена кожа.
+
+• Интензивна хидратация
+• Бързо попиващ, без мазен слой
+• Нежен, траен аромат
+• Подходящ за ежедневна употреба след маникюр
+
+Перфектен завършек на всяка процедура.`
   },
    {
     id: "13",
@@ -619,7 +658,7 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
     name: "Масажни свещи AYA",
     price: 15.99,
     category: "масажни_свещи",
-    in_stock: true,
+    in_stock: false,
     image_url: "https://i.postimg.cc/7L3KdG2w/12779591-3cf1-4d68-abc5-4b9abd7a5670.jpg",
     image_url_2: "https://i.postimg.cc/3R6nVPZ0/18ba628e-8a04-4b9e-b432-10b6b2c8e45e.jpg",
     image_url_3: "https://i.postimg.cc/xdpRNWBq/a2448134-f14c-4379-8008-2925ddc3e595.jpg",
@@ -739,6 +778,19 @@ export const productGroups = [
     variants: [
       { productId: "37", label: "601" },
       { productId: "38", label: "601P" },
+    ],
+  },
+  {
+    // TODO: смени етикетите спрямо реалните аромати/цветове
+    id: "group-creams",
+    name: "Крем за ръце AYA",
+    category: "кремове",
+    selectorLabel: "Аромат",
+    variants: [
+      { productId: "42", label: "Midnight Blossom", swatch: "#2E2A4A" },
+      { productId: "43", label: "Sweet Vanilla Woods", swatch: "#C9A77C" },
+      { productId: "44", label: "Purple Musk", swatch: "#7B5EA7" },
+      { productId: "45", label: "Twilight", swatch: "#8E7CC3" },
     ],
   },
 ];
