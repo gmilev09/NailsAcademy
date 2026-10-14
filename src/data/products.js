@@ -383,14 +383,15 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
     in_stock: true,
     image_url: "https://i.postimg.cc/63dPtjdX/Ekranna-snimka-2026-03-01-192942.png", image_url_2:"https://i.postimg.cc/GhM5Lssk/Ekranna-snimka-2026-03-01-193034.png", image_url_3:"https://i.postimg.cc/4xq2tk5W/Ekranna-snimka-2026-03-01-193000.png",
     description: "100бр."
-  },  {
+  },
+  {
     id: "42",
-    name: "Крем за ръце AYA - Жасмин",
-    price: 9.9,
+    name: "Крем за ръце - Midnight Blossom",
+    price: 8.9,
     category: "кремове",
     in_stock: true,
     image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-37-453.jpg`,
-    description: `Крем за ръце AYA - Полнощно цъфтене
+    description: `Крем за ръце - Полнощно цъфтене
 
 Богата подхранваща формула за мека и копринена кожа.
 
@@ -403,12 +404,12 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
   },
   {
     id: "43",
-    name: "Крем за ръце AYA - Sweet Vanilla Woods",
+    name: "Крем за ръце - Sweet Vanilla Woods",
     price: 8.9,
     category: "кремове",
     in_stock: true,
     image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-37-959.jpg`,
-    description: `Крем за ръце AYA - Сладки ванилови дървета
+    description: `Крем за ръце - Сладки ванилови дървета
 
 Богата подхранваща формула за мека и копринена кожа.
 
@@ -421,12 +422,12 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
   },
   {
     id: "44",
-    name: "Крем за ръце AYA - Лавандула",
-    price: 9.9,
+    name: "Крем за ръце - Purple Musk",
+    price: 8.9,
     category: "кремове",
     in_stock: true,
     image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-38-146.jpg`,
-    description: `Крем за ръце AYA - Лавандула
+    description: `Крем за ръце - Лилав мускус
 
 Богата подхранваща формула за мека и копринена кожа.
 
@@ -439,12 +440,12 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
   },
   {
     id: "45",
-    name: "Крем за ръце AYA - Twilight",
+    name: "Крем за ръце - Twilight",
     price: 8.9,
     category: "кремове",
     in_stock: true,
     image_url: `${PRODUCT_IMG}/%D0%BA%D1%80%D0%B5%D0%BC%D0%BE%D0%B2%D0%B5/viber_image_2026-10-03_22-31-38-321.jpg`,
-    description: `Крем за ръце AYA - Здрач
+    description: `Крем за ръце - Здрач
 
 Богата подхранваща формула за мека и копринена кожа.
 
@@ -658,7 +659,7 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
     name: "Масажни свещи AYA",
     price: 15.99,
     category: "масажни_свещи",
-    in_stock: false,
+    in_stock: true,
     image_url: "https://i.postimg.cc/7L3KdG2w/12779591-3cf1-4d68-abc5-4b9abd7a5670.jpg",
     image_url_2: "https://i.postimg.cc/3R6nVPZ0/18ba628e-8a04-4b9e-b432-10b6b2c8e45e.jpg",
     image_url_3: "https://i.postimg.cc/xdpRNWBq/a2448134-f14c-4379-8008-2925ddc3e595.jpg",
@@ -693,6 +694,7 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
 
 AYA – топлина, аромат и естествена грижа за кожата.`
   }
+  
 ];
 
 /**
@@ -781,9 +783,8 @@ export const productGroups = [
     ],
   },
   {
-    // TODO: смени етикетите спрямо реалните аромати/цветове
     id: "group-creams",
-    name: "Крем за ръце AYA",
+    name: "Крем за ръце",
     category: "кремове",
     selectorLabel: "Аромат",
     variants: [
