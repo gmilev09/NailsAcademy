@@ -4,11 +4,12 @@ import { ArrowRight, Images } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const RAW = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/Gallery";
-const previewImg4 = `${RAW}/e1aaf6e9-032d-456a-97df-636ec298749f.jpg`;
-const previewImg2 = `${RAW}/587504285_18048329723675195_6197362676033051046_n.jpg`;
-const previewImg3 = `${RAW}/a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg`;
-const previewImg1 = `${RAW}/viber_image_2026-04-23_13-40-57-131.jpg`;
-const previewImg5 = `${RAW}/viber_image_2026-04-23_13-38-29-918.jpg`;
+const DIR = "%D0%9C%D0%B0%D0%BD%D0%B8%D0%BA%D1%8E%D1%80";
+const previewImg1 = `${RAW}/${DIR}/viber_image_2026-10-12_21-24-01-108.jpg`;
+const previewImg2 = `${RAW}/${DIR}/viber_image_2026-10-12_21-24-02-982.jpg`;
+const previewImg3 = `${RAW}/${DIR}/viber_image_2026-10-12_21-24-03-907.jpg`;
+const previewImg4 = `${RAW}/${DIR}/viber_image_2026-10-12_21-24-04-154.jpg`;
+const previewImg5 = `${RAW}/${DIR}/viber_image_2026-10-12_21-24-04-363.jpg`;
 
 const galleryImages = [
   { url: previewImg1, span: "col-span-2 row-span-2" },
