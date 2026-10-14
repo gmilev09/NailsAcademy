@@ -4,7 +4,7 @@ import { ArrowRight, GraduationCap, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 
-const heroImage = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/Salon/884c3f0c-fa89-4cc0-8dd4-346ae9fec656.jpg";
+const heroImage = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/Salon/viber_image_2026-10-12_22-14-55-933.jpg";
 
 const heroStats = [
   { value: "10+", label: "години опит" },
