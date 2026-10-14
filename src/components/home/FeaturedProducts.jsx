@@ -7,7 +7,7 @@ import { shopProducts } from "../../data/products";
 import { addProductToCart } from "@/lib/cart";
 import { useAuth } from "@/lib/AuthContext";
 
-const featuredProductIds = ["36", "3", "4", "37", "25", "41"];
+const featuredProductIds = ["36", "40", "4", "37", "25", "41"];
 const productsData = featuredProductIds
   .map((id) => shopProducts.find((product) => product.id === id))
   .filter(Boolean);
