@@ -1,54 +1,69 @@
-// RECONSTRUCTED — masonry структурата и lightbox-ът са по оригиналния фрагмент;
-// списъкът с изображения е от реалните файлове в src/NailsAcademy/Gallery на репозиторито.
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Images, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const RAW = "https://raw.githubusercontent.com/gmilev09/NailsAcademy/main/src/NailsAcademy/Gallery";
 
-const imageFiles = [
-  "viber_image_2026-04-23_13-40-57-131.jpg",
-  "e1aaf6e9-032d-456a-97df-636ec298749f.jpg",
-  "a65b7d91-e3b1-42ba-a98e-7184a22c878b.jpg",
-  "587504285_18048329723675195_6197362676033051046_n.jpg",
-  "viber_image_2026-04-23_13-38-29-918.jpg",
-  "12779591-3cf1-4d68-abc5-4b9abd7a5670.jpg",
-  "18ba628e-8a04-4b9e-b432-10b6b2c8e45e.jpg",
-  "1a628a78-465b-4af1-abec-9f9127f6cda9.jpg",
-  "1b5f7468-c341-42a3-9525-d79513056d1f.jpg",
-  "1dcae7bb-6074-4f1a-9e22-fd1bc098a055.jpg",
-  "24e6fabc-9cac-4585-8500-4e277e0f1739.jpg",
-  "258373387-105845445258740-6646872728964521253-n.jpg",
-  "258382105-105854808591137-8481806728798514483-n.jpg",
-  "258384318-105852518591366-5290592204321149399-n.jpg",
-  "258397093-105849925258292-2200470297065060521-n.jpg",
-  "258405558-105852005258084-4226010845577433639-n.jpg",
-  "258457483-105854031924548-2292339568805999732-n.jpg",
-  "258470754-105853311924620-5228187720907141976-n.jpg",
-  "258485917-105852801924671-3250341266998586301-n.jpg",
-  "258558742-105849218591696-9138844759808013988-n.jpg",
-  "258615794-105851095258175-44783706752791787-n.jpg",
-  "263902421-117499347426683-8723268371839043654-n.jpg",
-  "471147077-610201628156450-8111398269010871634-n.jpg",
-  "471188084_611016031408343_4644402612634271318_n.jpg",
-  "472248704_619798720530074_5608259177382265833_n.jpg",
+/* Папките в репото са с кирилица, затова пътищата се кодират. */
+const MANICURE_DIR = "%D0%9C%D0%B0%D0%BD%D0%B8%D0%BA%D1%8E%D1%80";
+const PEDICURE_DIR = "%D0%9F%D0%B5%D0%B4%D0%B8%D0%BA%D1%8E%D1%80";
+
+/* Снимки от src/NailsAcademy/Gallery/Маникюр */
+const manicureFiles = [
+  "viber_image_2026-10-12_21-24-01-108.jpg",
+  "viber_image_2026-10-12_21-24-02-982.jpg",
+  "viber_image_2026-10-12_21-24-03-907.jpg",
+  "viber_image_2026-10-12_21-24-04-154.jpg",
+  "viber_image_2026-10-12_21-24-04-363.jpg",
+  "viber_image_2026-10-12_21-24-04-794.jpg",
+  "viber_image_2026-10-12_21-24-05-016.jpg",
 ];
 
-const galleryItems = imageFiles.map((file, index) => ({
-  id: index + 1,
-  image_url: `${RAW}/${file}`,
-  title: "",
-}));
+/* Снимки от src/NailsAcademy/Gallery/Педикюр */
+const pedicureFiles = [
+  "viber_image_2026-10-12_21-24-04-585.jpg",
+];
+
+const galleryItems = [
+  ...manicureFiles.map((file, index) => ({
+    id: `m-${index + 1}`,
+    image_url: `${RAW}/${MANICURE_DIR}/${file}`,
+    category: "manicure",
+    title: "Маникюр",
+  })),
+  ...pedicureFiles.map((file, index) => ({
+    id: `p-${index + 1}`,
+    image_url: `${RAW}/${PEDICURE_DIR}/${file}`,
+    category: "pedicure",
+    title: "Педикюр",
+  })),
+];
+
+const categories = [
+  { value: "all", label: "Всички" },
+  { value: "manicure", label: "Маникюр" },
+  { value: "pedicure", label: "Педикюр" },
+];
 
 export default function Gallery() {
+  const [activeCategory, setActiveCategory] = useState("all");
   const [lightboxIndex, setLightboxIndex] = useState(null);
-  const filteredItems = galleryItems;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const openLightbox = (item, index) => setLightboxIndex(index);
+  // При смяна на категорията затваряме отворения lightbox.
+  useEffect(() => {
+    setLightboxIndex(null);
+  }, [activeCategory]);
+
+  const filteredItems =
+    activeCategory === "all"
+      ? galleryItems
+      : galleryItems.filter((item) => item.category === activeCategory);
+
+  const openLightbox = (item) => setLightboxIndex(filteredItems.indexOf(item));
   const closeLightbox = () => setLightboxIndex(null);
 
   const stepLightbox = useCallback(
@@ -88,32 +103,66 @@ export default function Gallery() {
           <h1 className="text-4xl md:text-6xl font-light text-gray-900 mb-4 italic">
             Галерия с <span className="font-semibold text-rose-500">маникюри</span>
           </h1>
-          <p className="text-gray-500 max-w-xl mx-auto">Работи на нашите курсисти и на екипа на ARTAYA Nails Academy</p>
+          <p className="text-gray-500 max-w-xl mx-auto">
+            Работи на нашите курсисти и на екипа на ARTAYA Nails Academy
+          </p>
         </motion.div>
 
-        <div className="px-6 pb-24">
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-            {filteredItems.map((item, index) => (
-              <motion.div
-                key={item.id}
-                className="break-inside-avoid group cursor-pointer"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => openLightbox(item, index)}
-              >
-                <div className="relative overflow-hidden rounded-2xl border-4 border-white shadow-sm hover:shadow-xl transition-all">
-                  <img src={item.image_url} alt={item.title || `Маникюр ${index + 1}`} loading="lazy" decoding="async" className="w-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-rose-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  {item.title && (
-                    <p className="text-white font-medium text-xs italic">{item.title}</p>
-                  )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        {/* Филтри по категория */}
+        <section className="flex justify-center flex-wrap gap-2 mb-12">
+          {categories.map((cat) => (
+            <button
+              key={cat.value}
+              onClick={() => setActiveCategory(cat.value)}
+              className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all ${
+                activeCategory === cat.value
+                  ? "bg-rose-500 text-white shadow-md hover:bg-rose-600"
+                  : "bg-white text-gray-600 border border-gray-100 hover:bg-rose-50"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </section>
+
+        {/* Снимки */}
+        <section>
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-20 italic text-gray-400">
+              Няма снимки в тази категория.
+            </div>
+          ) : (
+            <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+              <AnimatePresence mode="popLayout">
+                {filteredItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    className="break-inside-avoid group cursor-pointer"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.35, delay: index * 0.03 }}
+                    onClick={() => openLightbox(item)}
+                  >
+                    <div className="relative overflow-hidden rounded-2xl border-4 border-white shadow-sm hover:shadow-xl transition-all">
+                      <img
+                        src={item.image_url}
+                        alt={item.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-rose-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <span className="text-white font-medium text-xs italic">{item.title}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+        </section>
       </div>
 
       {/* Lightbox */}
@@ -134,23 +183,30 @@ export default function Gallery() {
               <X className="w-6 h-6" />
             </button>
             <button
-              className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-10"
+              className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors z-10"
               onClick={(e) => { e.stopPropagation(); stepLightbox(-1); }}
               aria-label="Предишна"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
-              className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors z-10"
+              className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors z-10"
               onClick={(e) => { e.stopPropagation(); stepLightbox(1); }}
               aria-label="Следваща"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
+
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm">
+              {lightboxIndex + 1} / {filteredItems.length}
+              <span className="mx-2 opacity-50">·</span>
+              {filteredItems[lightboxIndex].title}
+            </div>
+
             <motion.img
               key={filteredItems[lightboxIndex].id}
               src={filteredItems[lightboxIndex].image_url}
-              alt={filteredItems[lightboxIndex].title || `Маникюр ${lightboxIndex + 1}`}
+              alt={filteredItems[lightboxIndex].title}
               className="max-h-[85vh] max-w-full rounded-2xl shadow-2xl object-contain"
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
