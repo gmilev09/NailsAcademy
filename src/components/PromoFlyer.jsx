@@ -5,14 +5,16 @@ import { PROMO_ACTIVE, shopProducts } from "@/data/products";
 
 const EASE = [0.22, 1, 0.36, 1];
 
-
+// Запазва се само докато текущата страница е заредена. При refresh
+// модулът се зарежда наново и флайерът отново може да се покаже.
 let flyerShownDuringThisPageLoad = false;
 
 export default function PromoFlyer() {
   // "unknown" | "closed" | "open"
   const [flyerState, setFlyerState] = useState("unknown");
 
-
+  // Показване веднъж за текущото зареждане на сайта. При refresh или
+  // ново отваряне се показва пак, но не изскача при вътрешна навигация.
   useEffect(() => {
     if (!PROMO_ACTIVE) {
       setFlyerState("closed");
@@ -32,7 +34,7 @@ export default function PromoFlyer() {
     return () => clearTimeout(timer);
   }, []);
 
-  
+  // Блокиране на скролана фона + Esc ключ при отворен флайер
   useEffect(() => {
     if (flyerState !== "open") return;
 
@@ -50,7 +52,8 @@ export default function PromoFlyer() {
     };
   }, [flyerState]);
 
-  
+  // Витрината във флайера: продукцията по реда от каталога,
+  // като NADIR новата LED лампа (id 41) се показва на ТРЕТА позиция.
   const LED_LAMP_ID = "41";
   const LAMP_POSITION = 2; // индекс 2 = трета позиция
 
@@ -238,7 +241,6 @@ export default function PromoFlyer() {
                   transition={{ delay: 0.48 }}
                 >
                   Професионални пили и UV/LED лампи NAIL MASTER на специални цени.
-                  Офертата важи само днес.
                 </motion.p>
 
                 {/* Бутон за затваряне на флайера */}
