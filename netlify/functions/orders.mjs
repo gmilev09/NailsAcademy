@@ -60,6 +60,17 @@ async function sendAdminOrderNotification(order) {
       `Тип: ${order.delivery_type === "office" ? "До офис" : "До адрес"}`,
       `Адрес/Офис: ${order.delivery_address || "няма"}`,
       `Куриер: ${order.courier === "econt" ? "Еконт" : "Спиди"}`,
+      ...(order.needs_invoice
+        ? [
+            "",
+            "ФАКТУРА НА ФИРМА: ДА",
+            `Фирма: ${order.company_name || "няма"}`,
+            `ЕИК/Булстат: ${order.company_eik || "няма"}`,
+            `№ по ДДС: ${order.company_vat || "няма"}`,
+            `МОЛ: ${order.company_mol || "няма"}`,
+            `Адрес на фирмата: ${order.company_address || "няма"}`,
+          ]
+        : []),
       "",
       "Продукти:",
       itemsList || "- няма",
@@ -117,6 +128,12 @@ export default async (req, context) => {
       shipping_cost,
       total,
       payment_method,
+      needs_invoice,
+      company_name,
+      company_eik,
+      company_vat,
+      company_mol,
+      company_address,
     } = body;
     const normalizedItems = normalizeOrderItems(items);
 
@@ -143,6 +160,12 @@ export default async (req, context) => {
       shipping_cost: String(shipping_cost) || "0",
       total: String(total) || "0",
       payment_method: payment_method || "cod",
+      needs_invoice: Boolean(needs_invoice),
+      company_name: needs_invoice ? company_name || "" : "",
+      company_eik: needs_invoice ? company_eik || "" : "",
+      company_vat: needs_invoice ? company_vat || "" : "",
+      company_mol: needs_invoice ? company_mol || "" : "",
+      company_address: needs_invoice ? company_address || "" : "",
       status: "new",
       created_at: new Date().toISOString(),
     };
