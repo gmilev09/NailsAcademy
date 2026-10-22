@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { getDisplayProducts } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
 import { useAuth } from "@/lib/AuthContext";
+import CartFloatingButton from "@/components/CartFloatingButton";
 
 // Галерия за малките карти в магазина
 function ProductImageGallery({ product }) {
@@ -298,6 +299,9 @@ export default function Shop() {
           )}
         </section>
       </div>
+
+      {/* Бърз достъп до количката */}
+      <CartFloatingButton />
     </div>
   );
 }
