@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { shopProducts, getGroupForProduct } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
 import { useAuth } from "@/lib/AuthContext";
+import CartFloatingButton from "@/components/CartFloatingButton";
 
 export default function ProductDetail() {
   const [searchParams] = useSearchParams();
@@ -272,6 +273,9 @@ export default function ProductDetail() {
           </motion.div>
         </div>
       </div>
+
+      {/* Бърз достъп до количката */}
+      <CartFloatingButton />
     </div>
   );
 }
