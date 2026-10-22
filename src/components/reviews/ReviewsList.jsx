@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { toast } from "sonner";
 
 const fallbackReviews = [
   {
@@ -127,16 +126,18 @@ export default function ReviewsList() {
     const loadApprovedReviews = async () => {
       try {
         const response = await fetch("/api/reviews");
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data?.error || "Неуспешно зареждане на отзиви.");
+        const contentType = response.headers.get("content-type") || "";
+        // Ако API-то не отговори с JSON (напр. локално превю без Netlify
+        // функции) — тихо показваме резервните отзиви, без грешки.
+        if (!response.ok || !contentType.includes("application/json")) {
+          throw new Error("reviews api unavailable");
         }
+        const data = await response.json();
 
         if (!isMounted) return;
         const loadedReviews = Array.isArray(data?.reviews) ? data.reviews : [];
         setReviews(loadedReviews.length ? loadedReviews : fallbackReviews);
-      } catch (error) {
+      } catch {
         if (!isMounted) return;
         setReviews(fallbackReviews);
       } finally {
