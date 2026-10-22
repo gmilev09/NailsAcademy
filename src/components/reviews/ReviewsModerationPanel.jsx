@@ -9,6 +9,18 @@ function formatDate(iso) {
   return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("bg-BG");
 }
 
+// Безопасно четене на JSON: ако API-то не налично (локално превю без Netlify
+// функции) отговорът е HTML/текст — тогава връщаме null и няма грешки.
+async function readJsonSafely(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("application/json")) return null;
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 export default function ReviewsModerationPanel() {
   const [isLoading, setIsLoading] = useState(true);
   const [canModerate, setCanModerate] = useState(false);
@@ -21,18 +33,21 @@ export default function ReviewsModerationPanel() {
     try {
       setIsLoading(true);
       const response = await fetch("/api/reviews?status=pending");
-      const data = await response.json();
+      const data = await readJsonSafely(response);
 
-      if (!response.ok) {
-        throw new Error(data?.error || "Неуспешно зареждане на отзиви.");
+      // API-то не отговори с валиден JSON (напр. локално превю) —
+      // просто не показваме панела, без изскачащи грешки.
+      if (!response.ok || !data) {
+        setCanModerate(false);
+        setReviews([]);
+        return;
       }
 
       setCanModerate(Boolean(data?.canModerate));
       setReviews(Array.isArray(data?.reviews) ? data.reviews : []);
-    } catch (error) {
+    } catch {
       setCanModerate(false);
       setReviews([]);
-      toast.error(error?.message || "Проблем при зареждане на модерацията.");
     } finally {
       setIsLoading(false);
     }
@@ -51,8 +66,8 @@ export default function ReviewsModerationPanel() {
         body: JSON.stringify({ id, action }),
       });
 
-      const data = await response.json();
-      if (!response.ok) {
+      const data = await readJsonSafely(response);
+      if (!response.ok || !data) {
         throw new Error(data?.error || "Неуспешна модерация.");
       }
 
