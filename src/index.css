@@ -96,6 +96,19 @@
     font-feature-settings: "ss01", "cv05";
   }
 
+  /* Никакъв страничен скрол — декоративни елементи и анимации не изливат извън екрана */
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  @supports (overflow: clip) {
+    html,
+    body {
+      overflow-x: clip;
+    }
+  }
+
   /* Елегантен дисплей шрифт за всички заглавия */
   h1, h2, h3 {
     font-family: "Fraunces", "Georgia", serif;
