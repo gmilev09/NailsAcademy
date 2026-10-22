@@ -95,8 +95,8 @@ const STUDENTS_DIR = `${RAW}/%D0%9A%D1%83%D1%80%D1%81%D0%B8%D1%81%D1%82%D0%B8`;
 const graduateStudents = [
   {
     id: "maria",
-    name: "Мария",
-    role: "Завършил курсист",
+    name: "Завършил курсист",
+    role: "Випуск на ARTAYA",
     photos: [
       `${STUDENTS_DIR}/%D0%9C%D0%B0%D1%80%D0%B8%D1%8F/viber_image_2026-10-11_13-15-32-626.jpg`,
       `${STUDENTS_DIR}/%D0%9C%D0%B0%D1%80%D0%B8%D1%8F/viber_image_2026-10-11_13-15-51-842.jpg`,
@@ -105,8 +105,8 @@ const graduateStudents = [
   },
   {
     id: "slavyanka",
-    name: "Славянка",
-    role: "Завършил курсист",
+    name: "Завършил курсист",
+    role: "Випуск на ARTAYA",
     photos: [
       `${STUDENTS_DIR}/%D0%A1%D0%BB%D0%B0%D0%B2%D1%8F%D0%BD%D0%BA%D0%B0/2026-10-06.jpg`,
       `${STUDENTS_DIR}/%D0%A1%D0%BB%D0%B0%D0%B2%D1%8F%D0%BD%D0%BA%D0%B0/2026-10-06%20(1).jpg`,
@@ -194,7 +194,7 @@ export default function About() {
   return (
     <div className="min-h-screen bg-white">
       {/* ЗА МЕН — Мария Божинова */}
-      <section className="pt-32 pb-20 px-6 bg-white">
+      <section className="relative overflow-hidden pt-32 pb-20 px-6 bg-white">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-[0.85fr_1.15fr] gap-12 lg:gap-20 items-start">
 
@@ -514,7 +514,7 @@ export default function About() {
                   type="button"
                   onClick={() => setGradLightbox(studentIndex * 3 + 1)}
                   className="group relative block w-full h-72 sm:h-80 outline-none"
-                  aria-label={`Виж снимките на ${student.name}`}
+                  aria-label="Виж снимките на завършил курсист"
                 >
                   {/* Рамка за дълбочина */}
                   <div className="absolute inset-x-6 -bottom-3 h-24 rounded-full bg-rose-500/20 blur-2xl transition-opacity duration-500 group-hover:opacity-100 opacity-60" />
@@ -575,12 +575,9 @@ export default function About() {
                   </motion.div>
                 </button>
 
-                {/* Име и роля */}
+                {/* Етикет — без лични имена */}
                 <div className="relative z-10 -mt-2 text-center">
-                  <h3 className="font-display text-3xl md:text-4xl font-semibold italic text-gray-900">
-                    {student.name}
-                  </h3>
-                  <p className="mt-1.5 inline-flex items-center gap-2 text-sm text-gray-500">
+                  <p className="inline-flex items-center gap-2 text-sm text-gray-500">
                     <span className="h-px w-6 bg-rose-300" />
                     <span className="text-rose-500 font-medium">{student.role}</span>
                     <span className="h-px w-6 bg-rose-300" />
@@ -613,51 +610,51 @@ export default function About() {
       </section>
 
       {/* Values */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-14 md:py-20 px-6 bg-white">
         <div className="container mx-auto">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-10"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}>
 
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 mb-5">
               <Star className="w-4 h-4 text-rose-400" />
               <span className="text-sm font-medium text-rose-600">Нашите ценности</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-light text-gray-900">
               Какво ни <span className="font-semibold text-rose-500">движи</span>
             </h2>
           </motion.div>
 
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-3xl mx-auto">
               {values.map((value, index) => (
                 <motion.div
                   key={value.title}
-                  className="group relative flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8 border-t border-gray-100 py-9 last:border-b"
+                  className="group relative flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 border-t border-gray-100 py-5 last:border-b"
                   initial={{ opacity: 0, x: -24 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-30px" }}
                   transition={{ delay: index * 0.09, duration: 0.6 }}
                 >
                   {/* Номер */}
-                  <span className="font-display text-4xl md:text-5xl font-light italic text-rose-300/80 leading-none select-none w-16 shrink-0 group-hover:text-rose-400 transition-colors duration-300">
+                  <span className="font-display text-2xl md:text-3xl font-light italic text-rose-300/80 leading-none select-none sm:w-10 shrink-0 group-hover:text-rose-400 transition-colors duration-300">
                     {String(index + 1).padStart(2, "0")}
                   </span>
 
                   {/* Иконка */}
                   <div className="relative shrink-0">
-                    <div className="w-13 h-13 grid place-items-center rounded-2xl border-2 border-rose-200 text-rose-500 transition-all duration-300 group-hover:border-rose-400 group-hover:bg-rose-500 group-hover:text-white group-hover:scale-105 group-hover:-rotate-3">
-                      <value.icon className="w-5 h-5" strokeWidth={1.8} />
+                    <div className="w-10 h-10 grid place-items-center rounded-xl border-2 border-rose-200 text-rose-500 transition-all duration-300 group-hover:border-rose-400 group-hover:bg-rose-500 group-hover:text-white group-hover:scale-105 group-hover:-rotate-3">
+                      <value.icon className="w-4 h-4" strokeWidth={1.8} />
                     </div>
                   </div>
 
                   {/* Текст */}
                   <div className="transition-transform duration-300 group-hover:translate-x-1.5">
-                    <h3 className="font-display text-2xl md:text-3xl font-semibold text-gray-900 mb-1.5">
+                    <h3 className="font-display text-lg md:text-xl font-semibold text-gray-900 mb-0.5">
                       {value.title}
                     </h3>
-                    <p className="text-gray-500 leading-relaxed text-[15px] md:text-base max-w-xl">
+                    <p className="text-gray-500 leading-relaxed text-sm max-w-xl">
                       {value.description}
                     </p>
                   </div>
@@ -812,7 +809,7 @@ export default function About() {
             </button>
 
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm z-10">
-              <span className="font-display italic text-rose-300">{graduatePhotos[gradLightbox].studentName}</span>
+              <span className="font-display italic text-rose-300">Завършил курсист</span>
               <span className="mx-2 opacity-50">·</span>
               {gradLightbox + 1} / {graduatePhotos.length}
             </div>
@@ -820,7 +817,7 @@ export default function About() {
             <motion.img
               key={graduatePhotos[gradLightbox].src}
               src={graduatePhotos[gradLightbox].src}
-              alt={graduatePhotos[gradLightbox].studentName}
+              alt="Завършил курсист на ARTAYA"
               className="max-h-[85vh] max-w-full rounded-2xl shadow-2xl object-contain"
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
