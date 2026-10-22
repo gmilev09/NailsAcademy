@@ -7,15 +7,19 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Checkbox } from "../components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
-import { MapPin, Truck, CreditCard, Package, ShoppingBag, Building2, Home, CheckCircle, LogIn, ImageOff } from "lucide-react";
+import { MapPin, Truck, CreditCard, Package, ShoppingBag, Building2, Home, CheckCircle, LogIn, ImageOff, FileText, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { getCartItems, removeCartItem } from "@/lib/cart";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
+import { COURIERS, OTHER_CITY_OPTION, getCitiesForCourier, getOfficesForCity } from "@/data/delivery";
 
 const FREE_SHIPPING_THRESHOLD = 50;
 const SHIPPING_COST = 5;
+
+const selectBaseClass =
+  "w-full appearance-none rounded-xl border border-input bg-white px-4 py-2.5 pr-10 text-sm text-gray-700 shadow-xs transition-colors focus:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-100 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60";
 
 function formatItemName(name) {
   return String(name || "").trim();
@@ -39,6 +43,18 @@ export default function Checkout() {
     delivery_type: "office",
     delivery_address: "",
     courier: "econt",
+  });
+  // Падащи менюта за офиси: избран град и избран офис
+  const [officeCity, setOfficeCity] = useState("");
+  const [officeChoice, setOfficeChoice] = useState("");
+  // Фактура на фирма
+  const [wantsInvoice, setWantsInvoice] = useState(false);
+  const [invoiceData, setInvoiceData] = useState({
+    company_name: "",
+    company_eik: "",
+    company_vat: "",
+    company_mol: "",
+    company_address: "",
   });
 
   useEffect(() => {
@@ -70,13 +86,50 @@ export default function Checkout() {
   const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal + shippingCost;
 
+  // Смяна на куриер — нулира избора на офис
+  const handleCourierChange = (courier) => {
+    setFormData((prev) => ({ ...prev, courier, delivery_address: "" }));
+    setOfficeCity("");
+    setOfficeChoice("");
+  };
+
+  // Смяна на типа доставка — нулира адресните полета
+  const handleDeliveryTypeChange = (delivery_type) => {
+    setFormData((prev) => ({ ...prev, delivery_type, city: "", delivery_address: "" }));
+    setOfficeCity("");
+    setOfficeChoice("");
+  };
+
+  // Избор на град от падащото меню (или „Друг град" за ръчно въвеждане)
+  const handleOfficeCityChange = (value) => {
+    setOfficeCity(value);
+    setOfficeChoice("");
+    setFormData((prev) => ({
+      ...prev,
+      city: value === OTHER_CITY_OPTION ? "" : value,
+      delivery_address: "",
+    }));
+  };
+
+  // Избор на конкретен офис — записва го като адрес за доставка
+  const handleOfficeChoiceChange = (value) => {
+    setOfficeChoice(value);
+    setFormData((prev) => ({ ...prev, delivery_address: value }));
+  };
+
   const validate = () => {
     const next = {};
     if (!formData.customer_name.trim()) next.customer_name = "Въведете име и фамилия.";
     if (!formData.customer_phone.trim()) next.customer_phone = "Въведете телефон.";
     if (!formData.customer_email.trim()) next.customer_email = "Въведете имейл.";
-    if (!formData.city.trim()) next.city = "Въведете град.";
-    if (!formData.delivery_address.trim()) next.delivery_address = "Въведете адрес/офис.";
+    if (!formData.city.trim()) next.city = formData.delivery_type === "office" ? "Изберете град." : "Въведете град.";
+    if (!formData.delivery_address.trim()) {
+      next.delivery_address = formData.delivery_type === "office" ? "Изберете офис на куриера." : "Въведете адрес за доставка.";
+    }
+    if (wantsInvoice) {
+      if (!invoiceData.company_name.trim()) next.company_name = "Въведете име на фирмата.";
+      if (!invoiceData.company_eik.trim()) next.company_eik = "Въведете ЕИК/Булстат.";
+    }
     if (!agreedToTerms) next.terms = "Задължително съгласие с Общите условия.";
     if (!agreedToPrivacy) next.privacy = "Задължително съгласие с Политиката за лични данни.";
     setErrors(next);
@@ -92,6 +145,12 @@ export default function Checkout() {
     try {
       await base44.entities.Order.create({
         ...formData,
+        needs_invoice: wantsInvoice,
+        company_name: wantsInvoice ? invoiceData.company_name.trim() : "",
+        company_eik: wantsInvoice ? invoiceData.company_eik.trim() : "",
+        company_vat: wantsInvoice ? invoiceData.company_vat.trim() : "",
+        company_mol: wantsInvoice ? invoiceData.company_mol.trim() : "",
+        company_address: wantsInvoice ? invoiceData.company_address.trim() : "",
         items: cartItems.map((item) => ({
           product_id: item.product_id,
           product_name: item.product_name,
@@ -247,22 +306,12 @@ export default function Checkout() {
                 Доставка
               </h2>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Град *</Label>
-                  <Input
-                    value={formData.city}
-                    onChange={(e) => setFormData({...formData, city: e.target.value})}
-                    className={errors.city ? "border-red-500" : ""}
-                    placeholder="София"
-                  />
-                  {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
-                </div>
-
+                {/* Тип доставка */}
                 <div className="space-y-2">
                   <Label>Тип доставка *</Label>
                   <RadioGroup
                     value={formData.delivery_type}
-                    onValueChange={(value) => setFormData({...formData, delivery_type: value})}
+                    onValueChange={handleDeliveryTypeChange}
                     className="flex gap-4"
                   >
                     <div className="flex items-center space-x-2">
@@ -280,34 +329,125 @@ export default function Checkout() {
                   </RadioGroup>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>{formData.delivery_type === "office" ? "Офис на куриера *" : "Адрес за доставка *"}</Label>
-                  <Input
-                    value={formData.delivery_address}
-                    onChange={(e) => setFormData({...formData, delivery_address: e.target.value})}
-                    className={errors.delivery_address ? "border-red-500" : ""}
-                    placeholder={formData.delivery_type === "office" ? "Офис Еконт/Спиди..." : "ул. Примерна 1, ап. 5"}
-                  />
-                  {errors.delivery_address && <p className="text-red-500 text-sm">{errors.delivery_address}</p>}
-                </div>
-
+                {/* Куриер — офисите зависят от него */}
                 <div className="space-y-2">
                   <Label>Куриер *</Label>
                   <RadioGroup
                     value={formData.courier}
-                    onValueChange={(value) => setFormData({...formData, courier: value})}
+                    onValueChange={handleCourierChange}
                     className="flex gap-4"
                   >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="econt" id="econt" />
-                      <Label htmlFor="econt" className="cursor-pointer">Еконт</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="speedy" id="speedy" />
-                      <Label htmlFor="speedy" className="cursor-pointer">Спиди</Label>
-                    </div>
+                    {COURIERS.map((courier) => (
+                      <div key={courier.value} className="flex items-center space-x-2">
+                        <RadioGroupItem value={courier.value} id={courier.value} />
+                        <Label htmlFor={courier.value} className="cursor-pointer">{courier.label}</Label>
+                      </div>
+                    ))}
                   </RadioGroup>
                 </div>
+
+                {formData.delivery_type === "office" ? (
+                  <>
+                    {/* Град — падащо меню */}
+                    <div className="space-y-2">
+                      <Label>Град *</Label>
+                      <div className="relative">
+                        <select
+                          value={officeCity}
+                          onChange={(e) => handleOfficeCityChange(e.target.value)}
+                          className={`${selectBaseClass} ${errors.city ? "border-red-500" : ""} ${officeCity ? "" : "text-gray-400"}`}
+                        >
+                          <option value="" disabled>Изберете град…</option>
+                          {getCitiesForCourier(formData.courier).map((city) => (
+                            <option key={city} value={city}>{city}</option>
+                          ))}
+                          <option value={OTHER_CITY_OPTION}>Друг град — въвеждам ръчно…</option>
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      </div>
+                      {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
+                    </div>
+
+                    {officeCity === OTHER_CITY_OPTION ? (
+                      <>
+                        {/* Ръчно въвеждане на град */}
+                        <div className="space-y-2">
+                          <Label>Вашият град *</Label>
+                          <Input
+                            value={formData.city}
+                            onChange={(e) => setFormData({...formData, city: e.target.value})}
+                            className={`rounded-xl ${errors.city ? "border-red-500" : ""}`}
+                            placeholder="Въведете град"
+                          />
+                          {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Офис на куриера *</Label>
+                          <Input
+                            value={formData.delivery_address}
+                            onChange={(e) => setFormData({...formData, delivery_address: e.target.value})}
+                            className={`rounded-xl ${errors.delivery_address ? "border-red-500" : ""}`}
+                            placeholder="Име/адрес на офиса…"
+                          />
+                          {errors.delivery_address && <p className="text-red-500 text-sm">{errors.delivery_address}</p>}
+                        </div>
+                      </>
+                    ) : (
+                      /* Офис — падащо меню за избрания град */
+                      <div className="space-y-2">
+                        <Label>Офис на куриера *</Label>
+                        <div className="relative">
+                          <select
+                            value={officeChoice}
+                            onChange={(e) => handleOfficeChoiceChange(e.target.value)}
+                            disabled={!officeCity}
+                            className={`${selectBaseClass} ${errors.delivery_address ? "border-red-500" : ""} ${officeChoice ? "" : "text-gray-400"}`}
+                          >
+                            <option value="" disabled>
+                              {officeCity ? "Изберете офис…" : "Първо изберете град"}
+                            </option>
+                            {officeCity && getOfficesForCity(formData.courier, officeCity).map((office) => (
+                              <option key={office.name} value={office.name}>{office.name}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        </div>
+                        {errors.delivery_address && <p className="text-red-500 text-sm">{errors.delivery_address}</p>}
+                        {officeChoice && (
+                          <p className="text-xs text-gray-400 flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                            {officeChoice}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {/* Доставка до адрес — свободен текст */}
+                    <div className="space-y-2">
+                      <Label>Град *</Label>
+                      <Input
+                        value={formData.city}
+                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        className={`rounded-xl ${errors.city ? "border-red-500" : ""}`}
+                        placeholder="София"
+                      />
+                      {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Адрес за доставка *</Label>
+                      <Input
+                        value={formData.delivery_address}
+                        onChange={(e) => setFormData({...formData, delivery_address: e.target.value})}
+                        className={`rounded-xl ${errors.delivery_address ? "border-red-500" : ""}`}
+                        placeholder="ул. Примерна 1, ап. 5"
+                      />
+                      {errors.delivery_address && <p className="text-red-500 text-sm">{errors.delivery_address}</p>}
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
 
@@ -324,6 +464,77 @@ export default function Checkout() {
                   <p className="text-sm text-gray-500">Плащате при получаване на пратката</p>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Фактура на фирма */}
+            <motion.div className="bg-white rounded-2xl p-6 shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  id="invoice"
+                  checked={wantsInvoice}
+                  onCheckedChange={(checked) => setWantsInvoice(Boolean(checked))}
+                  className="mt-0.5"
+                />
+                <div>
+                  <Label htmlFor="invoice" className="text-base font-semibold text-gray-900 cursor-pointer inline-flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-rose-400" />
+                    Желая фактура на фирма
+                  </Label>
+                  <p className="text-sm text-gray-500 mt-1">Ще издадем фактура към въведените фирмени данни.</p>
+                </div>
+              </div>
+
+              {wantsInvoice && (
+                <div className="mt-5 pt-5 border-t border-gray-100 grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Име на фирмата *</Label>
+                    <Input
+                      value={invoiceData.company_name}
+                      onChange={(e) => setInvoiceData({ ...invoiceData, company_name: e.target.value })}
+                      className={`rounded-xl ${errors.company_name ? "border-red-500" : ""}`}
+                      placeholder="Фирма ЕООД"
+                    />
+                    {errors.company_name && <p className="text-red-500 text-sm">{errors.company_name}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>ЕИК / Булстат *</Label>
+                    <Input
+                      value={invoiceData.company_eik}
+                      onChange={(e) => setInvoiceData({ ...invoiceData, company_eik: e.target.value })}
+                      className={`rounded-xl ${errors.company_eik ? "border-red-500" : ""}`}
+                      placeholder="123456789"
+                    />
+                    {errors.company_eik && <p className="text-red-500 text-sm">{errors.company_eik}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>№ по ДДС</Label>
+                    <Input
+                      value={invoiceData.company_vat}
+                      onChange={(e) => setInvoiceData({ ...invoiceData, company_vat: e.target.value })}
+                      className="rounded-xl"
+                      placeholder="BG123456789 (ако е приложимо)"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>МОЛ</Label>
+                    <Input
+                      value={invoiceData.company_mol}
+                      onChange={(e) => setInvoiceData({ ...invoiceData, company_mol: e.target.value })}
+                      className="rounded-xl"
+                      placeholder="Име на управителя"
+                    />
+                  </div>
+                  <div className="md:col-span-2 space-y-2">
+                    <Label>Адрес на фирмата</Label>
+                    <Input
+                      value={invoiceData.company_address}
+                      onChange={(e) => setInvoiceData({ ...invoiceData, company_address: e.target.value })}
+                      className="rounded-xl"
+                      placeholder="гр. Петрич, ул. Примерна 1"
+                    />
+                  </div>
+                </div>
+              )}
             </motion.div>
 
             {/* Terms */}
