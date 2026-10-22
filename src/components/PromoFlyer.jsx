@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X as XIcon, Flame } from "lucide-react";
+import { X as XIcon, Flame, ShoppingBag, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { PROMO_ACTIVE, shopProducts } from "@/data/products";
 
 const EASE = [0.22, 1, 0.36, 1];
@@ -243,13 +244,22 @@ export default function PromoFlyer() {
                   Професионални пили и UV/LED лампи NAIL MASTER на специални цени.
                 </motion.p>
 
-                {/* Бутон за затваряне на флайера */}
+                {/* Бутони: към магазина с промоциите + затваряне */}
                 <motion.div
                   className="mt-8 flex flex-col sm:flex-row gap-3"
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.62, ease: EASE }}
                 >
+                  <Link
+                    to="/Shop?category=електроуреди"
+                    onClick={closeFlyer}
+                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-base font-semibold text-rose-600 shadow-xl shadow-black/10 transition-all hover:bg-rose-50 hover:shadow-2xl"
+                  >
+                    <ShoppingBag className="w-5 h-5" />
+                    Разгледай магазина
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
                   <button
                     type="button"
                     onClick={closeFlyer}
