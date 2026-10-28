@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimationFrame } from "framer-motion";
-import { Heart, Award, Users, GraduationCap, Sparkles, Star, ArrowRight, MessageSquare, X, Video, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, Award, Users, GraduationCap, Sparkles, ArrowRight, MessageSquare, X, Video, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ReviewForm from "@/components/reviews/ReviewForm";
@@ -125,28 +125,6 @@ const stats = [
 { icon: Award, value: "10+", label: "Години опит" },
 { icon: GraduationCap, value: "100+", label: "Завършили курсисти" },
 { icon: Heart, value: "4", label: "Курсови програми" }];
-
-const values = [
-{
-  title: "Съвършенство",
-  description: "Стремим се към перфекция във всеки маникюр, използвайки само първокласни продукти и техники.",
-  icon: Star
-},
-{
-  title: "Образование",
-  description: "Споделянето на знания е нашата страст. Обучаваме следващото поколение nail артисти.",
-  icon: GraduationCap
-},
-{
-  title: "Грижа",
-  description: "Вашият комфорт и удовлетворение са наш приоритет. Отнасяме се към всеки клиент като към семейство.",
-  icon: Heart
-},
-{
-  title: "Иновации",
-  description: "Винаги сме в крак с най-новите тенденции, техники и технологии в маникюра.",
-  icon: Sparkles
-}];
 
 export default function About() {
   const { isAuthenticated } = useAuth();
@@ -606,61 +584,6 @@ export default function About() {
               Instagram
             </a>
           </motion.p>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="py-14 md:py-20 px-6 bg-white">
-        <div className="container mx-auto">
-          <motion.div
-            className="text-center mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}>
-
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-pink-100 mb-5">
-              <Star className="w-4 h-4 text-rose-400" />
-              <span className="text-sm font-medium text-rose-600">Нашите ценности</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-light text-gray-900">
-              Какво ни <span className="font-semibold text-rose-500">движи</span>
-            </h2>
-          </motion.div>
-
-            <div className="max-w-3xl mx-auto">
-              {values.map((value, index) => (
-                <motion.div
-                  key={value.title}
-                  className="group relative flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 border-t border-gray-100 py-5 last:border-b"
-                  initial={{ opacity: 0, x: -24 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ delay: index * 0.09, duration: 0.6 }}
-                >
-                  {/* Номер */}
-                  <span className="font-display text-2xl md:text-3xl font-light italic text-rose-300/80 leading-none select-none sm:w-10 shrink-0 group-hover:text-rose-400 transition-colors duration-300">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  {/* Иконка */}
-                  <div className="relative shrink-0">
-                    <div className="w-10 h-10 grid place-items-center rounded-xl border-2 border-rose-200 text-rose-500 transition-all duration-300 group-hover:border-rose-400 group-hover:bg-rose-500 group-hover:text-white group-hover:scale-105 group-hover:-rotate-3">
-                      <value.icon className="w-4 h-4" strokeWidth={1.8} />
-                    </div>
-                  </div>
-
-                  {/* Текст */}
-                  <div className="transition-transform duration-300 group-hover:translate-x-1.5">
-                    <h3 className="font-display text-lg md:text-xl font-semibold text-gray-900 mb-0.5">
-                      {value.title}
-                    </h3>
-                    <p className="text-gray-500 leading-relaxed text-sm max-w-xl">
-                      {value.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
         </div>
       </section>
 
