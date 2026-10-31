@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, useAnimationFrame } from "framer-motion";
-import { ShoppingBag, Plus, ArrowRight } from "lucide-react";
+import { ShoppingBag, Plus, ArrowRight, PackagePlus, Clock3 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { shopProducts } from "../../data/products";
@@ -14,6 +14,18 @@ const productsData = featuredProductIds
 
 function AddToCartButton({ product, isAuthenticated, navigateToLogin }) {
   const [added, setAdded] = useState(false);
+
+  // Продукт със статус „Очакваме доставка" → бутон за запазване към контактите
+  if (product.awaiting_stock) {
+    return (
+      <Link
+        to={`/Contact?product=${encodeURIComponent(product.name)}`}
+        className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600"
+      >
+        <PackagePlus className="w-4 h-4" />Запази
+      </Link>
+    );
+  }
 
   const handleAdd = async () => {
     if (!isAuthenticated) {
@@ -51,6 +63,12 @@ function ProductCard({ product, isAuthenticated, navigateToLogin }) {
         {product.on_sale && product.discount_percent > 0 && (
           <span className="absolute top-3 left-3 z-10 rounded-full bg-rose-500 px-2.5 py-1 text-xs font-bold text-white shadow-md shadow-rose-200">
             −{product.discount_percent}%
+          </span>
+        )}
+        {product.awaiting_stock && (
+          <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-md shadow-amber-200">
+            <Clock3 className="w-3 h-3" />
+            Очакваме доставка
           </span>
         )}
         <Link to={`/ProductDetail?id=${product.id}`} className="w-full h-full flex items-center justify-center">
