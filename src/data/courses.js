@@ -60,7 +60,7 @@ export const courses = [
     title: "Комбиниран маникюр",
     category: "advanced",
     level: "advanced",
-    price: 180,
+    price: 250,
     duration: "20 учебни часа",
     certificate: true,
     max_students: 2,
