@@ -17,8 +17,10 @@ const rawProducts = [
     price: 160,
     category: "електроуреди",
     in_stock: true,
+    awaiting_stock: true, // „Очакваме доставка" — показва се бадж и бутон „Запази продукта"
     image_url: `${PRODUCT_IMG}/417/%E6%B8%B2%E6%9F%93%E5%9B%BE%20(4).jpg`,
     image_url_2: `${PRODUCT_IMG}/417/%E5%8C%85%E8%A3%85%E5%AE%9E%E7%89%A9%E5%9B%BE.jpg`,
+    video_url: `${PRODUCT_IMG}/417/new%20417/FullSizeRender_1.mov`,
     description: `NAIL MASTER ES-417
 
 Професионална електрическа пила • 110W • Безчетков мотор • до 40 000 оборота/мин
@@ -86,6 +88,7 @@ NAIL MASTER ES-417
     image_url: `${PRODUCT_IMG}/601%20601P/601%20%E7%99%BD.jpg`,
     image_url_2: `${PRODUCT_IMG}/601%20601P/601%E5%86%85%E8%85%94%E5%9B%BE.jpg`,
     image_url_3: `${PRODUCT_IMG}/601%20601P/%E6%B8%B2%E6%9F%93%E5%9C%BA%E6%99%AF%E5%9B%BE%20(1).jpg`,
+    video_url: `${PRODUCT_IMG}/601%20601P/new%20601%20601p/IMG_9854.MP4`,
     description: `NAIL MASTER
 Професионална UV/LED лампа • 96W • 2600 mAh
 
@@ -138,6 +141,7 @@ NAIL MASTER Компактна. Интелигентна. Готова за пр
     name: "NAIL MASTER PRO - Професионална UV/LED лампа",
     price: 124,
     category: "електроуреди",
+    video_url: `${PRODUCT_IMG}/601%20601P/new%20601%20601p/IMG_9854.MP4`,
     in_stock: true,
     image_url: `${PRODUCT_IMG}/601%20601P/601p%E7%BB%84%E5%90%88%20.jpg`,
     image_url_2: `${PRODUCT_IMG}/601%20601P/%E6%B8%B2%E6%9F%93%E5%9C%BA%E6%99%AF%E5%9B%BE%20(1).jpg`,
@@ -308,6 +312,7 @@ NAIL TURBO - инструмент за чистота, комфорт и про�
     price: 27.9,
     category: "електроуреди",
     in_stock: true,
+    awaiting_stock: true, // „Очакваме доставка"
     image_url: "https://i.postimg.cc/8cj36h3d/Ekranna-snimka-2026-03-01-204502.png",
     image_url_2: "https://i.postimg.cc/VvphBJPf/Ekranna-snimka-2026-03-01-204526.png",
     description: "UV/LED лампа с 45 диода."
