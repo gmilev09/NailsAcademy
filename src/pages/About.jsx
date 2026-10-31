@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimationFrame } from "framer-motion";
-import { Heart, Award, Users, GraduationCap, Sparkles, ArrowRight, MessageSquare, X, Video, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, Award, Users, GraduationCap, ArrowRight, MessageSquare, X, Video, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import ReviewForm from "@/components/reviews/ReviewForm";
@@ -91,6 +91,7 @@ const salonImages = [
  * качена в src/NailsAcademy/Курсисти/{Име}).
  */
 const STUDENTS_DIR = `${RAW}/%D0%9A%D1%83%D1%80%D1%81%D0%B8%D1%81%D1%82%D0%B8`;
+const NEW_STUDENTS_DIR = `${STUDENTS_DIR}/%D0%BD%D0%BE%D0%B2%D0%B8%20%D0%BF%D0%BE%D0%BF%D1%8A%D0%BB%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F`;
 
 const graduateStudents = [
   {
@@ -113,12 +114,30 @@ const graduateStudents = [
       `${STUDENTS_DIR}/%D0%A1%D0%BB%D0%B0%D0%B2%D1%8F%D0%BD%D0%BA%D0%B0/2026-10-06%20(2).jpg`,
     ],
   },
+  {
+    id: "novi-popalneniya",
+    name: "Завършил курсист",
+    role: "Випуск на ARTAYA",
+    photos: [
+      `${NEW_STUDENTS_DIR}/viber_image_2026-10-30_09-19-04-595.jpg`,
+      `${NEW_STUDENTS_DIR}/viber_image_2026-10-30_09-19-05-242.jpg`,
+      `${NEW_STUDENTS_DIR}/viber_image_2026-10-30_09-19-05-454.jpg`,
+      `${NEW_STUDENTS_DIR}/viber_image_2026-10-30_09-19-04-809.jpg`,
+      `${NEW_STUDENTS_DIR}/viber_image_2026-10-30_09-19-05-032.jpg`,
+    ],
+    videos: [`${NEW_STUDENTS_DIR}/IMG_0026.MOV`],
+  },
 ];
 
-/* Плосък списък на всички снимки за lightbox-а, с името на курсистката. */
-const graduatePhotos = graduateStudents.flatMap((student) =>
-  student.photos.map((src) => ({ src, studentName: student.name }))
-);
+/* Плосък списък с всички медии (снимки + видеа) за lightbox-а.
+   Пази типа на всяка медия и началния индекс на всеки курсист. */
+const graduateMedia = [];
+const graduateStartIndex = {};
+graduateStudents.forEach((student) => {
+  graduateStartIndex[student.id] = graduateMedia.length;
+  student.photos.forEach((src) => graduateMedia.push({ src, type: "image", studentId: student.id }));
+  (student.videos || []).forEach((src) => graduateMedia.push({ src, type: "video", studentId: student.id }));
+});
 
 const stats = [
 { icon: Users, value: "500+", label: "Доволни клиенти" },
@@ -252,18 +271,6 @@ export default function About() {
                   Защото най-голямото удовлетворение за един преподавател не е просто да предаде знания, а да види как човекът срещу него израства, открива потенциала си и уверено прави първите си стъпки като професионалист.
                 </p>
               </blockquote>
-
-              {/* Свидетелство за квалификация */}
-              <div className="mt-8 pt-6 border-t border-gray-100 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-400">
-                <span className="inline-flex items-center gap-2">
-                  <Award className="w-4 h-4 text-rose-400" />
-                  Втора степен на професионална квалификация
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-rose-400" />
-                  Автор на собствени обучения и техники
-                </span>
-              </div>
             </motion.div>
           </div>
         </div>
@@ -472,7 +479,7 @@ export default function About() {
           </motion.div>
 
           {/* Spotlight карти */}
-          <div className="grid md:grid-cols-2 gap-16 md:gap-12 lg:gap-16 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16 md:gap-10 max-w-6xl mx-auto">
             {graduateStudents.map((student, studentIndex) => (
               <motion.article
                 key={student.id}
@@ -490,7 +497,7 @@ export default function About() {
                 {/* Интерактивно тесте от снимки */}
                 <button
                   type="button"
-                  onClick={() => setGradLightbox(studentIndex * 3 + 1)}
+                  onClick={() => setGradLightbox(graduateStartIndex[student.id] + 1)}
                   className="group relative block w-full h-72 sm:h-80 outline-none"
                   aria-label="Виж снимките на завършил курсист"
                 >
@@ -546,9 +553,9 @@ export default function About() {
                       decoding="async"
                       className="w-full aspect-[3/4] object-cover rounded-xl border-4 border-white shadow-2xl"
                     />
-                    {/* Бадж с брой снимки */}
+                    {/* Бадж с брой медии (снимки + видеа) */}
                     <span className="absolute -top-3 -right-3 grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-rose-400 to-pink-500 text-white text-xs font-bold shadow-lg ring-2 ring-white">
-                      {student.photos.length}
+                      {student.photos.length + (student.videos ? student.videos.length : 0)}
                     </span>
                   </motion.div>
                 </button>
@@ -693,9 +700,9 @@ export default function About() {
         </div>
       </section>
 
-      {/* Lightbox за курсистите с навигация */}
+      {/* Lightbox за курсистите с навигация — снимки и видеа */}
       <AnimatePresence>
-        {gradLightbox !== null && graduatePhotos[gradLightbox] && (
+        {gradLightbox !== null && graduateMedia[gradLightbox] && (
           <motion.div
             className="fixed inset-0 z-[110] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
@@ -714,7 +721,7 @@ export default function About() {
               className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors z-10"
               onClick={(e) => {
                 e.stopPropagation();
-                setGradLightbox((c) => (c - 1 + graduatePhotos.length) % graduatePhotos.length);
+                setGradLightbox((c) => (c - 1 + graduateMedia.length) % graduateMedia.length);
               }}
               aria-label="Предишна"
             >
@@ -724,7 +731,7 @@ export default function About() {
               className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors z-10"
               onClick={(e) => {
                 e.stopPropagation();
-                setGradLightbox((c) => (c + 1) % graduatePhotos.length);
+                setGradLightbox((c) => (c + 1) % graduateMedia.length);
               }}
               aria-label="Следваща"
             >
@@ -734,19 +741,38 @@ export default function About() {
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm z-10">
               <span className="font-display italic text-rose-300">Завършил курсист</span>
               <span className="mx-2 opacity-50">·</span>
-              {gradLightbox + 1} / {graduatePhotos.length}
+              {gradLightbox + 1} / {graduateMedia.length}
             </div>
 
-            <motion.img
-              key={graduatePhotos[gradLightbox].src}
-              src={graduatePhotos[gradLightbox].src}
-              alt="Завършил курсист на ARTAYA"
-              className="max-h-[85vh] max-w-full rounded-2xl shadow-2xl object-contain"
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.25 }}
-              onClick={(e) => e.stopPropagation()}
-            />
+            {graduateMedia[gradLightbox].type === "video" ? (
+              <motion.div
+                key={graduateMedia[gradLightbox].src}
+                className="flex items-center justify-center"
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.25 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <video
+                  src={graduateMedia[gradLightbox].src}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="max-h-[85vh] max-w-full rounded-2xl shadow-2xl"
+                />
+              </motion.div>
+            ) : (
+              <motion.img
+                key={graduateMedia[gradLightbox].src}
+                src={graduateMedia[gradLightbox].src}
+                alt="Завършил курсист на ARTAYA"
+                className="max-h-[85vh] max-w-full rounded-2xl shadow-2xl object-contain"
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.25 }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
