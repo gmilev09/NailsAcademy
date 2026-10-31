@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Link, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ChevronLeft, ChevronRight, Plus, PackageX, Truck, ShieldCheck, Check } from "lucide-react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronLeft, ChevronRight, Plus, PackageX, Truck, ShieldCheck, Check, Play, PackagePlus, Clock3 } from "lucide-react";
 import { toast } from "sonner";
 import { shopProducts, getGroupForProduct } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
@@ -17,6 +17,7 @@ export default function ProductDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [added, setAdded] = useState(false);
   const { isAuthenticated, navigateToLogin } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setSelectedVariantId(urlId);
@@ -36,10 +37,15 @@ export default function ProductDetail() {
 
   const displayName = group ? group.name : product?.name;
 
-  const images = useMemo(
-    () => (product ? [product.image_url, product.image_url_2, product.image_url_3].filter(Boolean) : []),
-    [product]
-  );
+  // Галерия: снимки + видео (ако продуктът има video_url, добавя се като последен слайд)
+  const media = useMemo(() => {
+    if (!product) return [];
+    const items = [product.image_url, product.image_url_2, product.image_url_3]
+      .filter(Boolean)
+      .map((src) => ({ type: "image", src }));
+    if (product.video_url) items.push({ type: "video", src: product.video_url });
+    return items;
+  }, [product]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -67,6 +73,11 @@ export default function ProductDetail() {
     } catch {
       toast.error("Възникна проблем при добавяне в количката.");
     }
+  };
+
+  // Резервация за продукт със статус „Очакваме доставка"
+  const handleReserve = () => {
+    navigate(`/Contact?product=${encodeURIComponent(displayName || product.name)}`);
   };
 
   if (!product) {
@@ -97,16 +108,34 @@ export default function ProductDetail() {
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <div className="relative bg-white rounded-3xl overflow-hidden aspect-square group border border-pink-100 shadow-sm flex items-center justify-center p-4">
               <AnimatePresence mode="wait" initial={false}>
-                {images.length > 0 ? (
-                  <motion.img
-                    key={images[currentImageIndex] + String(product.id)}
-                    src={images[currentImageIndex]}
-                    alt={displayName}
-                    className="w-full h-full object-contain object-center"
-                    initial={{ opacity: 0.4, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
-                  />
+                {media.length > 0 ? (
+                  media[currentImageIndex]?.type === "video" ? (
+                    <motion.div
+                      key={media[currentImageIndex].src + String(product.id)}
+                      className="w-full h-full flex items-center justify-center"
+                      initial={{ opacity: 0.4, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                    >
+                      <video
+                        src={media[currentImageIndex].src}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="max-h-full max-w-full rounded-2xl object-contain"
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.img
+                      key={media[currentImageIndex].src + String(product.id)}
+                      src={media[currentImageIndex].src}
+                      alt={displayName}
+                      className="w-full h-full object-contain object-center"
+                      initial={{ opacity: 0.4, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                    />
+                  )
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300">Без снимка</div>
                 )}
@@ -114,19 +143,25 @@ export default function ProductDetail() {
               {!product.in_stock && (
                 <Badge className="absolute top-4 right-4 bg-gray-500 text-white">Изчерпан</Badge>
               )}
-              {images.length > 1 && (
+              {product.in_stock && product.awaiting_stock && (
+                <Badge className="absolute top-4 right-4 bg-amber-500 text-white border-0 shadow-md shadow-amber-200 font-bold">
+                  <Clock3 className="w-3 h-3 mr-1" />
+                  Очакваме доставка
+                </Badge>
+              )}
+              {media.length > 1 && (
                 <>
                   <button
-                    onClick={() => setCurrentImageIndex((i) => (i === 0 ? images.length - 1 : i - 1))}
+                    onClick={() => setCurrentImageIndex((i) => (i === 0 ? media.length - 1 : i - 1))}
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
-                    aria-label="Предишна снимка"
+                    aria-label="Предишна медия"
                   >
                     <ChevronLeft className="w-5 h-5 text-gray-600" />
                   </button>
                   <button
-                    onClick={() => setCurrentImageIndex((i) => (i === images.length - 1 ? 0 : i + 1))}
+                    onClick={() => setCurrentImageIndex((i) => (i === media.length - 1 ? 0 : i + 1))}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
-                    aria-label="Следваща снимка"
+                    aria-label="Следваща медия"
                   >
                     <ChevronRight className="w-5 h-5 text-gray-600" />
                   </button>
@@ -134,15 +169,23 @@ export default function ProductDetail() {
               )}
             </div>
 
-            {images.length > 1 && (
-              <div className="flex gap-3 mt-4">
-                {images.map((img, i) => (
+            {media.length > 1 && (
+              <div className="flex gap-3 mt-4 flex-wrap">
+                {media.map((item, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentImageIndex(i)}
-                    className={`w-20 h-20 rounded-xl overflow-hidden border-2 bg-white flex items-center justify-center p-1.5 transition-all ${i === currentImageIndex ? "border-rose-400 shadow-md" : "border-transparent ring-1 ring-gray-100 opacity-60 hover:opacity-100"}`}
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 bg-white flex items-center justify-center p-1.5 transition-all ${i === currentImageIndex ? "border-rose-400 shadow-md" : "border-transparent ring-1 ring-gray-100 opacity-60 hover:opacity-100"}`}
+                    aria-label={item.type === "video" ? "Видео" : `Снимка ${i + 1}`}
                   >
-                    <img src={img} alt={`${displayName} ${i + 1}`} className="w-full h-full object-contain object-center" loading="lazy" decoding="async" />
+                    {item.type === "video" ? (
+                      <span className="w-full h-full flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-rose-50 to-pink-100 text-rose-500">
+                        <Play className="w-6 h-6 fill-current" />
+                        <span className="text-[9px] font-bold uppercase tracking-wide">Видео</span>
+                      </span>
+                    ) : (
+                      <img src={item.src} alt={`${displayName} ${i + 1}`} className="w-full h-full object-contain object-center" loading="lazy" decoding="async" />
+                    )}
                   </button>
                 ))}
               </div>
@@ -245,13 +288,28 @@ export default function ProductDetail() {
             </AnimatePresence>
 
             <div className="mt-auto space-y-6">
-              <Button
-                className={`w-full rounded-full py-6 text-lg ${added ? "bg-green-500 hover:bg-green-600" : "bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600"} text-white`}
-                disabled={!product.in_stock}
-                onClick={handleAddToCart}
-              >
-                {added ? "✔ Добавено!" : <><Plus className="w-5 h-5 mr-2" /> {isAuthenticated ? "Добави в количката" : "Влезте, за да поръчате"}</>}
-              </Button>
+              {product.awaiting_stock ? (
+                <>
+                  <Button
+                    className="w-full rounded-full py-6 text-lg bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white"
+                    onClick={handleReserve}
+                  >
+                    <PackagePlus className="w-5 h-5 mr-2" /> Запази продукта
+                  </Button>
+                  <p className="text-sm text-amber-600 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex items-start gap-2">
+                    <Clock3 className="w-4 h-4 mt-0.5 shrink-0" />
+                    Очакваме доставка на този продукт. Запазете го и ще се свържем с вас веднага щом е наличен.
+                  </p>
+                </>
+              ) : (
+                <Button
+                  className={`w-full rounded-full py-6 text-lg ${added ? "bg-green-500 hover:bg-green-600" : "bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600"} text-white`}
+                  disabled={!product.in_stock}
+                  onClick={handleAddToCart}
+                >
+                  {added ? "✔ Добавено!" : <><Plus className="w-5 h-5 mr-2" /> {isAuthenticated ? "Добави в количката" : "Влезте, за да поръчате"}</>}
+                </Button>
+              )}
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-start gap-3 p-4 bg-white rounded-2xl border border-pink-50">
