@@ -1,11 +1,12 @@
 // RECONSTRUCTED (оригиналът е 10KB) — формата и контактните данни следват оригинала.
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { Label } from "../components/ui/label";
-import { Mail, Phone, MapPin, Send, Instagram, Facebook, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Instagram, Facebook, Clock, PackagePlus } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const contactCards = [
@@ -38,6 +39,20 @@ const contactCards = [
 export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchParams] = useSearchParams();
+  // Попълва се при идване от бутон „Запази“ на продукт със статус „Очакваме доставка"
+  const reservedProduct = searchParams.get("product") || "";
+
+  useEffect(() => {
+    if (!reservedProduct) return;
+    setFormData((prev) => {
+      if (prev.message.trim()) return prev; // не презаписваме ръчно написано съобщение
+      return {
+        ...prev,
+        message: `Здравейте! Бих искал/а да запазя „${reservedProduct}". Моля, свържете се с мен, когато продуктът е наличен.`,
+      };
+    });
+  }, [reservedProduct]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -152,6 +167,15 @@ export default function Contact() {
               className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-pink-50"
             >
               <h2 className="text-xl font-bold text-gray-900 mb-6 italic">Изпратете съобщение</h2>
+              {reservedProduct && (
+                <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3.5">
+                  <PackagePlus className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-semibold text-amber-800">Запазване на продукт</p>
+                    <p className="text-amber-700 mt-0.5">„{reservedProduct}" — попълнете името и имейла си и изпратете. Ще се свържем с вас при наличност.</p>
+                  </div>
+                </div>
+              )}
               <div className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
