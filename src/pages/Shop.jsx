@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
-import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search, Layers, ArrowUpDown } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { ShoppingBag, Plus, ChevronLeft, ChevronRight, Search, Layers, ArrowUpDown, PackagePlus, Clock3 } from "lucide-react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { getDisplayProducts } from "../data/products";
 import { addProductToCart } from "@/lib/cart";
@@ -32,6 +32,12 @@ function ProductImageGallery({ product }) {
       )}
       {!product.in_stock && (
         <Badge className="absolute top-3 right-3 bg-gray-500 text-white border-0">Изчерпан</Badge>
+      )}
+      {product.in_stock && product.awaiting_stock && (
+        <Badge className="absolute top-3 right-3 bg-amber-500 text-white border-0 shadow-md shadow-amber-200 font-bold">
+          <Clock3 className="w-3 h-3 mr-1" />
+          Очакваме доставка
+        </Badge>
       )}
       {images.length > 1 && (
         <>
@@ -112,6 +118,7 @@ export default function Shop() {
   const [sortBy, setSortBy] = useState("default");
   const [addedProductId, setAddedProductId] = useState(null);
   const { isAuthenticated, navigateToLogin } = useAuth();
+  const navigate = useNavigate();
 
   const displayProducts = useMemo(() => getDisplayProducts(), []);
 
@@ -165,6 +172,12 @@ export default function Shop() {
     } catch {
       toast.error("Възникна проблем при добавяне в количката.");
     }
+  };
+
+  // „Запази" за продукти със статус „Очакваме доставка" —
+  // води към контактната форма с попълнено съобщение за резервация.
+  const handleReserve = (product) => {
+    navigate(`/Contact?product=${encodeURIComponent(product.name)}`);
   };
 
   return (
@@ -267,7 +280,15 @@ export default function Shop() {
                           {`€${product.price}`}
                         </span>
                       </div>
-                      {product.group ? (
+                      {product.awaiting_stock && !product.group ? (
+                        <Button
+                          size="sm"
+                          className="rounded-full px-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600"
+                          onClick={() => handleReserve(product)}
+                        >
+                          <PackagePlus className="w-4 h-4 mr-1" /> Запази
+                        </Button>
+                      ) : product.group ? (
                         <Link to={`/ProductDetail?id=${product.id}`}>
                           <Button
                             size="sm"
