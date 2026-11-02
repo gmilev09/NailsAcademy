@@ -65,29 +65,54 @@ export default function Contact() {
       return;
     }
     setIsSubmitting(true);
+
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const message = formData.message.trim();
+    const subject = reservedProduct
+      ? `Запазване на продукт: ${reservedProduct}`
+      : "Запитване от сайта";
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ name, email, subject, message }),
       });
       if (!response.ok) throw new Error("api unavailable");
-      toast.success("Съобщението е изпратено успешно! Ще се свържем с вас скоро.");
-      setFormData({ name: "", email: "", message: "" });
     } catch {
       // Preview fallback: keep the message locally
       try {
         const saved = JSON.parse(localStorage.getItem("na_contact_messages") || "[]");
-        saved.push({ ...formData, created_at: new Date().toISOString() });
+        saved.push({ name, email, subject, message, created_at: new Date().toISOString() });
         localStorage.setItem("na_contact_messages", JSON.stringify(saved));
       } catch {
         // ignore
       }
-      toast.success("Съобщението е изпратено успешно! Ще се свържем с вас скоро.");
-      setFormData({ name: "", email: "", message: "" });
-    } finally {
-      setIsSubmitting(false);
     }
+
+    // Netlify Forms — съобщението пристига в Netlify dashboard (Forms → contact),
+    // независимо от сървърната функция. Същият pattern като при ревюта/записвания.
+    try {
+      const netlifyData = new URLSearchParams();
+      netlifyData.append("form-name", "contact");
+      netlifyData.append("name", name);
+      netlifyData.append("email", email);
+      netlifyData.append("subject", subject);
+      netlifyData.append("message", message);
+      netlifyData.append("bot-field", "");
+      await fetch("/__forms.html", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: netlifyData.toString(),
+      });
+    } catch {
+      // ignore — best effort
+    }
+
+    toast.success("Съобщението е изпратено успешно! Ще се свържем с вас скоро.");
+    setFormData({ name: "", email: "", message: "" });
+    setIsSubmitting(false);
   };
 
   return (
