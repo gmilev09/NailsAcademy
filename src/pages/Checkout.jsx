@@ -143,6 +143,48 @@ export default function Checkout() {
     }
     setIsPlacingOrder(true);
     try {
+      // Netlify Forms — поръчката пристига в Netlify dashboard (Forms → orders),
+      // независимо от сървърната функция. Същият pattern като при ревюта/записвания.
+      try {
+        const orderForm = new URLSearchParams();
+        orderForm.set("form-name", "orders");
+        orderForm.set("customer_name", formData.customer_name.trim());
+        orderForm.set("customer_email", formData.customer_email);
+        orderForm.set("customer_phone", formData.customer_phone.trim());
+        orderForm.set("city", formData.city);
+        orderForm.set("delivery_type", formData.delivery_type === "office" ? "До офис" : "До адрес");
+        orderForm.set("delivery_address", formData.delivery_address);
+        orderForm.set("courier", formData.courier === "econt" ? "Еконт" : "Спиди");
+        orderForm.set("payment_method", "Наложен платеж");
+        orderForm.set(
+          "items",
+          cartItems
+            .map((item) => `${formatItemName(item.product_name)} x${item.quantity} = ${(item.product_price * item.quantity).toFixed(2)}€`)
+            .join("\n")
+        );
+        orderForm.set("agreed_to_terms", "да");
+        orderForm.set("agreed_to_privacy", "да");
+        orderForm.set("subtotal", `${subtotal.toFixed(2)}€`);
+        orderForm.set("shipping_cost", shippingCost === 0 ? "Безплатна" : `${shippingCost.toFixed(2)}€`);
+        orderForm.set("total", `${total.toFixed(2)}€`);
+        orderForm.set("needs_invoice", wantsInvoice ? "ДА" : "не");
+        if (wantsInvoice) {
+          orderForm.set("company_name", invoiceData.company_name.trim());
+          orderForm.set("company_eik", invoiceData.company_eik.trim());
+          orderForm.set("company_vat", invoiceData.company_vat.trim());
+          orderForm.set("company_mol", invoiceData.company_mol.trim());
+          orderForm.set("company_address", invoiceData.company_address.trim());
+        }
+        orderForm.set("bot-field", "");
+        await fetch("/__forms.html", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: orderForm.toString(),
+        });
+      } catch {
+        // best effort — поръчката продължава през API/localStorage
+      }
+
       await base44.entities.Order.create({
         ...formData,
         needs_invoice: wantsInvoice,
